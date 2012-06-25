@@ -1,0 +1,89 @@
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/bioconductor/!svn/ver/63887/trunk/madman/Rpacks/PING/man
+END
+setParaPrior.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/bioconductor/!svn/ver/63887/trunk/madman/Rpacks/PING/man/setParaPrior.Rd
+END
+pingList-class.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/bioconductor/!svn/ver/63887/trunk/madman/Rpacks/PING/man/pingList-class.Rd
+END
+PING.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/bioconductor/!svn/ver/63887/trunk/madman/Rpacks/PING/man/PING.Rd
+END
+segReads.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/bioconductor/!svn/ver/63887/trunk/madman/Rpacks/PING/man/segReads.Rd
+END
+summary.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/bioconductor/!svn/ver/63887/trunk/madman/Rpacks/PING/man/summary.Rd
+END
+ping-class.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/bioconductor/!svn/ver/63887/trunk/madman/Rpacks/PING/man/ping-class.Rd
+END
+show.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/bioconductor/!svn/ver/63887/trunk/madman/Rpacks/PING/man/show.Rd
+END
+segmentReads.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/bioconductor/!svn/ver/63887/trunk/madman/Rpacks/PING/man/segmentReads.Rd
+END
+setParaEM.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/bioconductor/!svn/ver/63887/trunk/madman/Rpacks/PING/man/setParaEM.Rd
+END
+postPING.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/bioconductor/!svn/ver/63887/trunk/madman/Rpacks/PING/man/postPING.Rd
+END
+unique.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/bioconductor/!svn/ver/63887/trunk/madman/Rpacks/PING/man/unique.Rd
+END
+SegReadsList.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/bioconductor/!svn/ver/63887/trunk/madman/Rpacks/PING/man/SegReadsList.Rd
+END
+makeRangedDataOutput.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/bioconductor/!svn/ver/63887/trunk/madman/Rpacks/PING/man/makeRangedDataOutput.Rd
+END
+pingError-class.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/bioconductor/!svn/ver/63887/trunk/madman/Rpacks/PING/man/pingError-class.Rd
+END

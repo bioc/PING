@@ -1,0 +1,39 @@
+useDynLib(PING,.registration=TRUE)
+
+#importMethodsFrom(IRanges, "score", "sort", "unique", "order", "duplicated","start","end","lapply")
+
+#import(methods)
+importFrom(graphics, abline, axis, grid, layout, lines, mtext, par, plot, points, segments, stripchart, symbols, title)
+importFrom(grDevices, grey)
+importFrom(stats, dt, integrate, kmeans, pt)
+importFrom(BiocGenerics, density)
+importFrom(stats4, summary)
+
+importFrom(IRanges, IRanges, RangedData)
+importClassesFrom(IRanges, IRanges, RangedData)
+importMethodsFrom(IRanges, duplicated, end, levels, lapply, order, score, sort, space, start, unique)
+
+importMethodsFrom(GenomicRanges, strand, seqnames)
+
+importFrom(BSgenome, GenomeData)
+importClassesFrom(BSgenome, GenomeData)
+
+#import(GenomeGraphs)
+#import(GenomicRanges)
+
+importClassesFrom(PICS, segReads, segReadsList, pics, picsError, picsList)
+importMethodsFrom(PICS, coerce, show, summary, score, minRange, maxRange, scoreReverse, scoreForward, chromosome, map,
+	 se, seF,seR,sigmaSqF, sigmaSqR, delta, mu, w, K, code, length, "[","[[",unique)
+importFrom(PICS, segReads, segReadsList, segReadsGeneric, summarySeg, makeRangedDataOutput)
+
+
+
+### export anything w/out a dot in front. 
+#exportPattern(".+")
+# I export the default parameters for the PING code, so that the user does not have to worry about them
+export(paraPriorH,paraPriorTF,paraEMH,paraEMTF,PING,postPING,setParaEM,setParaPrior,makeRangedDataOutput,newPingError)
+
+
+exportClasses(segReads, segReadsList, ping, pingError, pingList)
+exportMethods(show, summary, plot, density, chromosome, score, se, seF, seR, sigmaSqF, sigmaSqR, mu, delta, w, code, length, K,"[","[[")
+export("segReads","segReadsList","segmentPING","makeRangedDataOutput")
