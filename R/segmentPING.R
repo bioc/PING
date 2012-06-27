@@ -1,19 +1,35 @@
-segmentPING<-function(data, dataC=NULL, map=NULL, minReads=2, minReadsInRegion=3, jitter=FALSE, maxLregion=1200,minLregion=80)
+segmentPING<-function(data, dataC=NULL, map=NULL, minReads=2, minReadsInRegion=3, jitter=FALSE, maxLregion=1200, minLregion=80, step=NULL, width=NULL, dataType="H")
 {
-  dataType="H"
+  #dataType="H"
 
   if(dataType=="TF")
   {
-    step<-paraSegTF$step
-    width<-paraSegTF$width
+    #step<-paraSegTF$step
+    #width<-paraSegTF$width
+    if(is.null(step))
+    {
+      step<-20L
+    }
+    if(is.null(width))
+    {
+      width<-150L
+    }
   }
   if(dataType=="H")
   {
-    step<-paraSegH$step
-    width<-paraSegH$width
+    #step<-paraSegH$step
+    #width<-paraSegH$width
+    if(is.null(step))
+    {
+      step<-2L
+    }
+    if(is.null(width))
+    {
+      width<-150L
+    }
   }
+  cat("step=",step,"| width=",width,"| dataType=",dataType,"\n")
   ## Perform the segmentation
-  newSet<-segReadsGeneric(data, dataC=dataC, map=map, minReads=minReads, minReadsInRegion=minReadsInRegion, jitter=jitter, maxLregion=maxLregion,minLregion=minLregion,
-		  step=step, width=width, package="PING")
+  newSet<-segReadsGeneric(data, dataC=dataC, map=map, minReads=minReads, minReadsInRegion=minReadsInRegion, jitter=jitter, maxLregion=maxLregion,minLregion=minLregion, step=step, width=width, package="PING")
   return(newSet)
 }

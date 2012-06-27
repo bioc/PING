@@ -77,43 +77,6 @@ setMethod("density", "pingError",
             return(NULL)
           }
 )
-#setMethod("summary", "segReadsList",
-#          function(object)
-#      {
-#          cat("** Experiment information ** \n")
-#          cat("Chromosomes interogated: ")
-#          cat(unique(unlist(lapply(object@List,function(obj){obj@chr}))),"\n")
-#          cat("Number of reads")
-#          cat(" in IP: ",object@N," and in control: ",object@Nc,"\n")
-#          cat("** Segmentation parameters ** \n")
-#          cat("The following settings were used:\n")          
-#          cat("  Sliding window half width: ", object@paraSW$width,"\n")
-#          cat("  Step size: ", object@paraSW$step,"\n")          
-#          cat("  Minimum number of reads: ", object@paraSW$minReads,"\n")
-#          cat("** Segmentation summary ** \n")                    
-#          cat("Number of segmented regions:",length(object@List),"\n")
-#          cat("Summary on the number of Forward/Reverse reads per region:\n")
-#          cat("  Forward:\n") 
-#          cat("  ")
-#          tempF<-lapply(object@List,function(obj){length(obj@yF)})
-#          print(summary(as.integer(unlist(tempF))))
-#          cat("  Reverse:\n") 
-#          cat("  ")
-#          tempR<-lapply(object@List,function(obj){length(obj@yR)})
-#          print(summary(as.integer(unlist(tempR))))
-#          cat("Summary on the number of control Forward/Reverse reads per region:\n")
-#          cat("  Forward:\n") 
-#          cat("  ")
-#          tempF<-lapply(object@List,function(obj){length(obj@cF)})
-#          print(summary(as.integer(unlist(tempF))))
-#          cat("  Reverse:\n") 
-#          cat("  ")
-#          tempR<-lapply(object@List,function(obj){length(obj@cR)})
-#          print(summary(as.integer(unlist(tempR))))                    
-#          tempMap<-map(object)
-#          cat("** Mappability summary **\n")
-#          cat("Non mappable intervals cover an average ", mean(unlist(tempMap)),"% of all regions \n")                  
-#      })
 
 
 setMethod("summary", "segReads",
@@ -129,77 +92,6 @@ setMethod("summary", "segReads",
         cat("Non mappable intervals cover ", sum(diff(t(object@map)))/(M-m),"% of the region \n")
       })
 
-
-#setMethod("[","segReadsList",
-#		function(x,i, j,..., drop=FALSE)
-#		{
-#			if(missing(i))
-#			{
-#				return(x)
-#			}
-#			if(!missing(j))
-#			{
-#			  stop("incorrect number of dimensions")
-#			}
-#      else
-#      {
-#        segReadsList(x@List[i],x@paraSW,x@N,x@Nc)
-#      }
-#		})
-#
-#setMethod("[[","segReadsList",
-#    function(x, i, j, ..., exact = TRUE)
-#    {
-#      if(length(i) != 1)
-#      {
-#        stop("subscript out of bounds (index must have length 1)")
-#      }
-#      if(missing(i))
-#      {
-#        return(x)
-#      }
-#      if(!missing(j))
-#      {
-#        stop("incorrect number of dimensions")
-#      }
-#      x@List[[i]]
-#})
-
-
-#setMethod("[","segReadsListPE",
-#		function(x,i, j,..., drop=FALSE)
-#		{
-#			if(missing(i))
-#			{
-#				return(x)
-#			}
-#			if(!missing(j))
-#			{
-#			  stop("incorrect number of dimensions")
-#			}
-#      else
-#      {
-#        segReadsListPE(x@List[i],x@paraSW,x@N,x@NFm,x@NRm,x@Nc,x@NcFm,x@NcRm)
-#      }
-#		})
-#
-#setMethod("[[","segReadsListPE",
-#    function(x, i, j, ..., exact = TRUE)
-#    {
-#      if(length(i) != 1)
-#      {
-#        stop("subscript out of bounds (index must have length 1)")
-#      }
-#      if(missing(i))
-#      {
-#        return(x)
-#      }
-#      if(!missing(j))
-#      {
-#        stop("incorrect number of dimensions")
-#      }
-#      x@List[[i]]
-#})
 
 
 setMethod("[","pingList",
@@ -218,24 +110,6 @@ setMethod("[","pingList",
         newPingList(x@List[i], x@paraEM, x@paraPrior, x@minReads, x@N, x@Nc)        
       }
 		})
-
-#setMethod("[[","pingList",
-#    function(x, i, j, ..., exact = TRUE)
-#    {
-#      if(length(i) != 1)
-#      {
-#        stop("subscript out of bounds (index must have length 1)")
-#      }
-#      if(missing(i))
-#      {
-#        return(x)
-#      }
-#      if(!missing(j))
-#      {
-#        stop("incorrect number of dimensions")
-#      }
-#      x@List[[i]]
-#})
 
 
 setMethod("summary", "pingList",

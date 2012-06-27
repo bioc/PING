@@ -64,26 +64,6 @@ detail=0; rescale=1; PE=F
 }
 
 
-## This function could be used to simulate random reads in the case there are no background reads
-.background<-function(dataF, dataR, mapPro=NULL,gapPro=NULL,pRetain=0.01)
-{
-  obj<-.C("background",
-  dataF=as.double(dataF),
-  dataR=as.double(dataR),
-  nF=as.integer(length(dataF)),
-  nR=as.integer(length(dataR)),
-  as.integer(mapPro[,1]),
-  as.integer(mapPro[,2]),
-  as.integer(nrow(mapPro)),
-  as.integer(gapPro[,1]),
-  as.integer(gapPro[,2]),
-  as.integer(nrow(gapPro)),
-  as.double(pRetain),
-  PACKAGE="PING")
-  
-  list(dataF=obj$dataF,dataR=obj$dataR)
-}
-
 
 # ================================================================================
 # = Purpose: Screen out abnormal predictions whose parameters are too far from others
@@ -302,33 +282,6 @@ filterPING2 <- function(ss)
 	return(ans)
 }
 
-
-# the following two functions related to a old PING score we no-longer use
-#calcuScore<-function(ping,seg)
-#{
-#	result=NULL
-#	for(i in 1:length(ping))
-#	{
-#		mus=mu(ping[[i]])
-#		yF=seg[[i]]@yF
-#		yR=seg[[i]]@yR
-#		idx.F=outer(yF, mus-147, ">" ) & outer(yF, mus, "<=" )
-#		idx.R=outer(yR, mus+147, "<" ) & outer(yR, mus, ">=" )	
-#		scoreF=apply(idx.F,2,sum) 
-#		scoreR=apply(idx.R,2,sum)
-#		score=scoreF+scoreR
-#		result=rbind(result,data.frame(score=score,scoreF=scoreF,scoreR=scoreR))
-#		if (i%%1000==0) print(i)
-#	}
-#	return(result)
-#}
-#
-#as.df<-function(ping,seg)
-#{
-#	ps=as(ping,"data.frame")
-#	score2=calcuScore(ping,seg)
-#	return(data.frame(ps,score2=score2[,1],scoreF2=score2[,2],scoreR2=score2[,3]))
-#}
 
 
 #Given a data.frame, and the chrInfo, we truncate certain columns specified by "positions"

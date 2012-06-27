@@ -24,7 +24,7 @@ importClassesFrom(BSgenome, GenomeData)
 importClassesFrom(PICS, segReads, segReadsList, pics, picsError, picsList)
 importMethodsFrom(PICS, coerce, show, summary, score, minRange, maxRange, scoreReverse, scoreForward, chromosome, map,
 	 se, seF,seR,sigmaSqF, sigmaSqR, delta, mu, w, K, code, length, "[","[[",unique)
-importFrom(PICS, segReads, segReadsList, segReadsGeneric, summarySeg, makeRangedDataOutput)
+importFrom(PICS, segReads, segReadsList, segReadsGeneric, summarySeg, makeRangedDataOutput, backgroundSim)
 
 
 
