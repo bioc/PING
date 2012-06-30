@@ -64,11 +64,31 @@ segReadsList.
 }
 
 \usage{
-PING(segReadsList)
+PING(segReadsList, paraEM=NULL, paraPrior=NULL)
 }
 
 \arguments{
 \item{segReadsList}{This object contains segmentation of Genome}
+
+\item{paraEM}{A list of parameters for the EM algorithm. The default parameters should be good enough for most usages.}
+	\describe{
+		\item{}{\code{minK}: an \code{integer}, default=0. The minimum number of binding events per region. If the value is 0, the minimum number is automatically calculated.}
+		\item{}{\code{maxK}: an \code{integer}, default=0. The maximum number of binding events per region. If the value is 0, the maximum number is automatically calculated.}
+		\item{}{\code{tol}: a \code{numeric}, default=1e-4. The tolerance for the EM algorithm.}
+		\item{}{\code{B}: an \code{integer}, default=100. The maximum number of iterations to be used.}
+		\item{}{\code{mSelect}: a character string specifying the information criteria to be used when selecting the number of binding events. Default="AIC3"}
+		\item{}{\code{mergePeaks}: a \code{logical} stating whether overlapping binding events should be picked. Default=TRUE}
+		\item{}{\code{mapCorrect}: a \code{logical} stating whether mappability profiles should be incorporated in the estimation, i.e: missing reads estimated. Default=TRUE}
+	}
+\item{paraPrior}{A list of parameters for the prior distribution. The default parameters should be good enough for most usages.}
+	\describe{
+		\item{}{\code{xi}: an \code{integer}, default=150. The average DNA fragment size.}
+		\item{}{\code{rho}: an \code{integer}, default=1.2. A variance parameter for the average DNA fragment size distribution.}
+		\item{}{\code{alpha}: an \code{integer}, default=10. First hyperparameter of the inverse Gamma distribution for sigma^2 in the PICS model}
+		\item{}{\code{beta}: an \code{integer}, default=20000. Second hyperparameter of the inverse Gamma distribution for sigma^2 in the PING model}
+		\item{}{\code{lambda}: an \code{integer}, default=0.000064. The precision of the prior for mu used for histone data.}
+		\item{}{\code{dMu}: an \code{integer}, default=200. Our best guess for the distance between two neighboring nucleosomes.}
+	}
 }
 
 \section{Methods}{

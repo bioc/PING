@@ -37,31 +37,6 @@ postPING <- function(ping, seg, rho=8, sigmaB2=2500,rho1=0.8,alpha1=20,alpha2=10
 
 	return(PS)
 }
-#postPING(ping3, seg, rho=8, makePlot=F, datname=datname, DupBound=DupBound, IP=IP, FragmentLenth=100,mart=mart)
-
-#PS$center=round(PS$mu)
-#PS$start=PS$mu-PS$delta/2
-#PS$end=PS$mu+PS$delta/2
-#pdf(paste(datname,"_rho",rho,"_DupBound",DupBound,"_Estimates_Filters_AIC3_after_filterSigma.pdf",sep=""),width=8,height=8)	
-#temp3=FilterPING(PS,detail=T,deltaB=c(80,250),sigmaB1=10000,sigmaB2=2500,seB=100)
-#dev.off()
-
-# #this function is same as postPING, but it return more details for inspection
-# postPING2 <- function(ping, seg, rho=8, makePlot=F, datname="", DupBound=NULL, IP=NULL, FragmentLenth=100,mart,sigmaB2=2500,rho1=0.8,alpha1=20,alpha2=100,beta2=100000)
-# {
-# 	# produce the PING result dataframe and add rank info
-# 	ps=as(ping,"data.frame")
-# 	ps=ps[order(ps$score,decreasing=T),]
-# 	ps$rank=1:nrow(ps)
-# 
-# 	ps1=PostError(ps=ps, ping=ping, seg=seg, rho=rho, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLenth=FragmentLenth,rho1=rho1,alpha1=alpha1)
-# 	ps2=PostDelta(ps=ps1, ping=ping, seg=seg, rho=rho, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLenth=FragmentLenth,sigmaB2=sigmaB2,rho1=rho1,alpha1=alpha1)
-# 	ps3=PostSigma(ps=ps2, ping=ping, seg=seg, rho=rho, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLenth=FragmentLenth,mart=mart,sigmaB2=sigmaB2,rho1=rho1,alpha1=alpha1,alpha2=alpha2,beta2=beta2)
-# 	PS=PostDup(ps=ps3, ping=ping, seg=seg, rho=rho,rho1=rho1,alpha1=alpha1)
-# 
-# 	return(list(before=ps,error=ps1,delta=ps2,sigma=ps3,after=PS))
-# }
-# #postPING(ping3, seg, rho=8, makePlot=F, datname=datname, DupBound=DupBound, IP=IP, FragmentLenth=100,mart=mart)
 
 
 
@@ -95,10 +70,10 @@ PostError <- function(ps, ping, seg, rho=8, makePlot=F, datname="", DupBound=NUL
 		print(head(idxE))
 
 		ssE=summarySeg(seg)[idxE,]
-		setParaPrior(xi=xi,rho=rho,alpha=alpha1,beta=20000,lambda=lambda,dMu=200)
-		pingE=PING(seg[idxE])
+		paraPrior<-setParaPrior(xi=xi,rho=rho,alpha=alpha1,beta=20000,lambda=lambda,dMu=200)
+		pingE=PING(seg[idxE], paraPrior=paraPrior)
 		#change Prior back to default setting
-		setParaPrior(xi=xi,rho=rho1,alpha=alpha1,beta=20000,lambda=lambda,dMu=200)
+		paraPrior<-setParaPrior(xi=xi,rho=rho1,alpha=alpha1,beta=20000,lambda=lambda,dMu=200)
 		
 		PS1=as(pingE,"data.frame")
 		#PS1=as.df(pingE,seg[idxE])
@@ -183,10 +158,10 @@ PostDelta <- function(ps, ping, seg, rho=8, makePlot=F, datname="", DupBound=NUL
 		cat("\n The", length(idxFilt), "Regions with following IDs are reprocessed for atypical delta: \n")
 		print(head(idxFilt))
 
-		setParaPrior(xi=xi,rho=rho,alpha=alpha1,beta=20000,lambda=lambda,dMu=200)
-		pingFilt=PING(seg[idxFilt])
+		paraPrior<-setParaPrior(xi=xi,rho=rho,alpha=alpha1,beta=20000,lambda=lambda,dMu=200)
+		pingFilt=PING(seg[idxFilt], paraPrior=paraPrior)
 		#change Prior back to default setting
-		setParaPrior(xi=xi,rho=rho1,alpha=alpha1,beta=20000,lambda=lambda,dMu=200)
+		paraPrior<-setParaPrior(xi=xi,rho=rho1,alpha=alpha1,beta=20000,lambda=lambda,dMu=200)
 
 	
 		tempPS1=as(pingFilt,"data.frame")
@@ -270,10 +245,10 @@ PostSigma <- function(ps, ping, seg, rho=8, makePlot=F, datname="", DupBound=NUL
 		segSigma=seg; segSigma@List=newseg2
 		
 		#change hyper-parameters for rho (to avoid atypical delta) and beta (to ask for smaller "sigma")
-		setParaPrior(xi=xi,rho=rho,alpha=alpha2,beta=beta2,lambda=lambda,dMu=200)
-		system.time(pingSigma<-PING(segSigma))
+		paraPrior<-setParaPrior(xi=xi,rho=rho,alpha=alpha2,beta=beta2,lambda=lambda,dMu=200)
+		system.time(pingSigma<-PING(segSigma, paraPrior=paraPrior))
 		#change Prior back to default setting
-		setParaPrior(xi=xi,rho=rho1,alpha=alpha2,beta=200000,lambda=lambda,dMu=200)
+		paraPrior<-setParaPrior(xi=xi,rho=rho1,alpha=alpha2,beta=200000,lambda=lambda,dMu=200)
 
 		tempPS1=as(pingSigma,"data.frame")
 		#tempPS1=as.df(pingSigma,segSigma)
@@ -337,12 +312,12 @@ PostDup <- function(ps, ping, seg, rho=8,rho1,alpha1,xi,PE,min.dist,lambda)
 		newseg=vector("list",ndup)
 		for(i in 1:ndup) { newseg[[i]]=processDup(paras=ps[dups[i]+c(0,1),],seg=seg,PE=PE) }
 		segDup=seg; segDup@List=newseg
-		setParaEM(minK=1,maxK=2,tol=1e-4,B=100,mSelect="AIC3",mergePeaks=T,mapCorrect=T)
-		setParaPrior(xi=xi,rho=rho,alpha=alpha1,beta=20000,lambda=lambda,dMu=200)
-		system.time(pingDup<-PING(segDup))
+		paraEM<-setParaEM(minK=1,maxK=2,tol=1e-4,B=100,mSelect="AIC3",mergePeaks=T,mapCorrect=T)
+		paraPrior<-setParaPrior(xi=xi,rho=rho,alpha=alpha1,beta=20000,lambda=lambda,dMu=200)
+		system.time(pingDup<-PING(segDup, paraEM=paraEM, paraPrior=paraPrior))
 		#change Prior back to default setting
-		setParaPrior(xi=xi,rho=rho1,alpha=alpha1,beta=20000,lambda=lambda,dMu=200)
-		setParaEM(minK=0,maxK=0,tol=1e-4,B=100,mSelect="AIC3",mergePeaks=T,mapCorrect=T)
+		paraPrior<-setParaPrior(xi=xi,rho=rho1,alpha=alpha1,beta=20000,lambda=lambda,dMu=200)
+		paraEM<-setParaEM(minK=0,maxK=0,tol=1e-4,B=100,mSelect="AIC3",mergePeaks=T,mapCorrect=T)
 		
 		tempPS1=as(pingDup,"data.frame")
 		#tempPS1=as.df(pingDup,segDup)
@@ -422,59 +397,3 @@ processDup <- function(paras,seg,nsigma=1,PE)
 		res=segReads(as.numeric(IPF), as.numeric(IPR), as.numeric(CTLF), as.numeric(CTLR), map, chr)
 	}
 }
-
-#processDup2 <- function(paras,IPdat,CTLdat=NULL, maps=NULL,jitter=F)
-#{
-#	
-#	chr=as.character(paras$chr[1])
-#	muv=paras$mu
-#	deltav=paras$delta
-#	sigmaSqFv=paras$sigmaSqF
-#	sigmaSqRv=paras$sigmaSqR
-#	
-#	## find boundaries
-#	sigmaF=sqrt(sigmaSqFv)
-#	sigmaR=sqrt(sigmaSqRv)
-#	startF=min(muv-deltav/2-sigmaF)
-#	endF  =max(muv-deltav/2+sigmaF)
-#	startR=min(muv+deltav/2-sigmaR)
-#	endR  =max(muv+deltav/2+sigmaR)
-#	
-#	#process IP data
-#	IP=IPdat[[chr]]
-#	IPF=IP$"+"
-#	IPF=subset(IPF,IPF>=startF)
-#	IPF=subset(IPF,IPF<=endF)
-#	IPR=IP$"-"
-#	IPR=subset(IPR,IPR>=startR)
-#	IPR=subset(IPR,IPR<=endR)
-#	if (jitter) { IPF=IPF+rnorm(length(IPF),0,0.1);  IPR=IPR+rnorm(length(IPR),0,0.1)}
-#	
-#	#process control data	
-#	if(!is.null(CTLdat))
-#	{
-#		CTL=CTLdat[[chr]]
-#		CTLF=CTL$"+"
-#		CTLF=subset(CTLF,CTLF>=startF)
-#		CTLF=subset(CTLF,CTLF<=endF)
-#		CTLR=CTL$"-"
-#		CTLR=subset(CTLR,CTLR>=startR)
-#		CTLR=subset(CTLR,CTLR<=endR)	
-#		if (jitter) { CTLF=CTLF+rnorm(length(CTLF),0,0.1);  CTLR=CTLR+rnorm(length(CTLR),0,0.1)}
-#	}else
-#	{
-#		CTLF=CTLR=numeric(0)
-#	}
-#	
-#	#process mappability profile
-#	if(!is.null(maps))
-#	{
-#		#map=maps[[chr]]
-#		## TO BE ADDED
-#	}else
-#	{
-#		map=matrix(0,0,2)
-#	}
-#	
-#	res=segReads(as.numeric(IPF), as.numeric(IPR), as.numeric(CTLF), as.numeric(CTLR), map, chr)
-#}

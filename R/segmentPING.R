@@ -4,8 +4,6 @@ segmentPING<-function(data, dataC=NULL, map=NULL, minReads=2, minReadsInRegion=3
 
   if(dataType=="TF")
   {
-    #step<-paraSegTF$step
-    #width<-paraSegTF$width
     if(is.null(step))
     {
       step<-20L
@@ -17,8 +15,6 @@ segmentPING<-function(data, dataC=NULL, map=NULL, minReads=2, minReadsInRegion=3
   }
   if(dataType=="H")
   {
-    #step<-paraSegH$step
-    #width<-paraSegH$width
     if(is.null(step))
     {
       step<-2L

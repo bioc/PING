@@ -18,22 +18,21 @@ importMethodsFrom(GenomicRanges, strand, seqnames)
 importFrom(BSgenome, GenomeData)
 importClassesFrom(BSgenome, GenomeData)
 
-#import(GenomeGraphs)
+#importFrom(GenomeGraphs, makeGenomeAxis, makeGene, DisplayPars, makeGeneRegion, makeTitle,
+#	gdPlot,makeXSETtrack, makeBaseTrack, makeRectangleOverlay)
 #import(GenomicRanges)
 
 importClassesFrom(PICS, segReads, segReadsList, pics, picsError, picsList)
 importMethodsFrom(PICS, coerce, show, summary, score, minRange, maxRange, scoreReverse, scoreForward, chromosome, map,
-	 se, seF,seR,sigmaSqF, sigmaSqR, delta, mu, w, K, code, length, "[","[[",unique)
-importFrom(PICS, segReads, segReadsList, segReadsGeneric, summarySeg, makeRangedDataOutput, backgroundSim)
+	 se, seF,seR,sigmaSqF, sigmaSqR, delta, mu, w, K, code, length, "[","[[")
+importFrom(PICS, segReads, segReadsList, segReadsGeneric, summarySeg, makeRangedDataOutput, setParaEM, setParaPrior)
 
 
 
 ### export anything w/out a dot in front. 
 #exportPattern(".+")
 # I export the default parameters for the PING code, so that the user does not have to worry about them
-export(paraPriorH,paraPriorTF,paraEMH,paraEMTF,PING,postPING,setParaEM,setParaPrior,makeRangedDataOutput,newPingError)
 
-
-exportClasses(segReads, segReadsList, ping, pingError, pingList)
+exportClasses(ping, pingError, pingList)
 exportMethods(show, summary, plot, density, chromosome, score, se, seF, seR, sigmaSqF, sigmaSqR, mu, delta, w, code, length, K,"[","[[")
-export("segReads","segReadsList","segmentPING","makeRangedDataOutput")
+export("PING","postPING","newPingError","segReads","segReadsList","segmentPING","makeRangedDataOutput")

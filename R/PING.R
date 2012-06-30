@@ -1,5 +1,5 @@
 #PING<-function(segReadsList,detail=0, rescale=1, PE=F)
-PING<-function(segReadsList)
+PING<-function(segReadsList, paraEM=NULL, paraPrior=NULL)
 {
 detail=0; rescale=1; PE=F
 # detail is an integer indicate how much detail to print
@@ -15,10 +15,20 @@ detail=0; rescale=1; PE=F
   rescale=as.integer(rescale)
   PE=as.integer(PE)
 
-	paraPrior<-paraPriorH
-	paraEM<-paraEMH
-	calpha <- 1.5
+  ### Default parameters for EM algorithm
+  if(length(paraEM)!=7)
+  {
+    message("Using the default paraEM")
+    paraEM<-list(minK=0,maxK=0,tol=1e-4,B=100,mSelect="AIC3",mergePeaks=TRUE,mapCorrect=TRUE)
+  }
+  if(length(paraPrior)!=6)
+  {
+    message("Using the default paraPrior")
+    paraPrior<-list(xi=150,rho=1.2,alpha=10,beta=20000,lambda=-0.000064,dMu=200)
+  }
+  calpha <- 1.5
   
+
   if((length(grep("parallel",loadedNamespaces()))==0) & (length(grep("snowfall",loadedNamespaces()))==0 || !sfParallel()))
   {
     message("Using the serial version of PING")    
@@ -289,7 +299,7 @@ filterPING2 <- function(ss)
 #truncate.result <- function(dat, chr.info.name="../chromInfo.mm9.txt", positions=c("start","end"))
 truncateResult <- function(dat, chr.info.name="../chromInfo.mm9.txt", positions=c("start","end"))
 {
-	chr.info <- read.table(chr.info.name,colClass=c("character", "integer"))
+	chr.info <- read.table(chr.info.name,colClasses=c("character", "integer"))
 	names(chr.info)=c("chr","max.pos")
 	for(idx.chr in 1:nrow(chr.info))
 	{

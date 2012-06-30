@@ -60,8 +60,8 @@ PING is a probabilistic method that extends PICS (Zhang et al. Biometrics, 2011,
 \section{PING analysis steps}
 A typical PING analysis consists of the following steps:
 \begin{enumerate}
-  \item Convert aligned-read data to a `GenomeData' list for efficient processing
-  \item Segment the genome into candidate regions that have sufficient aligned reads via `segmentReads'
+  \item Convert aligned-read data to a `GRanges' list for efficient processing
+  \item Segment the genome into candidate regions that have sufficient aligned reads via `segmentPING'
   \item Estimate nucleosome positions and other parameters with PING
   \item Post-process PING predictions to correct certain predictions
 %  \item Repeat 2-4 by swapping the IP and Control samples (optional)
@@ -93,8 +93,8 @@ http:/wiki.rglab.org/index.php?title=Public:Mappability_Profile
 \end{verbatim}
 
 
-%Once the data have been read in, we can create the list of `GenomeData' object where each element of the list corresponds to a different chromosome. 
-Once the data have been read in, we can create a list of `GenomeData' objects, in which each element of the list corresponds to a different chromosome, and contains the aligned IP and Control reads, and the mappability profile, for the corresponding chromosome. When reading the data, reads are automatically sorted, which is required for a PING analysis. As well, we recommend that the number of duplicates be controlled by using PING's default protocol-specific thresholds.
+%Once the data have been read in, we can create the list of `GRanges' object where each element of the list corresponds to a different chromosome. 
+Once the data have been read in, we can create a list of `GRanges' objects, in which each element of the list corresponds to a different chromosome, and contains the aligned IP and Control reads, and the mappability profile, for the corresponding chromosome. When reading the data, reads are automatically sorted, which is required for a PING analysis. As well, we recommend that the number of duplicates be controlled by using PING's default protocol-specific thresholds.
 %When reads are duplicated too many times, we recommend users to collapse them, since that might be artificial effect.
 
 We supply a demonstration set of MNase-seq data for chr1 from budding yeast GSM351492, NOCL\_R4 (Kaplan et al, Nature, 2009, 458(7236):362-6). The demonstration data is in the 'extdata' folder of the PING installation:  .../PING/inst/extdata.
@@ -103,8 +103,7 @@ We supply a demonstration set of MNase-seq data for chr1 from budding yeast GSM3
 path<- system.file("extdata",package="PING")
 #Read the experiment : 
 dataIP<-read.table(file.path(path,"GSM351492_R4_chr1.bed"),header=TRUE)
-dataIP<-as(dataIP,"RangedData")
-dataIP<-as(dataIP,"GenomeData")
+dataIP<-as(dataIP,"GRanges")
 
 @
 
@@ -133,7 +132,7 @@ In order to improve the computational efficiency of the PING package, if you hav
 %, which simplifies doing parallel computations. 
 In what follows, we assume that \texttt{snowfall} is installed on your machine. If it is not, you could omit the first three lines, and calculations will occur on a single CPU. 
 %which will lead a serial execution. 
-By default the command is not run. Note that the \texttt{segmentReads} and \texttt{PING} functions will automatically detect whether you have initialized a cluster and will use it if you have. 
+By default the command is not run. Note that the \texttt{segmentPING} and \texttt{PING} functions will automatically detect whether you have initialized a cluster and will use it if you have. 
 
 <<Cluster initialization,eval=FALSE>>=
 library(snowfall)
@@ -143,7 +142,7 @@ sfLibrary(PING)
 
 
 <<Genome segmentation>>=
-seg<-segmentReads(dataIP,  minReads=NULL, maxLregion=1200,minLregion=80, jitter=T)
+seg<-segmentPING(dataIP,  minReads=NULL, maxLregion=1200,minLregion=80, jitter=TRUE)
 @
 
 
@@ -152,7 +151,7 @@ After having segmented the genome into candidate regions, we use the \texttt{PIN
 %binding regions 
 %in a way. 
 The function returns position estimates, confidence intervals, etc. %In the code below, we assume that you are processing nucleosome data.  
-In our case, assuming that we have already segmented the genome using \texttt{segmentReads}, we can proceed with the following command: 
+In our case, assuming that we have already segmented the genome using \texttt{segmentPING}, we can proceed with the following command: 
 
 <<PING analysis>>=
 ping<-PING(seg)
