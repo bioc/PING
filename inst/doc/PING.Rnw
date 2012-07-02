@@ -104,7 +104,6 @@ path<- system.file("extdata",package="PING")
 #Read the experiment : 
 dataIP<-read.table(file.path(path,"GSM351492_R4_chr1.bed"),header=TRUE)
 dataIP<-as(dataIP,"GRanges")
-
 @
 
 %<<Reading the mappability profile>>=
@@ -142,7 +141,8 @@ sfLibrary(PING)
 
 
 <<Genome segmentation>>=
-seg<-segmentPING(dataIP,  minReads=NULL, maxLregion=1200,minLregion=80, jitter=TRUE)
+seg<-segmentPING(dataIP,  minReads=NULL, maxLregion=1200,minLregion=80,
+jitter=TRUE)
 @
 
 

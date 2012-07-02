@@ -20,7 +20,7 @@ importClassesFrom(BSgenome, GenomeData)
 
 #importFrom(GenomeGraphs, makeGenomeAxis, makeGene, DisplayPars, makeGeneRegion, makeTitle,
 #	gdPlot,makeXSETtrack, makeBaseTrack, makeRectangleOverlay)
-#import(GenomicRanges)
+import(GenomeGraphs)
 
 importClassesFrom(PICS, segReads, segReadsList, pics, picsError, picsList)
 importMethodsFrom(PICS, coerce, show, summary, score, minRange, maxRange, scoreReverse, scoreForward, chromosome, map,
