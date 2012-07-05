@@ -6,11 +6,11 @@
 }
 
 \description{
-	This function takes from 0 to 6 parameters as argument, check if they are valid and returns a list to be used in a call to PING or postPING.
+	This function takes from 0 to 6 parameters as argument, check if they are valid and returns a list to be used in a call to PING or postPING. The default parameters are set for MNase data.
 }
 
 \usage{
-	setParaPrior(xi=150,rho=0.8,alpha=20,beta=20000,lambda=-0.000064,dMu=200)
+	setParaPriorPING(xi=150,rho=0.8,alpha=20,beta=20000,lambda=-0.000064,dMu=200)
 }
 
 \arguments{
@@ -37,9 +37,9 @@ Renan Sauteraud
 
 \examples{
 	# set prior for MNase data
-	paraPrior<-setParaPrior(xi=150,rho=0.8,alpha=20,beta=20000,lambda=-0.000064,dMu=200) 
+	paraPrior<-setParaPriorPING(xi=150,rho=0.8,alpha=20,beta=20000,lambda=-0.000064,dMu=200) 
 	# set prior for sonication data
-	paraPrior<-setParaPrior(xi=150,rho=1.2,alpha=10,beta=20000,lambda=-0.000064,dMu=200) 
+	paraPrior<-setParaPriorPING(xi=150,rho=1.2,alpha=10,beta=20000,lambda=-0.000064,dMu=200) 
 }
 
 \keyword{functions}

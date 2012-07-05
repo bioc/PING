@@ -6,14 +6,23 @@
 \description{ 
    Post process Estimation of binding site positions obtained from PING. Refit mixture models with stronger prior in candidate regions contain potential problems, and then convert final result into dataframe.}
 \usage{
-postPING(ping, seg, rho=8, sigmaB2=2500,rho1=0.8,alpha1=20,alpha2=100,beta2=100000,xi=150, min.dist=100, lambda=-0.000064)
+postPING(ping, seg, rho2=8, sigmaB2=2500, alpha2=100, beta2=100000, min.dist= 100, paraPrior=NULL)
 }
 
 
 \arguments{
   \item{ping}{A 'pingList' object containing estimation of nuclesome positions, result of 'PING' function.}
   \item{seg}{An object of class 'segmentReadsList' containing the results for all regions pre-processed, 'segmentReads' function.}
-  \item{rho1, sigmaB2, rho, alpha1, alpha2, beta2, xi}{Integer values, the parameters in the prior of mixture models to be re-fitted.}
+  \item{paraPrior}{A list of parameters for the prior distribution. The default parameters should be good enough for most usages.}
+	\describe{
+		\item{}{\code{xi}: an \code{integer}. The average DNA fragment size.}
+		\item{}{\code{rho}: an \code{integer}. A variance parameter for the average DNA fragment size distribution.}
+		\item{}{\code{alpha}: an \code{integer}. First hyperparameter of the inverse Gamma distribution for sigma^2 in the PICS model}
+		\item{}{\code{beta}: an \code{integer}. Second hyperparameter of the inverse Gamma distribution for sigma^2 in the PING model}
+  		\item{}{\code{lambda}: an \code{integer}. The lambda control Gaussian Markov Random Field prior on the distance of adjacent nucleosomes, we do not recommend user change the default value.}
+		\item{}{\code{dMu}: an \code{integer}. Our best guess for the distance between two neighboring nucleosomes.}
+	}
+  \item{rho2, sigmaB2, alpha2, beta2}{Integer values, the parameters in the prior of mixture models to be re-fitted.}
   \item{min.dist}{The minimum distance of two adjacent nucleosomes predicted from different candidate regions, smaller than that will be treated as duplicated predictions for the same nucleosomes.}
   \item{lambda}{The lambda control Gaussian Markov Random Field prior on the distance of adjacent nucleosomes, we do not recommend user change the default value.}
 }

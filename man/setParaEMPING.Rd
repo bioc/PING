@@ -10,7 +10,7 @@
 }
 
 \usage{
-	 setParaEM(minK=0,maxK=0,tol=1e-4,B=100,mSelect="AIC3",mergePeaks=TRUE,mapCorrect=TRUE)
+	 setParaEMPING(minK=0,maxK=0,tol=1e-4,B=100,mSelect="AIC3",mergePeaks=TRUE,mapCorrect=TRUE)
 }
 
 \arguments{

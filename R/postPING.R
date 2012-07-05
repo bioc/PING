@@ -37,7 +37,7 @@ postPING <- function(ping, seg, rho2=8, sigmaB2=2500, alpha2=100, beta2=100000, 
 	ps$rank=1:nrow(ps)
 
 	#ps1=PostError(ps=ps, ping=ping, seg=seg, rho=rho, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLenth=FragmentLenth,rho1=rho1,alpha1=alpha1,xi=xi, PE=PE, lambda=lambda)
-	ps1=PostError(ps=ps, ping=ping, seg=seg, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLenth=Fragmentlenth, paraPrior=paraPrior, rho2=rho2, PE=PE) 
+	ps1=PostError(ps=ps, ping=ping, seg=seg, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLenth=FragmentLenth, paraPrior=paraPrior, rho2=rho2, PE=PE) 
 	#ps2=PostDelta(ps=ps1, ping=ping, seg=seg, rho=rho, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLenth=FragmentLenth,sigmaB2=sigmaB2,rho1=rho1,alpha1=alpha1,xi=xi, PE=PE,lambda=lambda)
 	ps2=PostDelta(ps=ps1, ping=ping, seg=seg, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLenth=FragmentLenth, paraPrior=paraPrior, rho2=rho2, sigmaB2=sigmaB2, PE=PE)
 	#ps3=PostSigma(ps=ps2, ping=ping, seg=seg, rho=rho, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLenth=FragmentLenth,mart=mart,sigmaB2=sigmaB2,rho1=rho1,alpha1=alpha1,alpha2=alpha2,beta2=beta2,xi=xi, PE=PE,lambda=lambda)
