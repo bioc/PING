@@ -9,8 +9,6 @@
 \alias{coerce}
 \alias{coerce,pingList,RangedData-method}
 \alias{coerce,pingList,data.frame-method}
-\alias{coerce,RangedData,GenomeData-method}
-\alias{coerce,data.frame,GenomeData-method}
 \alias{coerce,data.frame,pingList-method}
 \alias{coerce,data.frame,pingList-method}
 \alias{density}

@@ -18,13 +18,13 @@ detail=0; rescale=1; PE=F
   ### Default parameters for EM algorithm
   if(length(paraEM)!=7)
   {
-    message("Using the default paraEM")
-    paraEM<-list(minK=0,maxK=0,tol=1e-4,B=100,mSelect="AIC3",mergePeaks=TRUE,mapCorrect=TRUE)
+    message("Using the default paraEM for PING")
+    paraEM<-setParaEMPING()
   }
   if(length(paraPrior)!=6)
   {
-    message("Using the default paraPrior")
-    paraPrior<-list(xi=150,rho=1.2,alpha=10,beta=20000,lambda=-0.000064,dMu=200)
+    message("Using the default paraPrior for MNase data")
+    paraPrior<-setParaPriorPING()
   }
   calpha <- 1.5
   

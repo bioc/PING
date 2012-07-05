@@ -6,7 +6,7 @@ Version: 0.99.2
 Author: Xuekui Zhang <xuezhang@jhsph.edu>, Raphael Gottardo <raph@stat.ubc.ca>, Sangsoon Woo, <swoo@fhcrc.org>
 Maintainer: Xuekui Zhang <xuezhang@jhsph.edu>, Raphael Gottardo
         <raph@stat.ubc.ca>, Sangsoon Woo, <swoo@fhcrc.org>
-Depends: R(>= 2.11.0),chipseq
+Depends: R(>= 2.14.0),chipseq
 Imports: methods, PICS, graphics, grDevices, stats, GenomeGraphs, fda ,
         IRanges, GenomicRanges, BSgenome, stats4, BiocGenerics
 Suggests: snowfall, ShortRead, rtracklayer
@@ -15,5 +15,6 @@ Description: Probabilistic inference of ChIP-Seq using an empirical Bayes mixtur
 biocViews: Clustering, Statistics, Visualization, Sequencing
 Collate: setClasses.R setMethods.R PING.R
         PlotRegions.R postPING.R segmentPING.R
+	setParaPING.R
 License: Artistic-2.0
 Packaged: 2012-03-14 20:24:48 UTC; dtenenba
