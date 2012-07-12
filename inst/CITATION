@@ -6,7 +6,7 @@ citEntry(entry="article",
 		person(given="Xuekui", family="Zhang"),
 		person(given="Gordon", family="Robertson"),
 		person(given="Sangsoon", family="Woo"),
-		person(given="Brad", middle="G", family="Hoffman"),
+		person(given="Brad", family="Hoffman"),
 		person(given="Raphael", family="Gottardo")
 	),
 	journal="PLoS ONE",

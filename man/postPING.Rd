@@ -24,7 +24,6 @@ postPING(ping, seg, rho2=8, sigmaB2=2500, alpha2=100, beta2=100000, min.dist= 10
 	}
   \item{rho2, sigmaB2, alpha2, beta2}{Integer values, the parameters in the prior of mixture models to be re-fitted.}
   \item{min.dist}{The minimum distance of two adjacent nucleosomes predicted from different candidate regions, smaller than that will be treated as duplicated predictions for the same nucleosomes.}
-  \item{lambda}{The lambda control Gaussian Markov Random Field prior on the distance of adjacent nucleosomes, we do not recommend user change the default value.}
 }
 
 \value{

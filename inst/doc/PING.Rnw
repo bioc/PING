@@ -1,5 +1,5 @@
 %\VignetteIndexEntry{The PING users guide}
-%\VignetteDepends{PING,snowfall,parallel}
+%\VignetteDepends{PING,parallel}
 %\VignetteKeywords{Preprocessing, ChIP-Seq, Sequencing}
 %\VignettePackage{PING}
 \documentclass[11pt]{article}
@@ -127,16 +127,14 @@ However, too small a value will likely return many false positive regions, which
 %If a Control sample is available you may also chose a value of `minReads' that gives you a ratio  of about 25\% for the number of candidate regions in the control over the number of candidate regions in the IP. A ratio larger than 25\% would most likely result in a large FDR when using \texttt{picsFDR}, and therefore it is not necessary to use too low of a threshold. 
 If users are not sure what values to use, they can assign `minReads=NULL', so that the value will be estimated from data. See below for an illustration.  \newline
 
-In order to improve the computational efficiency of the PING package, if you have access to multiple cores we recommend that you do parallel computations via the \texttt{snowfall} package.
+In order to improve the computational efficiency of the PING package, if you have access to multiple cores we recommend that you do parallel computations via the \texttt{parallel} package.
 %, which simplifies doing parallel computations. 
-In what follows, we assume that \texttt{snowfall} is installed on your machine. If it is not, you could omit the first three lines, and calculations will occur on a single CPU. 
+In what follows, we assume that \texttt{parallel} is installed on your machine. If it is not, you could omit the first line, and calculations will occur on a single CPU. 
 %which will lead a serial execution. 
 By default the command is not run. Note that the \texttt{segmentPING} and \texttt{PING} functions will automatically detect whether you have initialized a cluster and will use it if you have. 
 
 <<Cluster initialization,eval=FALSE>>=
-library(snowfall)
-sfInit(parallel=TRUE,cpus=2)
-sfLibrary(PING)
+library(parallel)
 @
 
 
@@ -222,9 +220,6 @@ The result output $PS$ is a dataframe that contains estimated parameters of each
 %export(rdBed,"myfile.wig")
 %@
 
-<<stop cluster,echo=FALSE,eval=FALSE>>=
-sfStop()
-@
 
 \end{document}
 

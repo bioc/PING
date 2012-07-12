@@ -580,7 +580,7 @@ SEXP fitModel(SEXP kk, SEXP iMax, SEXP tol, SEXP mselect, SEXP yR, SEXP yF, SEXP
 	}
 	
 	//Rprintf("Initial parameter\n");
-	para=initPara(yF, yR, kk, xi);
+	para=initPara(yF, yR, kk, xi); //para is w, mu, delta, sigmaSqF, sigmaSqR
 	if(detail>0) Rprintf("*** Initial value %i mixture\n", K);
 	if(detail>0) printPara(para);
 	//Rprintf("Start iterEM\n");
@@ -1884,12 +1884,14 @@ void ECM2PE(int nu, SEXP R, SEXP F, SEXP para, double xi, double alpha, double b
 }
 
 double logDensityMix(double *Y, double *w, double *mu, double *sigmaSq, int K, int N){
+	//Computes equation 1 of PING paper
 	int nu=4, i, j;
 	double ans=0.0, sigma, tmp, yNorm;
+	// *mu = mu-+delta/2 as in eq2 in PICS
 	
-	for(i=0; i<N; i++){
+	for(i=0; i<N; i++){ //for all reads in the region
 		tmp=0;
-		for (j=0; j<K; j++){
+		for (j=0; j<K; j++){ //for each binding event in the selected number of binding event
 			sigma=sqrt(sigmaSq[j]);
 			yNorm=(Y[i]-mu[j])/sigma;
 			tmp += w[j]*gsl_ran_tdist_pdf(yNorm,nu)/sigma;

@@ -98,8 +98,8 @@ PING(segReadsList, paraEM=NULL, paraPrior=NULL)
  \item{score}{\code{signature(x = "ping")}: return the score for each binding event.} 
  \item{scoreF}{\code{signature(x = "ping")}: return the score  of the forward (F)  for each binding event.}
  \item{scoreR}{\code{signature(x = "ping")}: return the score  of the forward (R)  for each binding event.}
-\item{maxRange}{\code{signature(x = "ping")}: return the range maximum.}
-\item{minRange}{\code{signature(x = "ping")}: return the range minimal.}
+ \item{maxRange}{\code{signature(x = "ping")}: return the range maximum.}
+ \item{minRange}{\code{signature(x = "ping")}: return the range minimal.}
  \item{K}{\code{signature(x = "ping")}: subset PING object.}
  \item{density}{\code{signature(x = "ping")}: return the density for each binding event.}
 }

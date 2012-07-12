@@ -29,39 +29,57 @@ detail=0; rescale=1; PE=F
   calpha <- 1.5
   
 
-  if((length(grep("parallel",loadedNamespaces()))==0) & (length(grep("snowfall",loadedNamespaces()))==0 || !sfParallel()))
+#  if((length(grep("parallel",loadedNamespaces()))==0) & (length(grep("snowfall",loadedNamespaces()))==0 || !sfParallel()))
+#  {
+#    message("Using the serial version of PING")    
+#    # C version
+#    res<-.Call("fitPING", segReadsList, paraEM, paraPrior, minReads, detail,rescale, calpha, PE, PACKAGE="PING")
+#  }
+#  else if(length(grep("parallel",loadedNamespaces()))==1)
+#  {
+#    cores<-getOption("cores")
+#    if(is.null(cores))
+#    {
+#      nClust<-parallel::detectCores()
+#    }
+#    else
+#    {
+#      nClust<-cores
+#    }
+#    message("Using the parallel version of PING with ",nClust," cores")
+#    # Split into nClust segReadsList
+#    segSplit<-split(segReadsList,cut(1:length(segReadsList),nClust))
+#    names(segSplit)<-NULL
+#    res<-unlist(parallel::mclapply(segSplit,.fitModelAllkSplit,paraEM,paraPrior,minReads,detail,rescale,calpha,PE, mc.preschedule=FALSE))
+#  }
+#  else if(length(grep("snowfall",loadedNamespaces()))==1 && sfParallel())
+#  {
+#    # Number of clusters
+#    nClust<-sfCpus()
+#    message("Using the parallel (snowfall) version of PING with ", nClust, " cpus or cores")
+#    # Split into nClust segReadsList
+#    segSplit<-split(segReadsList,cut(1:length(segReadsList),nClust))
+#    names(segSplit)<-NULL
+#    # Use a parallel version
+#    res<-unlist(sfLapply(segSplit,.fitModelAllkSplit,paraEM,paraPrior,minReads,detail,rescale, calpha, PE),recursive=FALSE)
+#  }
+	
+  if("parallel" %in% names(getLoadedDLLs()) )
   {
-    message("Using the serial version of PING")    
-    # C version
-    res<-.Call("fitPING", segReadsList, paraEM, paraPrior, minReads, detail,rescale, calpha, PE, PACKAGE="PING")
+	#Number of cores
+	nCores<-detectCores()
+	message("Using the parallel version of PING with ", nCores, " cpus or cores")
+	#Split into nCores segReadsList
+	cl <- makeCluster(getOption("cl.cores", nCores))
+	segSplit<-split(segReadsList,cut(1:length(segReadsList),nCores))
+	#Use parallel version of lapply
+	res<-unlist(parLapply(cl,segSplit,.fitModelAllkSplit,paraEM,paraPrior,minReads,detail,rescale, calpha, PE),recursive=FALSE)
+	stopCluster(cl)
   }
-  else if(length(grep("parallel",loadedNamespaces()))==1)
+  else
   {
-    cores<-getOption("cores")
-    if(is.null(cores))
-    {
-      nClust<-parallel::detectCores()
-    }
-    else
-    {
-      nClust<-cores
-    }
-    message("Using the parallel version of PING with ",nClust," cores")
-    # Split into nClust segReadsList
-    segSplit<-split(segReadsList,cut(1:length(segReadsList),nClust))
-    names(segSplit)<-NULL
-    res<-unlist(parallel::mclapply(segSplit,.fitModelAllkSplit,paraEM,paraPrior,minReads,detail,rescale,calpha,PE, mc.preschedule=FALSE))
-  }
-  else if(length(grep("snowfall",loadedNamespaces()))==1 && sfParallel())
-  {
-    # Number of clusters
-    nClust<-sfCpus()
-    message("Using the parallel (snowfall) version of PING with ", nClust, " cpus or cores")
-    # Split into nClust segReadsList
-    segSplit<-split(segReadsList,cut(1:length(segReadsList),nClust))
-    names(segSplit)<-NULL
-    # Use a parallel version
-    res<-unlist(sfLapply(segSplit,.fitModelAllkSplit,paraEM,paraPrior,minReads,detail,rescale, calpha, PE),recursive=FALSE)
+	message("Using the serial version of PING")
+	res<-.Call("fitPING", segReadsList, paraEM, paraPrior, minReads, detail,rescale, calpha, PE, PACKAGE="PING")
   }
 
   myPingList<-newPingList(res,paraEM,paraPrior,minReads,segReadsList@N,segReadsList@Nc)

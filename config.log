@@ -27,6 +27,7 @@ uname -v = #41-Ubuntu SMP Thu Jun 14 17:49:24 UTC 2012
 /usr/bin/oslevel       = unknown
 /bin/universe          = unknown
 
+PATH: /home/rsautera/perl5/bin
 PATH: /home/rsautera/bin
 PATH: /home/rsautera/bin
 PATH: /usr/lib/lightdm/lightdm

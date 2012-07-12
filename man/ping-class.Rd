@@ -36,9 +36,9 @@ The PING package provide accessors to directly access to most of the parameters/
 \item{`seF(x)'}{Gets the standard errors of all binding site position estimates identified in the region.}
 \item{`seF(x)'}{Gets the standard errors of all F peak modes identified in the region.}
 \item{`seR(x)'}{Gets the standard errors of all R peak modes identified in the region.}
- \item{score}{\code{signature(x = "ping")}: return the score for each binding event.} 
- \item{scoreF}{\code{signature(x = "ping")}: return the score  of the forward (F)  for each binding event.}
- \item{scoreR}{\code{signature(x = "ping")}: return the score  of the forward (R)  for each binding event.}
+\item{score}{\code{signature(x = "ping")}: return the score for each binding event.} 
+\item{scoreF}{\code{signature(x = "ping")}: return the score  of the forward (F)  for each binding event.}
+\item{scoreR}{\code{signature(x = "ping")}: return the score  of the forward (R)  for each binding event.}
 }
 }
 
@@ -80,7 +80,8 @@ Xuekui Zhang, Gordon Robertson, Sangsoon Woo, Brad G. Hoffman, and Raphael Gotta
 
 \examples{
 # Here is an example of how to construct such a region.
-# Typically, you would not do this manually, you would use the ping function to return a 'pingList' that contains a list of 'ping' or a 'pingError' object.
+# Typically, you would not do this manually, you would use the ping function to return a 'pingList'
+# that contains a list of 'ping' or a 'pingError' object.
 w<-1
 mu<-10000
 delta<-150

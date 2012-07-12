@@ -52,7 +52,8 @@ Xuekui Zhang, Gordon Robertson, Sangsoon Woo, Brad G. Hoffman, and Raphael Gotta
 
 \examples{
 # Here is an example on how to construct such a pingError object
-# Typically, you would not do this manually, you would use the ping function to return a 'pingList' that contains a list of 'ping' or 'pingError' object.
+# Typically, you would not do this manually, you would use the ping function to return a 'pingList'
+# that contains a list of 'ping' or 'pingError' object.
 # Contructor
 myPingError<-newPingError("Singular information matrix")
 # Accessors

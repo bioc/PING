@@ -9,8 +9,7 @@ Maintainer: Xuekui Zhang <xuezhang@jhsph.edu>, Raphael Gottardo
 Depends: R(>= 2.14.0),chipseq
 Imports: methods, PICS, graphics, grDevices, stats, GenomeGraphs, fda ,
         IRanges, GenomicRanges, BSgenome, stats4, BiocGenerics
-Suggests: snowfall, ShortRead, rtracklayer
-Enhances: parallel
+Suggests: parallel, ShortRead, rtracklayer
 Description: Probabilistic inference of ChIP-Seq using an empirical Bayes mixture model approach. 
 biocViews: Clustering, Statistics, Visualization, Sequencing
 Collate: setClasses.R setMethods.R PING.R
