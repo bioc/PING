@@ -93,7 +93,7 @@ library(parallel)
 @
 
 
-<<Genome-segmentation, echo=FALSE>>=
+<<Genome-segmentation, results=hide>>=
 segPE<-segmentPING(reads,  chr=chrs, islandDepth=3, min_cut=50, max_cut=1000)
 @
 It returns a \texttt{segReadsListPE} object.
