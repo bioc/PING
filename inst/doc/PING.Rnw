@@ -35,14 +35,10 @@ A step-by-step guide to inferring nucleosome positioning with high-throughput se
 
 Under the Artistic License 2.0, you are free to use and redistribute this software. 
 
-%However, 
-If you use this package for 
-%your own 
-a publication, we would ask you to cite the following: 
-%paper:
+If you use this package for a publication, we would ask you to cite the following: 
 
 \begin{itemize}
-\item[] Xuekui Zhang, Gordon Robertson, Sangsoon Woo, Brad G. Hoffman, and Raphael Gottardo. Probabilistic Inference for Nucleosome Positioning with MNase-based or Sonicated Short-read Data.  Submitted.
+\item[] Xuekui Zhang, Gordon Robertson, Sangsoon Woo, Brad G. Hoffman, and Raphael Gottardo. (2012). Probabilistic Inference for Nucleosome Positioning with MNase-based or Sonicated Short-read Data. PLoS ONE 7(2): e32095.
 \end{itemize}
 
 

@@ -7,9 +7,9 @@
 #								if seg.boundary is give, all predictions outside of boundary should be removed.
 #								This data frame contains 3 columns "ID" for id of candidate regions and "seg.start"/"seg.end" for start/end points of segment
 # min.dist=100, minimum distance of two adjacent nucs, smaller than that will be treated as duplicated prediction on boudary
-#postPING <- function(ping, seg, rho=8, makePlot=F, datname="", seg.boundary=NULL, DupBound=NULL, IP=NULL, FragmentLenth=100,mart=NULL,sigmaB2=2500,rho1=0.8,alpha1=20,alpha2=100,beta2=100000,xi=160, PE=F, min.dist=100, lambda=-0.000064)
+#postPING <- function(ping, seg, rho=8, makePlot=FALSE, datname="", seg.boundary=NULL, DupBound=NULL, IP=NULL, FragmentLenth=100,mart=NULL,sigmaB2=2500,rho1=0.8,alpha1=20,alpha2=100,beta2=100000,xi=160, PE=FALSE, min.dist=100, lambda=-0.000064)
 #postPING <- function(ping, seg, rho=8, sigmaB2=2500,rho1=0.8,alpha1=20,alpha2=100,beta2=100000,xi=150,  min.dist=100, lambda=-0.000064)
-postPING <- function(ping, seg, rho2=8, sigmaB2=2500, alpha2=100, beta2=100000, min.dist= 100, paraPrior=NULL)
+postPING <- function(ping, seg, rho2=8, sigmaB2=2500, alpha2=100, beta2=100000, min.dist= 100, paraPrior=NULL, makePlot=FALSE, PE=FALSE, FragmentLenth=100, mart=NULL, seg.boundary=NULL, DupBound=NULL, IP=NULL, datname="")
 {
 	if(length(paraPrior)!=6)
 	{
@@ -17,8 +17,6 @@ postPING <- function(ping, seg, rho2=8, sigmaB2=2500, alpha2=100, beta2=100000, 
 	  paraPrior<-setParaPriorPING()
 	}
 
-	PE=F; makePlot=F; datname=""; seg.boundary=NULL; DupBound=NULL; IP=NULL; FragmentLenth=100; mart=NULL
-	
 # "Sonication":  {rho1=1.2; sigmaB2=6400;rho=15;alpha1=10; alpha2=98; beta2=200000}
 # MNase:  {rho1=3; sigmaB2=4900; rho=8; alpha1=20; alpha2=100; beta2=100000}
 	# produce the PING result dataframe and add rank info
@@ -28,7 +26,7 @@ postPING <- function(ping, seg, rho2=8, sigmaB2=2500, alpha2=100, beta2=100000, 
 	
 	if(!is.null(seg.boundary)) # remove predictions outside of segmention boundary
 	{
-		temp <- merge(ps,seg.boundary, all.x=T, all.y=F, by="ID")
+		temp <- merge(ps,seg.boundary, all.x=T, all.y=FALSE, by="ID")
 		idx <- ( (temp$mu >= temp$seg.start) & (temp$mu <= temp$seg.end) )
 		ps <- ps[idx, ]
 	}
@@ -67,8 +65,8 @@ postPING <- function(ping, seg, rho2=8, sigmaB2=2500, alpha2=100, beta2=100000, 
 ## Output
 # PS: the post-processed PING results used to replace input "ps"
 ########################################################
-#PostError <- function(ps, ping, seg, rho=8, makePlot=F, datname="", DupBound=NULL, IP=NULL, FragmentLenth=100,rho1,alpha1,xi, PE,lambda)
-PostError <- function(ps, ping, seg, rho2=8, makePlot=F, datname="", DupBound=NULL, IP=NULL, FragmentLenth=100, paraPrior, PE)
+#PostError <- function(ps, ping, seg, rho=8, makePlot=FALSE, datname="", DupBound=NULL, IP=NULL, FragmentLenth=100,rho1,alpha1,xi, PE,lambda)
+PostError <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBound=NULL, IP=NULL, FragmentLenth=100, paraPrior, PE)
 {
 	idxE=which(code(ping)!="")
 	if(length(idxE)==0)
@@ -83,7 +81,7 @@ PostError <- function(ps, ping, seg, rho2=8, makePlot=F, datname="", DupBound=NU
 		ssE=summarySeg(seg)[idxE,]
 		#paraPriorPostError<-setParaPriorPING(xi=xi,rho=rho,alpha=alpha1,lambda=lambda)
 		paraPriorPostError<-setParaPriorPING(xi=paraPrior$xi, rho=rho2, alpha=paraPrior$alpha, beta=paraPrior$beta, lambda=paraPrior$lambda, dMu=paraPrior$dMu)
-		pingE=PING(seg[idxE], paraPrior=paraPriorPostError)
+		pingE=PING(seg[idxE], paraPrior=paraPriorPostError, PE=PE)
 		#change Prior back to default setting
 		#paraPrior<-setParaPriorPING(xi=xi,rho=rho1,alpha=alpha1,lambda=lambda)
 		
@@ -127,7 +125,6 @@ PostError <- function(ps, ping, seg, rho2=8, makePlot=F, datname="", DupBound=NU
 		}
 	}
 	
-	#browser()
 
 	
 	return(PS)
@@ -151,10 +148,10 @@ PostError <- function(ps, ping, seg, rho2=8, makePlot=F, datname="", DupBound=NU
 # PS: the post-processed PING results used to replace input "ps"
 ########################################################
 
-#PostDelta <- function(ps, ping, seg, rho=8, makePlot=F, datname="", DupBound=NULL, IP=NULL, FragmentLenth=100, sigmaB2,rho1,alpha1,xi, PE,lambda)
-PostDelta <- function(ps, ping, seg, rho2=8, makePlot=F, datname="", DupBound=NULL, IP=NULL, FragmentLenth=100, paraPrior, sigmaB2, PE)
+#PostDelta <- function(ps, ping, seg, rho=8, makePlot=FALSE, datname="", DupBound=NULL, IP=NULL, FragmentLenth=100, sigmaB2,rho1,alpha1,xi, PE,lambda)
+PostDelta <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBound=NULL, IP=NULL, FragmentLenth=100, paraPrior, sigmaB2, PE)
 {
-	temp0=FilterPING(ps,detail=F,deltaB=c(80,250),sigmaB2=sigmaB2,sigmaB1=10000,seB=Inf,score=0)
+	temp0=FilterPING(ps,detail=FALSE,deltaB=c(80,250),sigmaB2=sigmaB2,sigmaB1=10000,seB=Inf,score=0)
 	
 	#find out who is filtered out by delta	
 	idx=(ps$delta<temp0$myFilter$delta[1])|(ps$delta>temp0$myFilter$delta[2])
@@ -173,7 +170,7 @@ PostDelta <- function(ps, ping, seg, rho2=8, makePlot=F, datname="", DupBound=NU
 
 		#paraPriorPostDelta<-setParaPriorPING(xi=xi,rho=rho,alpha=alpha1,lambda=lambda)
 		paraPriorPostDelta<-setParaPriorPING(xi=paraPrior$xi,rho=rho2, alpha=paraPrior$alpha, beta=paraPrior$beta, lambda=paraPrior$lambda, dMu=paraPrior$dMu)
-		pingFilt=PING(seg[idxFilt], paraPrior=paraPriorPostDelta)
+		pingFilt=PING(seg[idxFilt], paraPrior=paraPriorPostDelta, PE=PE)
 		#change Prior back to default setting
 		#paraPrior<-setParaPriorPING(xi=xi,rho=rho1,alpha=alpha1,lambda=lambda)
 
@@ -211,7 +208,6 @@ PostDelta <- function(ps, ping, seg, rho2=8, makePlot=F, datname="", DupBound=NU
 		}
 	}
 		
-	#browser()
 	return(PS)
 }
 
@@ -233,10 +229,10 @@ PostDelta <- function(ps, ping, seg, rho2=8, makePlot=F, datname="", DupBound=NU
 ## Output
 # PS: the post-processed PING results used to replace input "ps"
 ########################################################
-#PostSigma <- function(ps, ping, seg, rho=8, makePlot=F, datname="", DupBound=NULL, IP=NULL, FragmentLenth=100,mart,sigmaB2,rho1,alpha1,alpha2,beta2,xi,PE,lambda)
-PostSigma <- function(ps, ping, seg, rho2=8, makePlot=F, datname="", DupBound=NULL, IP=NULL, FragmentLenth=100, mart, paraPrior, sigmaB2, alpha2, beta2, PE)
+#PostSigma <- function(ps, ping, seg, rho=8, makePlot=FALSE, datname="", DupBound=NULL, IP=NULL, FragmentLenth=100,mart,sigmaB2,rho1,alpha1,alpha2,beta2,xi,PE,lambda)
+PostSigma <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBound=NULL, IP=NULL, FragmentLenth=100, mart, paraPrior, sigmaB2, alpha2, beta2, PE)
 {
-	temp=FilterPING(ps,detail=F,deltaB=c(80,250),sigmaB2=sigmaB2,sigmaB1=10000,seB=Inf, score=0)
+	temp=FilterPING(ps,detail=FALSE,deltaB=c(80,250),sigmaB2=sigmaB2,sigmaB1=10000,seB=Inf, score=0)
 	
 	#find out who is filtered out by SigmaSq2
 	idx4=(ps$sigmaSqF>temp$myFilter$sigmaSq2[2])&(ps$sigmaSqR>temp$myFilter$sigmaSq2[2])
@@ -262,7 +258,7 @@ PostSigma <- function(ps, ping, seg, rho2=8, makePlot=F, datname="", DupBound=NU
 		#change hyper-parameters for rho (to avoid atypical delta) and beta (to ask for smaller "sigma")
 		#paraPriorPostSigma<-setParaPriorPING(xi=xi,rho=rho,alpha=alpha2,beta=beta2,lambda=lambda)
 		paraPriorPostSigma<-setParaPriorPING(xi=paraPrior$xi, rho=rho2, alpha=alpha2, beta=beta2, lambda=paraPrior$lambda, dMu=paraPrior$dMu)
-		system.time(pingSigma<-PING(segSigma, paraPrior=paraPriorPostSigma))
+		system.time(pingSigma<-PING(segSigma, paraPrior=paraPriorPostSigma, PE=PE))
 		#change Prior back to default setting
 		#paraPrior<-setParaPriorPING(xi=xi,rho=rho1,alpha=alpha2,lambda=lambda)
 
@@ -298,7 +294,6 @@ PostSigma <- function(ps, ping, seg, rho2=8, makePlot=F, datname="", DupBound=NU
 		}
 	}
 
-	#browser()
 	return(PS)
 }
 
@@ -332,7 +327,7 @@ PostDup <- function(ps, ping, seg, rho2=8, paraPrior, PE, min.dist)
 		paraEM<-setParaEMPING(minK=1,maxK=2,tol=1e-4,B=100,mSelect="AIC3",mergePeaks=T,mapCorrect=T)
 		#paraPriorPostDup<-setParaPriorPING(xi=xi,rho=rho,alpha=alpha1,lambda=lambda)
 		paraPriorPostDup<-setParaPriorPING(xi=paraPrior$xi, rho=rho2, alpha=paraPrior$alpha, beta=paraPrior$beta, lambda=paraPrior$lambda, dMu=paraPrior$dMu)
-		system.time(pingDup<-PING(segDup, paraEM=paraEM, paraPrior=paraPriorPostDup))
+		system.time(pingDup<-PING(segDup, paraEM=paraEM, paraPrior=paraPriorPostDup, PE=PE))
 		#change Prior back to default setting
 		#paraPrior<-setParaPriorPING(xi=xi,rho=rho1,alpha=alpha1,lambda=lambda)
 		#paraEM<-setParaEM(minK=0,maxK=0,tol=1e-4,B=100,mSelect="AIC3",mergePeaks=T,mapCorrect=T)
@@ -348,7 +343,6 @@ PostDup <- function(ps, ping, seg, rho2=8, paraPrior, PE, min.dist)
 
 	}
 
-	#browser()
 	return(PS)
 }
 
@@ -408,8 +402,8 @@ processDup <- function(paras,seg,nsigma=1,PE)
 	
 	if(PE)
 	{
-#		res=segReadsPE(as.numeric(IPF), as.numeric(IPR), numeric(0), numeric(0), 
-#									 as.numeric(CTLF), as.numeric(CTLR), numeric(0), numeric(0), map, chr)		
+		res=segReadsPE(as.numeric(IPF), as.numeric(IPR), numeric(0), numeric(0), 
+									 as.numeric(CTLF), as.numeric(CTLR), numeric(0), numeric(0), map, chr)		
 	}else
 	{
 		res=segReads(as.numeric(IPF), as.numeric(IPR), as.numeric(CTLF), as.numeric(CTLR), map, chr)

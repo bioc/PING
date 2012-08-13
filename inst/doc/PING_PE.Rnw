@@ -1,0 +1,125 @@
+%\VignetteIndexEntry{Using PING with paired-end sequencing data}
+%\VignetteDepends{PING,parallel}
+%\VignetteKeywords{Preprocessing, ChIP-Seq, Sequencing}
+%\VignettePackage{PING}
+\documentclass[11pt]{article}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{color, pdfcolmk}
+\usepackage{underscore}
+\usepackage[authoryear,round]{natbib}
+\bibliographystyle{plainnat}
+\SweaveOpts{keep.source=FALSE} %Introduce newlines automatically in R code
+
+
+\newcommand{\scscst}{\scriptscriptstyle}
+\newcommand{\scst}{\scriptstyle}
+
+\author{Xuekui Zhang\footnote{ubcxzhang@gmail.com} and Raphael
+  Gottardo\footnote{rgottard@fhcrc.org}}
+
+\begin{document}
+%To display nice multilines chunks of code
+<<echo=false>>=
+options(continue=" ")
+@
+
+\title{PING: Probabilistic Inference for Nucleosome Positioning with MNase-based or Sonicated Short-read Data.}
+\maketitle
+
+
+
+\textnormal {\normalfont}
+This vignette presents a workflow to use PING on paired-end sequencing data.
+
+\tableofcontents
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+
+
+\section{Licensing and citing}
+
+Under the Artistic License 2.0, you are free to use and redistribute this software. 
+
+If you use this package for a publication, we would ask you to cite the following: 
+
+\begin{itemize}
+\item[] Xuekui Zhang, Gordon Robertson, Sangsoon Woo, Brad G. Hoffman, and Raphael Gottardo. (2012). Probabilistic Inference for Nucleosome Positioning with MNase-based or Sonicated Short-read Data. PLoS ONE 7(2): e32095.
+\end{itemize}
+
+
+\section{Introduction}
+For an introduction to the biological background and PING method, please refer to the PING user guide.
+
+
+\section{PING analysis steps}
+A typical PING analysis consists of the following steps:
+\begin{enumerate}
+  \item Extract reads and chromosomes from bam files.
+  \item Segment the genome into candidate regions that have sufficient aligned reads via `segmentPING'
+  \item Estimate nucleosome positions and other parameters with PING
+  \item Post-process PING predictions to correct certain predictions
+\end{enumerate}
+
+As with any R package, you should first load it with the following command:
+
+<<Loading-PING>>=
+library(PING)
+@
+
+\section{Data Input and Formatting}
+In order to use the PE version of PING, the input has to be slightly different. Instead of a GRanges object, the new segmentation method use a list of reads and a chromosome.
+
+We provide a dataset for the chromosome I of yeast.
+<<Reading-the-data, echo=TRUE>>=
+data(yeast_chrI)
+head(reads$P)
+chrs
+@
+
+
+\section{PING analysis}
+
+\subsection{Genome segmentation}
+PING is used the same way for paired-end and single-end sequencing data. The function \texttt{segmentPING} will decide which segmentation method should be used based on the data type. Paired-end reads should be passed as a list with at least the three elements P, yFm, and yRm. With P being the paired-end reads, yFm and yRm being the reads where one end is missing.
+When dealing with paired-end data, four new arguments have to be passed to the function: a chromosome chr and three parameters used in candidate region selection: islandDepth, min_cut and max_cut.
+
+In order to improve the computational efficiency of the PING package, if you have access to multiple cores we recommend that you do parallel computations via the \texttt{parallel} package.
+In what follows, we assume that \texttt{parallel} is installed on your machine. If it is not, you could omit the first line, and calculations will occur on a single CPU. 
+By default the command is not run. Note that the \texttt{segmentPING} and \texttt{PING} functions will automatically detect whether you have initialized a cluster and will use it if you have. 
+
+<<Cluster-initialization>>=
+library(parallel)
+@
+
+
+<<Genome-segmentation, echo=FALSE>>=
+segPE<-segmentPING(reads,  chr=chrs, islandDepth=3, min_cut=50, max_cut=1000)
+@
+It returns a \texttt{segReadsListPE} object.
+
+
+\subsection{Parameter estimation}
+The only difference when using \texttt{PING} for paired-end data is the argument PE that has to be set to TRUE.
+
+<<PING-analysis>>=
+paraP<-setParaPriorPING(xi=150, rho=1.2, alpha=12, beta=20000, lambda=-0.000064, dMu=200)
+ping<-PING(segPE, paraPrior=paraP, PE=TRUE)
+@
+The returned object is of class pingList and can be post-processed.
+
+
+\section{Post-processing PING results}
+Here again, we set the argument PE to TRUE, and use postPING normally.
+
+<<Post-process-PING-result>>=
+{sigmaB2=3600; rho2=15; alpha2=98; beta2=200000}
+PS=postPING(ping, segPE, paraPrior=paraP, rho2=rho2, alpha2=alpha2, beta2=beta2, sigmaB2=sigmaB2, PE=TRUE)
+@
+The result output $PS$ is a dataframe that contains estimated parameters of each nucleosome, users can use write.table command to export the selected columns of the result.
+<<Display-result>>=
+head(PS)
+@
+
+\end{document}
+

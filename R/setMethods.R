@@ -4,6 +4,18 @@ setAs("pingList", "RangedData",
             makeRangedDataOutput(from, type="bed", filter=list(delta=c(50,300),se=c(0,50),sigmaSqF=c(0,22500),sigmaSqR=c(0,22500),score=c(1,Inf)),length=100)
       })
 
+setAs("pingList", "data.frame",
+  function(from)
+  {
+    ans<-data.frame(ID=rep(1:length(from),K(from)),chr=chromosome(from),w=w(from), mu=mu(from),
+                    delta=delta(from), sigmaSqF=sigmaSqF(from), sigmaSqR=sigmaSqR(from),se=se(from),
+                    score=score(from), scoreF=scoreForward(from),scoreR=scoreReverse(from),
+                    minRange=minRange(from), maxRange=maxRange(from), seF=seF(from), seR=seR(from) )
+    ans$chr       <- as.character(ans$chr)
+    ans           <- ans[is.finite(ans$mu),]
+    return(ans)
+  })
+
 setMethod("show", "pingList",
           function(object)
           {

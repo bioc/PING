@@ -1,7 +1,6 @@
 #PING<-function(segReadsList,detail=0, rescale=1, PE=F)
-PING<-function(segReadsList, paraEM=NULL, paraPrior=NULL)
+PING<-function(segReadsList, paraEM=NULL, paraPrior=NULL, detail=0, rescale=1, PE=FALSE)
 {
-detail=0; rescale=1; PE=F
 # detail is an integer indicate how much detail to print
 # detail=0 print no details, The larger detail, the more detail I print 
 # rescale is an integer indicate how reads was rescaled by yF/rescale and yR/rescale, default rescale=1
@@ -28,41 +27,6 @@ detail=0; rescale=1; PE=F
   }
   calpha <- 1.5
   
-
-#  if((length(grep("parallel",loadedNamespaces()))==0) & (length(grep("snowfall",loadedNamespaces()))==0 || !sfParallel()))
-#  {
-#    message("Using the serial version of PING")    
-#    # C version
-#    res<-.Call("fitPING", segReadsList, paraEM, paraPrior, minReads, detail,rescale, calpha, PE, PACKAGE="PING")
-#  }
-#  else if(length(grep("parallel",loadedNamespaces()))==1)
-#  {
-#    cores<-getOption("cores")
-#    if(is.null(cores))
-#    {
-#      nClust<-parallel::detectCores()
-#    }
-#    else
-#    {
-#      nClust<-cores
-#    }
-#    message("Using the parallel version of PING with ",nClust," cores")
-#    # Split into nClust segReadsList
-#    segSplit<-split(segReadsList,cut(1:length(segReadsList),nClust))
-#    names(segSplit)<-NULL
-#    res<-unlist(parallel::mclapply(segSplit,.fitModelAllkSplit,paraEM,paraPrior,minReads,detail,rescale,calpha,PE, mc.preschedule=FALSE))
-#  }
-#  else if(length(grep("snowfall",loadedNamespaces()))==1 && sfParallel())
-#  {
-#    # Number of clusters
-#    nClust<-sfCpus()
-#    message("Using the parallel (snowfall) version of PING with ", nClust, " cpus or cores")
-#    # Split into nClust segReadsList
-#    segSplit<-split(segReadsList,cut(1:length(segReadsList),nClust))
-#    names(segSplit)<-NULL
-#    # Use a parallel version
-#    res<-unlist(sfLapply(segSplit,.fitModelAllkSplit,paraEM,paraPrior,minReads,detail,rescale, calpha, PE),recursive=FALSE)
-#  }
 	
   if("parallel" %in% names(getLoadedDLLs()) )
   {
@@ -158,7 +122,6 @@ FilterPING <- function(ping.df,detail=F,alpha=0.05,deltaB=c(80,250),sigmaB1=1000
 	ind4=(ping.df$sigmaSqF<=sigmaSq2[2])|(ping.df$sigmaSqR<=sigmaSq2[2])
 	ind5=(ping.df$scoreF>score)&(ping.df$scoreR>score)
 	ind=ind1&ind2&ind3&ind4&ind5
-	#browser()
 	ping.df=ping.df[ind,]
 	return(list(ping.df=ping.df,myFilter=myFilter))
 }#temp1=FilterPING(as(PING1,"data.frame"),detail=T)

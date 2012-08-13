@@ -19,13 +19,17 @@ importMethodsFrom(GenomicRanges, strand, seqnames)
 importFrom(GenomeGraphs, makeGenomeAxis, makeGene, DisplayPars, makeGeneRegion, makeTitle,
 	gdPlot, makeBaseTrack, makeRectangleOverlay, makeSegmentation)
 
-importClassesFrom(PICS, segReads, segReadsList, pics, picsError, picsList)
+importClassesFrom(PICS, segReads, segReadsPE, segReadsList, segReadsListPE, pics, picsError, picsList)
 importMethodsFrom(PICS, coerce, show, summary, score, minRange, maxRange, scoreReverse, scoreForward, chromosome, map,
 	 se, seF,seR,sigmaSqF, sigmaSqR, delta, mu, w, K, code, length, "[","[[")
-importFrom(PICS, segReads, segReadsList, segReadsGeneric, summarySeg, makeRangedDataOutput, setParaEM, setParaPrior)
+importFrom(PICS, segReads, segReadsPE, segReadsList, segReadsListPE,
+	segReadsGeneric, summarySeg, makeRangedDataOutput, setParaEM, setParaPrior,
+	candidate.region, segChrRead)
 
 
 
 exportClasses(ping, pingError, pingList)
 exportMethods(show, summary, plot, density, chromosome, score, se, seF, seR, sigmaSqF, sigmaSqR, mu, delta, w, code, length, K,"[","[[")
-export("PING","postPING","newPingError","segReads","segReadsList","segmentPING","makeRangedDataOutput","setParaEMPING","setParaPriorPING")
+export("PING","postPING","newPingError",
+	"segReads","segReadsPE","segReadsList","segReadsListPE",
+	"segmentPING","makeRangedDataOutput","setParaEMPING","setParaPriorPING")
