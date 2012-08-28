@@ -5,8 +5,8 @@
 
 static const R_CallMethodDef CallEntries[] = {
     {"fitPING", (DL_FUNC)&fitPING, 8},
-    {"getDensity", (DL_FUNC)&getDensity, 6},
-    {"getDensityList", (DL_FUNC)&getDensityList, 6},
+//    {"getDensity", (DL_FUNC)&getDensity, 6},
+//    {"getDensityList", (DL_FUNC)&getDensityList, 6},
 
     {NULL, NULL, 0}
 };
