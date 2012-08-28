@@ -9,12 +9,15 @@
 # min.dist=100, minimum distance of two adjacent nucs, smaller than that will be treated as duplicated prediction on boudary
 #postPING <- function(ping, seg, rho=8, makePlot=FALSE, datname="", seg.boundary=NULL, DupBound=NULL, IP=NULL, FragmentLenth=100,mart=NULL,sigmaB2=2500,rho1=0.8,alpha1=20,alpha2=100,beta2=100000,xi=160, PE=FALSE, min.dist=100, lambda=-0.000064)
 #postPING <- function(ping, seg, rho=8, sigmaB2=2500,rho1=0.8,alpha1=20,alpha2=100,beta2=100000,xi=150,  min.dist=100, lambda=-0.000064)
-postPING <- function(ping, seg, rho2=8, sigmaB2=2500, alpha2=100, beta2=100000, min.dist= 100, paraPrior=NULL, makePlot=FALSE, PE=FALSE, FragmentLenth=100, mart=NULL, seg.boundary=NULL, DupBound=NULL, IP=NULL, datname="")
+postPING <- function(ping, seg, rho2=8, sigmaB2=2500, alpha2=100, beta2=100000, min.dist= 100, paraEM=NULL, paraPrior=NULL, makePlot=FALSE, PE=FALSE, FragmentLenth=100, mart=NULL, seg.boundary=NULL, DupBound=NULL, IP=NULL, datname="")
 {
 	if(length(paraPrior)!=6)
 	{
-	  message("Using the default paraPrior for MNase data")
-	  paraPrior<-setParaPriorPING()
+	  paraPrior<-setParaPrior(dataType="MNase")
+	}
+	if(length(paraEM)!=7)
+	{
+	  paraEM<-setParaEM(dataType="MNase")
 	}
 
 # "Sonication":  {rho1=1.2; sigmaB2=6400;rho=15;alpha1=10; alpha2=98; beta2=200000}
@@ -35,11 +38,11 @@ postPING <- function(ping, seg, rho2=8, sigmaB2=2500, alpha2=100, beta2=100000, 
 	ps$rank=1:nrow(ps)
 
 	#ps1=PostError(ps=ps, ping=ping, seg=seg, rho=rho, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLenth=FragmentLenth,rho1=rho1,alpha1=alpha1,xi=xi, PE=PE, lambda=lambda)
-	ps1=PostError(ps=ps, ping=ping, seg=seg, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLenth=FragmentLenth, paraPrior=paraPrior, rho2=rho2, PE=PE) 
+	ps1=PostError(ps=ps, ping=ping, seg=seg, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLenth=FragmentLenth, paraEM=paraEM, paraPrior=paraPrior, rho2=rho2, PE=PE) 
 	#ps2=PostDelta(ps=ps1, ping=ping, seg=seg, rho=rho, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLenth=FragmentLenth,sigmaB2=sigmaB2,rho1=rho1,alpha1=alpha1,xi=xi, PE=PE,lambda=lambda)
-	ps2=PostDelta(ps=ps1, ping=ping, seg=seg, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLenth=FragmentLenth, paraPrior=paraPrior, rho2=rho2, sigmaB2=sigmaB2, PE=PE)
+	ps2=PostDelta(ps=ps1, ping=ping, seg=seg, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLenth=FragmentLenth, paraEM=paraEM, paraPrior=paraPrior, rho2=rho2, sigmaB2=sigmaB2, PE=PE)
 	#ps3=PostSigma(ps=ps2, ping=ping, seg=seg, rho=rho, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLenth=FragmentLenth,mart=mart,sigmaB2=sigmaB2,rho1=rho1,alpha1=alpha1,alpha2=alpha2,beta2=beta2,xi=xi, PE=PE,lambda=lambda)
-	ps3=PostSigma(ps=ps2, ping=ping, seg=seg, rho2=rho2, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLenth=FragmentLenth, mart=mart, sigmaB2=sigmaB2, paraPrior=paraPrior, alpha2=alpha2,beta2=beta2, PE=PE)
+	ps3=PostSigma(ps=ps2, ping=ping, seg=seg, rho2=rho2, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLenth=FragmentLenth, mart=mart, sigmaB2=sigmaB2, paraEM=paraEM, paraPrior=paraPrior, alpha2=alpha2,beta2=beta2, PE=PE)
 	#PS=PostDup(ps=ps3, ping=ping, seg=seg, rho=rho,rho1=rho1,alpha1=alpha1,xi=xi, PE=PE,min.dist=min.dist,lambda=lambda)
 	PS=PostDup(ps=ps3, ping=ping, seg=seg, rho2=rho2,paraPrior=paraPrior, PE=PE, min.dist=min.dist)
 
@@ -66,7 +69,7 @@ postPING <- function(ping, seg, rho2=8, sigmaB2=2500, alpha2=100, beta2=100000, 
 # PS: the post-processed PING results used to replace input "ps"
 ########################################################
 #PostError <- function(ps, ping, seg, rho=8, makePlot=FALSE, datname="", DupBound=NULL, IP=NULL, FragmentLenth=100,rho1,alpha1,xi, PE,lambda)
-PostError <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBound=NULL, IP=NULL, FragmentLenth=100, paraPrior, PE)
+PostError <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBound=NULL, IP=NULL, FragmentLenth=100, paraEM, paraPrior, PE)
 {
 	idxE=which(code(ping)!="")
 	if(length(idxE)==0)
@@ -81,7 +84,7 @@ PostError <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBoun
 		ssE=summarySeg(seg)[idxE,]
 		#paraPriorPostError<-setParaPriorPING(xi=xi,rho=rho,alpha=alpha1,lambda=lambda)
 		paraPriorPostError<-setParaPriorPING(xi=paraPrior$xi, rho=rho2, alpha=paraPrior$alpha, beta=paraPrior$beta, lambda=paraPrior$lambda, dMu=paraPrior$dMu)
-		pingE=PING(seg[idxE], paraPrior=paraPriorPostError, PE=PE)
+		pingE=PING(seg[idxE], paraEM=paraEM, paraPrior=paraPriorPostError, PE=PE)
 		#change Prior back to default setting
 		#paraPrior<-setParaPriorPING(xi=xi,rho=rho1,alpha=alpha1,lambda=lambda)
 		
@@ -149,7 +152,7 @@ PostError <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBoun
 ########################################################
 
 #PostDelta <- function(ps, ping, seg, rho=8, makePlot=FALSE, datname="", DupBound=NULL, IP=NULL, FragmentLenth=100, sigmaB2,rho1,alpha1,xi, PE,lambda)
-PostDelta <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBound=NULL, IP=NULL, FragmentLenth=100, paraPrior, sigmaB2, PE)
+PostDelta <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBound=NULL, IP=NULL, FragmentLenth=100, paraEM, paraPrior, sigmaB2, PE)
 {
 	temp0=FilterPING(ps,detail=FALSE,deltaB=c(80,250),sigmaB2=sigmaB2,sigmaB1=10000,seB=Inf,score=0)
 	
@@ -170,7 +173,7 @@ PostDelta <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBoun
 
 		#paraPriorPostDelta<-setParaPriorPING(xi=xi,rho=rho,alpha=alpha1,lambda=lambda)
 		paraPriorPostDelta<-setParaPriorPING(xi=paraPrior$xi,rho=rho2, alpha=paraPrior$alpha, beta=paraPrior$beta, lambda=paraPrior$lambda, dMu=paraPrior$dMu)
-		pingFilt=PING(seg[idxFilt], paraPrior=paraPriorPostDelta, PE=PE)
+		pingFilt=PING(seg[idxFilt], paraEM=paraEM, paraPrior=paraPriorPostDelta, PE=PE)
 		#change Prior back to default setting
 		#paraPrior<-setParaPriorPING(xi=xi,rho=rho1,alpha=alpha1,lambda=lambda)
 
@@ -230,7 +233,7 @@ PostDelta <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBoun
 # PS: the post-processed PING results used to replace input "ps"
 ########################################################
 #PostSigma <- function(ps, ping, seg, rho=8, makePlot=FALSE, datname="", DupBound=NULL, IP=NULL, FragmentLenth=100,mart,sigmaB2,rho1,alpha1,alpha2,beta2,xi,PE,lambda)
-PostSigma <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBound=NULL, IP=NULL, FragmentLenth=100, mart, paraPrior, sigmaB2, alpha2, beta2, PE)
+PostSigma <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBound=NULL, IP=NULL, FragmentLenth=100, mart, paraEM, paraPrior, sigmaB2, alpha2, beta2, PE)
 {
 	temp=FilterPING(ps,detail=FALSE,deltaB=c(80,250),sigmaB2=sigmaB2,sigmaB1=10000,seB=Inf, score=0)
 	
@@ -258,7 +261,7 @@ PostSigma <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBoun
 		#change hyper-parameters for rho (to avoid atypical delta) and beta (to ask for smaller "sigma")
 		#paraPriorPostSigma<-setParaPriorPING(xi=xi,rho=rho,alpha=alpha2,beta=beta2,lambda=lambda)
 		paraPriorPostSigma<-setParaPriorPING(xi=paraPrior$xi, rho=rho2, alpha=alpha2, beta=beta2, lambda=paraPrior$lambda, dMu=paraPrior$dMu)
-		system.time(pingSigma<-PING(segSigma, paraPrior=paraPriorPostSigma, PE=PE))
+		system.time(pingSigma<-PING(segSigma, paraEM=paraEM, paraPrior=paraPriorPostSigma, PE=PE))
 		#change Prior back to default setting
 		#paraPrior<-setParaPriorPING(xi=xi,rho=rho1,alpha=alpha2,lambda=lambda)
 
@@ -324,7 +327,7 @@ PostDup <- function(ps, ping, seg, rho2=8, paraPrior, PE, min.dist)
 		newseg=vector("list",ndup)
 		for(i in 1:ndup) { newseg[[i]]=processDup(paras=ps[dups[i]+c(0,1),],seg=seg,PE=PE) }
 		segDup=seg; segDup@List=newseg
-		paraEM<-setParaEMPING(minK=1,maxK=2,tol=1e-4,B=100,mSelect="AIC3",mergePeaks=T,mapCorrect=T)
+		paraEM<-setParaEM(minK=1,maxK=2,tol=1e-4,B=100,mSelect="AIC3",mergePeaks=TRUE,mapCorrect=TRUE)
 		#paraPriorPostDup<-setParaPriorPING(xi=xi,rho=rho,alpha=alpha1,lambda=lambda)
 		paraPriorPostDup<-setParaPriorPING(xi=paraPrior$xi, rho=rho2, alpha=paraPrior$alpha, beta=paraPrior$beta, lambda=paraPrior$lambda, dMu=paraPrior$dMu)
 		system.time(pingDup<-PING(segDup, paraEM=paraEM, paraPrior=paraPriorPostDup, PE=PE))

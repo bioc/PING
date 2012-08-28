@@ -377,7 +377,7 @@ setMethod("plot", signature("pingList", "pingList"),
 })
 
 # plot function for two ping results in data.frame format
-setMethod("plot", signature("data.frame", "data.frame"),
+setMethod("plot", signature("data.frame", "data.frame"), 
           function(x, y, h=.1, logscale=F, ...)
 {
   FDR<-pingFDR2(x,y)
@@ -391,3 +391,102 @@ setMethod("plot", signature("data.frame", "data.frame"),
   abline(h=h,lw=1.5,col="grey")
 })
 
+
+
+############################################################################################
+
+# A CoverageTrack
+CoverageTrack<-function(reads, chr, gen, from=NULL, to=NULL, FragmentLength=200)
+{
+	EXT<-resize(reads[seqnames(reads)==chr], width=FragmentLength)
+	EXT   = EXT[start(EXT)>=from-FragmentLength]
+	EXT   = EXT[start(EXT)<=to]
+	XSET  = coverage(EXT)
+	covTrack<-DataTrack(data=XSET[[chr]]@values, start=start(XSET[[chr]]), width=width(XSET[[chr]]),
+			chr=chr, gen=gen, name="XSET", type="s", col.axis="black", cex.axis=1, col.title="black")
+	return(covTrack)
+}
+
+##
+# RawReadsTrack
+#   Shows the starting position of forward and reverse reads
+##
+RawReadsTrack<-function(reads, chr, gen, from=NULL, to=NULL)
+{
+	#subset the reads by starting pos
+	reads<-reads[which(start(reads)>from & start(reads)<to)]
+	idxF<-which(strand(reads)=="+")
+	idxR<-which(strand(reads)=="-")
+	#Make 2 values columns to use groups
+	rev<-c(rep(1, length(idxR)),rep(NA, length(idxF)))
+	fwd<-c(rep(NA, length(idxR)), rep(-1, length(idxF)))
+	values(reads)<-cbind(rev,fwd)
+	
+	RawTrack<-DataTrack(data=t(as.matrix(elementMetadata(reads))),
+			groups=c("rev", "fwd"),
+			col=c("red", "blue"), pch=c("<",">"),
+			cex=2, size=1,
+			ylim=c(-4,4), title=FALSE, col.title="black", name="Raw reads",
+			showAxis=FALSE, cex.axis=0, col.axis="lightgray", #All 3 para to make axis invis
+			start=start(reads), end=start(reads), chr=chr, gen=gen)
+	return(RawTrack)
+}
+##
+# NucleosomeTrack
+#   Shows nucleosome positioning prediction with standard error
+##
+NucleosomeTrack<-function(PS, chr, gen, from=NULL, to=NULL)
+{
+	#Order the data.frame by start
+	PS<-PS[with(PS, order(mu)),]	
+	#wide nucleosomes are nucleosomes +se
+	smallWidth<-rep(147, nrow(PS))
+	wideWidth<-147+2*PS$se
+	smallStart<-PS$mu-(smallWidth/2)
+	wideStart<-PS$mu-(wideWidth/2)
+
+	#Drawing the wide first is important
+	starts<-c(wideStart, smallStart)
+	widths<-c(wideWidth, smallWidth)
+	
+	nucTrack<-AnnotationTrack(start=starts, 
+			width=widths,
+#			id=c(PS[-negWidth,]$ID, rep(" ", len)),
+			chr=chr, genome=gen,
+			lwd=1, col="darkgray", alpha=1, size=0.5,# showFeatureId=TRUE,
+			stacking="dense",feature=c(rep("wide", nrow(PS)), rep("small", nrow(PS))),
+			wide="darkgray",small="white", 
+			shape="ellipse", col.title="black", name="PING", collapse=FALSE) #collapse=FALSE is important. Prevents Gviz to change the element order during prepare mode.
+
+	return(nucTrack)
+}
+
+##
+# Plot a summary of PING estimates using Gviz
+#   PS : The ouput of postPING or a list of posPING output
+#   reads : The reads used for the segmentation (GRanges)
+#   chr : The chromosome to display
+#   from,to : The range to display
+#   title : A main title for the plot
+#   FragmentLength : Length of the DNA fragments used 
+##
+plotSummary<-function(PS, reads, chr, gen, from=NULL, to=NULL, FragmentLength=200, title="", trackList)
+{
+	if(class(PS)!="list")
+		PS<-list(PS)
+	gt<-GenomeAxisTrack(add53=TRUE, add35=TRUE)
+	covTrack<-CoverageTrack(reads=reads, chr=chr, gen=gen, from=from, to=to, FragmentLength=FragmentLength)
+	rrTrack<-RawReadsTrack(reads=reads, chr=chr, gen=gen, from=from, to=to)
+	tList<-list(gt, covTrack, rrTrack)
+	for(idxPS in 1:length(PS))
+	{
+		print(idxPS)
+		tList<-c(tList,NucleosomeTrack(PS=PS[[idxPS]], chr=chr, gen=gen, from=from, to=to))
+	}
+	plotTitle<-paste(title,chr,":",from,"-",to,"(",to-from,"bps)", sep="")
+	# Plotting
+	plotTracks(trackList=tList, from=from, to=to,
+			main=plotTitle)
+	#Return the tracks so they can be added to other plots
+	return(tList)
+}

@@ -17,13 +17,11 @@ PING<-function(segReadsList, paraEM=NULL, paraPrior=NULL, detail=0, rescale=1, P
   ### Default parameters for EM algorithm
   if(length(paraEM)!=7)
   {
-    message("Using the default paraEM for PING")
-    paraEM<-setParaEMPING()
+    paraEM<-setParaEM(dataType="MNase")
   }
   if(length(paraPrior)!=6)
   {
-    message("Using the default paraPrior for MNase data")
-    paraPrior<-setParaPriorPING()
+    paraPrior<-setParaPrior(dataType="MNase")
   }
   calpha <- 1.5
   

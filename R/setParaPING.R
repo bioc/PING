@@ -1,13 +1,14 @@
 #setParaPrior with PING default values
-setParaPriorPING<-function(xi=150,rho=0.8,alpha=20,beta=20000,lambda=-0.000064,dMu=200)
+#setParaPriorPING<-function(xi=150,rho=0.8,alpha=20,beta=20000,lambda=-0.000064,dMu=200, dataType=NULL)
+setParaPriorPING<-function(xi=NULL,rho=NULL,alpha=NULL,beta=NULL,lambda=NULL,dMu=NULL, dataType=NULL)
 {
   #default for PING MNase
   #(xi=150,rho=0.8,alpha=20,beta=20000,lambda=-0.000064,dMu=200)
   #default for PING sonication
   #(xi=150,rho=1.2,alpha=10,beta=20000,lambda=-0.000064,dMu=200)
-
+	
   #Call to function imported from PICS
-  paraList<-setParaPrior(xi=xi,rho=rho,alpha=alpha,beta=beta,lambda=lambda,dMu=dMu)
+  paraList<-setParaPrior(xi=xi,rho=rho,alpha=alpha,beta=beta,lambda=lambda,dMu=dMu, dataType=dataType)
   return(paraList)
 }
 
