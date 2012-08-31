@@ -3,13 +3,13 @@
 %\VignetteKeywords{Preprocessing, ChIP-Seq, Sequencing}
 %\VignettePackage{PING}
 \documentclass[11pt]{article}
-%\usepackage{hyperref}
+\usepackage{hyperref}
 \usepackage{url}
 \usepackage{color, pdfcolmk}
 \usepackage{underscore}
 \usepackage[authoryear,round]{natbib}
 \bibliographystyle{plainnat}
-\SweaveOpts{keep.source=FALSE} %Introduce newlines automatically in R code
+ %Introduce newlines automatically in R code
 
 
 \newcommand{\scscst}{\scriptscriptstyle}
@@ -18,11 +18,9 @@
 \author{Xuekui Zhang\footnote{ubcxzhang@gmail.com} and Raphael
   Gottardo\footnote{rgottard@fhcrc.org}}
 
+\usepackage{Sweave}
 \begin{document}
 %To display nice multilines chunks of code
-<<echo=false>>=
-options(continue=" ")
-@
 
 \title{PING: Probabilistic Inference for Nucleosome Positioning with MNase-based or Sonicated Short-read Data.}
 \maketitle
@@ -63,18 +61,31 @@ A typical PING analysis consists of the following steps:
 
 As with any R package, you should first load it with the following command:
 
-<<Loading-PING>>=
-library(PING)
-@
+\begin{Schunk}
+\begin{Sinput}
+> library(PING)
+\end{Sinput}
+\end{Schunk}
 
 \section{Data Input and Formatting}
 In order to use the PE version of PING, the input has to be slightly different. Instead of a GRanges object, the new segmentation method use a list of reads and a chromosome.
 
 We provide a dataset for the chromosome M of yeast.
-<<Reading-the-data, echo=TRUE>>=
-data(yeast_chrM)
-head(yeast_chrM$P)
-@
+\begin{Schunk}
+\begin{Sinput}
+> data(yeast_chrM)
+> head(yeast_chrM$P)
+\end{Sinput}
+\begin{Soutput}
+                 qname pos.- pos.+
+4059237  120:6253:2074   338   187
+4059238  42:9052:11042   313   194
+4059239  17:6495:10151   341   209
+4059240  81:14542:7245   341   209
+4059241 87:14926:13898   341   209
+4059242 101:5324:18045   341   209
+\end{Soutput}
+\end{Schunk}
 
 
 \section{PING analysis}
@@ -87,14 +98,19 @@ In order to improve the computational efficiency of the PING package, if you hav
 In what follows, we assume that \texttt{parallel} is installed on your machine. If it is not, you could omit the first line, and calculations will occur on a single CPU. 
 By default the command is not run. Note that the \texttt{segmentPING} and \texttt{PING} functions will automatically detect whether you have initialized a cluster and will use it if you have. 
 
-<<Cluster-initialization>>=
-library(parallel)
-@
+\begin{Schunk}
+\begin{Sinput}
+> library(parallel)
+\end{Sinput}
+\end{Schunk}
 
 
-<<Genome-segmentation, results=hide>>=
-segPE<-segmentPING(yeast_chrM,  chr="chrM", islandDepth=3, min_cut=50, max_cut=1000)
-@
+\begin{Schunk}
+\begin{Sinput}
+> segPE <- segmentPING(yeast_chrM, chr = "chrM", islandDepth = 3, 
+     min_cut = 50, max_cut = 1000)
+\end{Sinput}
+\end{Schunk}
 It returns a \texttt{segReadsListPE} object.
 
 
@@ -102,23 +118,65 @@ It returns a \texttt{segReadsListPE} object.
 The only difference when using \texttt{PING} for paired-end data is the argument PE that has to be set to TRUE.
 
 %paraP<-setParaPriorPING(xi=150, rho=1.2, alpha=12, beta=20000, lambda=-0.000064, dMu=200)
-<<PING-analysis>>=
-ping<-PING(segPE, PE=TRUE)
-@
+\begin{Schunk}
+\begin{Sinput}
+> ping <- PING(segPE, PE = TRUE)
+\end{Sinput}
+\end{Schunk}
 The returned object is of class pingList and can be post-processed.
 
 
 \section{Post-processing PING results}
 Here again, we set the argument PE to TRUE, and use postPING normally.
 
-<<Post-process-PING-result>>=
-{sigmaB2=3600; rho2=15; alpha2=98; beta2=200000}
-PS=postPING(ping, segPE, rho2=rho2, alpha2=alpha2, beta2=beta2, sigmaB2=sigmaB2, PE=TRUE)
-@
+\begin{Schunk}
+\begin{Sinput}
+> {
+     sigmaB2 = 3600
+     rho2 = 15
+     alpha2 = 98
+     beta2 = 2e+05
+ }
+> PS = postPING(ping, segPE, rho2 = rho2, alpha2 = alpha2, beta2 = beta2, 
+     sigmaB2 = sigmaB2, PE = TRUE)
+\end{Sinput}
+\begin{Soutput}
+ The 6 Regions with following IDs are reprocessed for singularity problem: 
+(0.773,114]80   (114,228]39   (114,228]51   (114,228]79   (114,228]82 
+           80           153           165           193           196 
+ (114,228]106 
+          220 
+
+ The 17 Regions with following IDs are reprocessed for atypical delta: 
+[1] 155 190 129 142  41  37
+[1] "No predictions with atypical sigma"
+
+ The 172 regions with following IDs are reprocessed for Boundary problems: 
+[1]  4  6  7 12 18 20
+\end{Soutput}
+\end{Schunk}
 The result output $PS$ is a dataframe that contains estimated parameters of each nucleosome, users can use write.table command to export the selected columns of the result.
-<<Display-result>>=
-head(PS)
-@
+\begin{Schunk}
+\begin{Sinput}
+> head(PS)
+\end{Sinput}
+\begin{Soutput}
+     ID  chr         w       mu    delta  sigmaSqF  sigmaSqR       se    score
+6831 97 chrM 0.3309686 35700.34 148.9233 1344.1709 1613.7732 9.224526 820464.3
+6861 38 chrM 0.2665151 13610.62 149.7794 1294.9684 1173.7339 8.996622 721442.7
+6821 97 chrM 0.2721901 35550.59 151.4008 1453.3622 1497.1270 8.296995 707296.8
+6851 38 chrM 0.2554825 13457.08 157.8576  957.1654  795.3726 5.717227 693150.9
+694  95 chrM 0.4507928 34780.25 149.3691 1188.2719 1181.5768 9.706183 636567.1
+6811 97 chrM 0.2641553 35397.71 154.8389 1352.6040 1506.7203 7.511593 622421.2
+       scoreF   scoreR minRange maxRange      seF      seR rank
+6831 424378.1 396086.2    34788    36009 9.765269 9.082267    1
+6861 339502.5 381940.3    12907    14105 8.988645 9.428187    2
+6821 353648.4 353648.4    34788    36009 8.955503 8.068337    3
+6851 311210.6 381940.3    12907    14105 6.008960 6.446341    4
+694  353648.4 282918.7    34351    35423 9.980666 9.838740    5
+6811 311210.6 311210.6    34788    36009 7.965341 7.626689    6
+\end{Soutput}
+\end{Schunk}
 
 \end{document}
 

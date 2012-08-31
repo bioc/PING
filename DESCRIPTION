@@ -13,7 +13,6 @@ Suggests: parallel, ShortRead, rtracklayer
 Description: Probabilistic inference of ChIP-Seq using an empirical Bayes mixture model approach. 
 biocViews: Clustering, Statistics, Visualization, Sequencing
 Collate: setClasses.R setMethods.R PING.R
-        PlotRegions.R postPING.R segmentPING.R
-	setParaPING.R
+        postPING.R segmentPING.R
 License: Artistic-2.0
 Packaged: 2012-03-14 20:24:48 UTC; dtenenba

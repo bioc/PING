@@ -395,7 +395,7 @@ setMethod("plot", signature("data.frame", "data.frame"),
 
 ############################################################################################
 
-# A CoverageTrack
+# CoverageTrack
 CoverageTrack<-function(reads, chr, gen, from=NULL, to=NULL, FragmentLength=200)
 {
 	EXT<-resize(reads[seqnames(reads)==chr], width=FragmentLength)
@@ -403,7 +403,7 @@ CoverageTrack<-function(reads, chr, gen, from=NULL, to=NULL, FragmentLength=200)
 	EXT   = EXT[start(EXT)<=to]
 	XSET  = coverage(EXT)
 	covTrack<-DataTrack(data=XSET[[chr]]@values, start=start(XSET[[chr]]), width=width(XSET[[chr]]),
-			chr=chr, gen=gen, name="XSET", type="s", col.axis="black", cex.axis=1, col.title="black")
+			chromosome=chr, genome=gen, name="XSET", type="s", col.axis="black", cex.axis=1, col.title="black")
 	return(covTrack)
 }
 
@@ -415,8 +415,8 @@ RawReadsTrack<-function(reads, chr, gen, from=NULL, to=NULL)
 {
 	#subset the reads by starting pos
 	reads<-reads[which(start(reads)>from & start(reads)<to)]
-	idxF<-which(strand(reads)=="+")
-	idxR<-which(strand(reads)=="-")
+	idxF<-which(as.character(strand(reads))=="+")
+	idxR<-which(as.character(strand(reads))=="-")
 	#Make 2 values columns to use groups
 	rev<-c(rep(1, length(idxR)),rep(NA, length(idxF)))
 	fwd<-c(rep(NA, length(idxR)), rep(-1, length(idxF)))
@@ -424,11 +424,11 @@ RawReadsTrack<-function(reads, chr, gen, from=NULL, to=NULL)
 	
 	RawTrack<-DataTrack(data=t(as.matrix(elementMetadata(reads))),
 			groups=c("rev", "fwd"),
-			col=c("red", "blue"), pch=c("<",">"),
+			col=c("red", "blue"), pch=c("<",">"), font="sans",
 			cex=2, size=1,
 			ylim=c(-4,4), title=FALSE, col.title="black", name="Raw reads",
-			showAxis=FALSE, cex.axis=0, col.axis="lightgray", #All 3 para to make axis invis
-			start=start(reads), end=start(reads), chr=chr, gen=gen)
+			showAxis=FALSE, col.axis="transparent",
+			start=start(reads), end=start(reads), chromosome=chr, genome=gen)
 	return(RawTrack)
 }
 ##
@@ -452,7 +452,7 @@ NucleosomeTrack<-function(PS, chr, gen, from=NULL, to=NULL)
 	nucTrack<-AnnotationTrack(start=starts, 
 			width=widths,
 #			id=c(PS[-negWidth,]$ID, rep(" ", len)),
-			chr=chr, genome=gen,
+			chromosome=chr, genome=gen,
 			lwd=1, col="darkgray", alpha=1, size=0.5,# showFeatureId=TRUE,
 			stacking="dense",feature=c(rep("wide", nrow(PS)), rep("small", nrow(PS))),
 			wide="darkgray",small="white", 
@@ -470,7 +470,7 @@ NucleosomeTrack<-function(PS, chr, gen, from=NULL, to=NULL)
 #   title : A main title for the plot
 #   FragmentLength : Length of the DNA fragments used 
 ##
-plotSummary<-function(PS, reads, chr, gen, from=NULL, to=NULL, FragmentLength=200, title="", trackList)
+plotSummary<-function(PS, reads, chr, gen="gen", from=NULL, to=NULL, FragmentLength=200, title="")
 {
 	if(class(PS)!="list")
 		PS<-list(PS)
@@ -480,13 +480,12 @@ plotSummary<-function(PS, reads, chr, gen, from=NULL, to=NULL, FragmentLength=20
 	tList<-list(gt, covTrack, rrTrack)
 	for(idxPS in 1:length(PS))
 	{
-		print(idxPS)
 		tList<-c(tList,NucleosomeTrack(PS=PS[[idxPS]], chr=chr, gen=gen, from=from, to=to))
 	}
 	plotTitle<-paste(title,chr,":",from,"-",to,"(",to-from,"bps)", sep="")
 	# Plotting
 	plotTracks(trackList=tList, from=from, to=to,
 			main=plotTitle)
-	#Return the tracks so they can be added to other plots
-	return(tList)
+	#Return the tracks so they can be added to other plots. invisible=no print()
+	return(invisible(tList))
 }

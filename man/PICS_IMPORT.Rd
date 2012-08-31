@@ -2,6 +2,10 @@
 \alias{makeRangedDataOutput}
 \alias{segReads}
 \alias{segReadsList}
+\alias{segReadsPE}
+\alias{segReadsListPE}
+\alias{setParaEM}
+\alias{setParaPrior}
 
 \title{
 	PICS functions.
@@ -17,4 +21,8 @@
 	\link[PICS]{makeRangedDataOutput}
 	\link[PICS]{segReads}
 	\link[PICS]{segReadsList}
+	\link[PICS]{setParaEM}
+	\link[PICS]{setParaPrior}
+	\link[PICS]{segReadsPE}
+	\link[PICS]{segReadsListPE}
 }

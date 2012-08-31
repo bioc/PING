@@ -7,7 +7,8 @@
     Pre-process bidirectional aligned reads data to detect candidate regions with a minimum number of forward and reverse reads. These candidate regions will then be processed by PING.}
 \usage{
 	segmentPING(data, dataC=NULL, map=NULL, minReads=2, minReadsInRegion=3,
-    jitter=FALSE, maxLregion=1200, minLregion=80, step=NULL, width=NULL, dataType="H")
+    jitter=FALSE, maxLregion=1200, minLregion=80, step=NULL, width=NULL, dataType="H",
+    islandDepth=NULL, min_cut=NULL, max_cut=NULL, chr=NULL)
 }
 
 
@@ -21,8 +22,16 @@
   \item{step}{An \code{integer}. The step size for the sliding window.}
   \item{width}{An \code{integer}. The size of the sliding window.}
   \item{dataType}{Type of experiment.}
-\item{maxLregion}{The maximum length.}
-\item{minLregion}{The minimum length.}
+  \item{maxLregion}{The maximum length.}
+  \item{minLregion}{The minimum length.}
+  \item{islandDepth, min_cut, max_cut, chr}{Parameters used for paired-end sequencing data segmentation.}
+	\describe{
+		\item{islandDepth}{}
+		\item{min_cut}{}
+		\item{max_cut}{}
+		\item{chr}{}
+	}
+
 }
 
 \value{

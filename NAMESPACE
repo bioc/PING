@@ -12,7 +12,7 @@ importFrom(stats4, summary)
 
 importFrom(IRanges, IRanges, RangedData)
 importClassesFrom(IRanges, IRanges, RangedData)
-importMethodsFrom(IRanges, duplicated, end, levels, lapply, order, score, sort, space, start)
+importMethodsFrom(IRanges, duplicated, end, levels, lapply, order, score, sort, space, start, as.matrix)
 
 importMethodsFrom(GenomicRanges, strand, seqnames)
 
@@ -28,6 +28,7 @@ importMethodsFrom(PICS, coerce, show, summary, score, minRange, maxRange, scoreR
 importFrom(PICS, segReads, segReadsPE, segReadsList, segReadsListPE,
 	segReadsGeneric, summarySeg, makeRangedDataOutput, setParaEM, setParaPrior,
 	candidate.region, segChrRead)
+importClassesFrom(Gviz, AnnotationTrack, DataTrack, GenomeAxisTrack)
 importFrom(Gviz, AnnotationTrack, DataTrack, GenomeAxisTrack)
 importFrom(Gviz, plotTracks)
 
@@ -36,7 +37,7 @@ exportClasses(ping, pingError, pingList)
 exportMethods(show, summary, plot, chromosome, score, se, seF, seR, sigmaSqF, sigmaSqR, mu, delta, w, code, length, K,"[","[[")
 export("PING","postPING","newPingError",
 	"segReads","segReadsPE","segReadsList","segReadsListPE",
-	"segmentPING","setParaEMPING","setParaPriorPING",
+	"segmentPING",
 	"NucleosomeTrack","CoverageTrack","RawReadsTrack","plotSummary")
 #Export imported stuff
-export("plotTracks","makeRangedDataOutput","setParaPrior","setParaEM")
+export("makeRangedDataOutput","setParaPrior","setParaEM")

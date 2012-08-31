@@ -1,5 +1,5 @@
 #PING<-function(segReadsList,detail=0, rescale=1, PE=F)
-PING<-function(segReadsList, paraEM=NULL, paraPrior=NULL, detail=0, rescale=1, PE=FALSE)
+PING<-function(segReadsList, paraEM=NULL, paraPrior=NULL, PE=FALSE, dataType="MNase", detail=0, rescale=1)
 {
 # detail is an integer indicate how much detail to print
 # detail=0 print no details, The larger detail, the more detail I print 
@@ -17,11 +17,11 @@ PING<-function(segReadsList, paraEM=NULL, paraPrior=NULL, detail=0, rescale=1, P
   ### Default parameters for EM algorithm
   if(length(paraEM)!=7)
   {
-    paraEM<-setParaEM(dataType="MNase")
+    paraEM<-setParaEM(dataType=dataType)
   }
   if(length(paraPrior)!=6)
   {
-    paraPrior<-setParaPrior(dataType="MNase")
+    paraPrior<-setParaPrior(dataType=dataType)
   }
   calpha <- 1.5
   

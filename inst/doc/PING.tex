@@ -8,7 +8,7 @@
 \usepackage{url}
 \usepackage{color, pdfcolmk}
 \usepackage[authoryear,round]{natbib}
-\SweaveOpts{keep.source=FALSE}
+
 \bibliographystyle{plainnat}
 
 
@@ -66,9 +66,11 @@ A typical PING analysis consists of the following steps:
 
 As with any R package, you should first load it with the following command:
 
-<<Loading-PING>>=
-library(PING)
-@
+\begin{Schunk}
+\begin{Sinput}
+> library(PING)
+\end{Sinput}
+\end{Schunk}
 
 \section{Data Input and Formatting}
 The first step of the PING pipeline consists of converting the files representing aligned reads for IP and optional Control samples into a format that allows efficient segmentation of the genome into a set of candidate regions, each of which has at least a threshold number of Forward and Reverse reads. The data format could be a BED type dataframe, or an `AlignedReads' object returned by the `ShortRead' package's `ReadAligned' function, which can read various file formats including Eland, MAQ, Bowtie, etc. Please refer to the `ShortRead' package vignette for details.
@@ -93,13 +95,14 @@ Once the data have been read in, we can create a list of `GRanges' objects, in w
 %When reads are duplicated too many times, we recommend users to collapse them, since that might be artificial effect.
 
 We supply a demonstration set of MNase-seq data for chr1 from budding yeast GSM351492, NOCL\_R4 (Kaplan et al, Nature, 2009, 458(7236):362-6). The demonstration data is in the 'extdata' folder of the PING installation:  .../PING/inst/extdata.
-<<Reading-the-data>>=
-
-path<- system.file("extdata",package="PING")
-#Read the experiment : 
-dataIP<-read.table(file.path(path,"GSM351492_R4_chr1.bed"),header=TRUE)
-dataIP<-as(dataIP,"GRanges")
-@
+\begin{Schunk}
+\begin{Sinput}
+> path <- system.file("extdata", package = "PING")
+> dataIP <- read.table(file.path(path, "GSM351492_R4_chr1.bed"), 
++     header = TRUE)
+> dataIP <- as(dataIP, "GRanges")
+\end{Sinput}
+\end{Schunk}
 
 %<<Reading the mappability profile>>=
 %map<-read.table(paste(path,"mapProfileShort",sep=""),header=TRUE,colClasses=c("factor","integer","integer","NULL"))
@@ -133,14 +136,27 @@ By default the command is not run. Note that the \texttt{segmentPING} and
 \texttt{PING} functions will automatically detect whether you have initialized a
 cluster and will use it if you have.
 
-<<Cluster-initialization,eval=TRUE>>=
-library(parallel)
-@
+\begin{Schunk}
+\begin{Sinput}
+> library(parallel)
+\end{Sinput}
+\end{Schunk}
 
 
-<<Genome-segmentation>>=
-seg<-segmentPING(dataIP,  minReads=NULL, maxLregion=1200,minLregion=80, jitter=TRUE)
-@
+\begin{Schunk}
+\begin{Sinput}
+> seg <- segmentPING(dataIP, minReads = NULL, maxLregion = 1200, 
++     minLregion = 80, jitter = TRUE)
+\end{Sinput}
+\begin{Soutput}
+Performing segmentation for single end reads
+[1] "We automatically calculated minReads, which is 5."
+maxstep=450
+step=2
+width=150
+minReads=5
+\end{Soutput}
+\end{Schunk}
 
 
 \subsection{Parameter estimation}
@@ -150,9 +166,11 @@ After having segmented the genome into candidate regions, we use the \texttt{PIN
 The function returns position estimates, confidence intervals, etc. %In the code below, we assume that you are processing nucleosome data.  
 In our case, assuming that we have already segmented the genome using \texttt{segmentPING}, we can proceed with the following command: 
 
-<<PING-analysis>>=
-ping<-PING(seg)
-@
+\begin{Schunk}
+\begin{Sinput}
+> ping <- PING(seg)
+\end{Sinput}
+\end{Schunk}
 
 %\subsection{FDR estimation}
 %In order to estimate the FDR, we need to rerun our analysis after swapping the IP and control samples. Note that this requires the presence of a control sample. We proceed with the following commands to compute the FDR after removing binding site estimates with noisy parameters as specify by the filter. 
@@ -189,9 +207,23 @@ When initial segmentation returns too long a candidate region, recursive cutting
 We post-process results with the following command:
 
 
-<<Post-process-PING-result>>=
-PS=postPING(ping, seg)
-@
+\begin{Schunk}
+\begin{Sinput}
+> PS = postPING(ping, seg)
+\end{Sinput}
+\begin{Soutput}
+[1] "No regions with pingerror"
+
+ The 15 Regions with following IDs are reprocessed for atypical delta: 
+[1] 144 174 120 262 162  22
+
+ The 10 Peaks with following IDs are reprocessed for atypical sigma: 
+[1] 623 624 632 660 676 729
+
+ The 10 regions with following IDs are reprocessed for Boundary problems: 
+[1] 166 183 330 657 700 889
+\end{Soutput}
+\end{Schunk}
 The result output $PS$ is a dataframe that contains estimated parameters of each nucleosome, users can use write.table command to export the selected columns of the result.
 
 %\section{Result output}
@@ -231,25 +263,32 @@ The function \texttt{makeRangedDataOutput} take a \texttt{pingList} or the
 as well as an optional \texttt{list} of filters.
 The 'fixed' type is of bed format with a fixed size for the predicted nucleosome
 while the 'bed' type will use the predicted delta to infer the ranges.
-<<makeRangedDataOutput>>= 
-rdBed<-makeRangedDataOutput(ping, type="bed")
-rdFix<-makeRangedDataOutput(PS, type="fixed")
-@
+\begin{Schunk}
+\begin{Sinput}
+> rdBed <- makeRangedDataOutput(ping, type = "bed")
+> rdFix <- makeRangedDataOutput(PS, type = "fixed")
+\end{Sinput}
+\end{Schunk}
 
 It returns a \texttt{RangedData} object that can be written into a file using
 the \texttt{export} function from \texttt{rtracklayer}
-<<export-to-file, eval=FALSE>>=
-library(rtracklayer)
-export(rdBed, file="ping.bed")
-export(rdFix, file="postPING.bed")
-@
+\begin{Schunk}
+\begin{Sinput}
+> library(rtracklayer)
+> export(rdBed, file = "ping.bed")
+> export(rdFix, file = "postPING.bed")
+\end{Sinput}
+\end{Schunk}
 
 \subsection{Visualizing the results}
 \texttt{PING} also offer tools to summarize the prediction for given ranges in a
 graph using the \texttt{Gviz} package.
-<<plotSummary, fig=TRUE>>=
-plotSummary(PS, dataIP, "chr1", "gen", from=149000, to=153000)
-@
+\begin{Schunk}
+\begin{Sinput}
+> plotSummary(PS, dataIP, "chr1", "gen", from = 149000, to = 153000)
+\end{Sinput}
+\end{Schunk}
+\includegraphics{PING-plotSummary}
 
 The plot shows the coverage of the reads used as input, the start position of
 the forward and reverse reads and the predicted position of the nucleosome. The
@@ -266,18 +305,28 @@ Available track creation functions are:
 \end{itemize}
 
 Here we add an Annotation track to the plot:
-<<custom-plot>>=
-library(Gviz)
-cTrack<-CoverageTrack(dataIP, "chr1", "gen", from=149000, to=153000)
-rTrack<-RawReadsTrack(dataIP, "chr1", "gen", from=149000, to=153000)
-nTrack<-NucleosomeTrack(PS, "chr1", "gen", from=149000, to=153000)
-@
+\begin{Schunk}
+\begin{Sinput}
+> library(Gviz)
+> cTrack <- CoverageTrack(dataIP, "chr1", "gen", from = 149000, 
++     to = 153000)
+> rTrack <- RawReadsTrack(dataIP, "chr1", "gen", from = 149000, 
++     to = 153000)
+> nTrack <- NucleosomeTrack(PS, "chr1", "gen", from = 149000, to = 153000)
+\end{Sinput}
+\end{Schunk}
 
-<<Gviz-tracks, fig=TRUE>>=
-gTrack<-GenomeAxisTrack(add53=TRUE, add35=TRUE)
-aTrack<-AnnotationTrack(range=IRanges(start=149500, end=151000), showFeatureId=TRUE, id="random annotation", col.title="orange", chr="chr1", gen="gen", name="custom")
-plotTracks(trackList=c(gTrack, cTrack, aTrack, rTrack, nTrack), main="Custom plot", from=149000, to=153000 )
-@
+\begin{Schunk}
+\begin{Sinput}
+> gTrack <- GenomeAxisTrack(add53 = TRUE, add35 = TRUE)
+> aTrack <- AnnotationTrack(range = IRanges(start = 149500, end = 151000), 
++     showFeatureId = TRUE, id = "random annotation", col.title = "orange", 
++     chr = "chr1", gen = "gen", name = "custom")
+> plotTracks(trackList = c(gTrack, cTrack, aTrack, rTrack, nTrack), 
++     main = "Custom plot", from = 149000, to = 153000)
+\end{Sinput}
+\end{Schunk}
+\includegraphics{PING-Gviz-tracks}
 
 \end{document}
 

@@ -62,7 +62,7 @@ segReadsList.
 }
 
 \usage{
-PING(segReadsList, paraEM=NULL, paraPrior=NULL)
+PING(segReadsList, paraEM=NULL, paraPrior=NULL, PE=FALSE, dataType="MNase", detail=0, rescale=1)
 }
 
 \arguments{
@@ -87,6 +87,12 @@ PING(segReadsList, paraEM=NULL, paraPrior=NULL)
 		\item{}{\code{lambda}: an \code{integer}, default=0.000064. The precision of the prior for mu used for histone data.}
 		\item{}{\code{dMu}: an \code{integer}, default=200. Our best guess for the distance between two neighboring nucleosomes.}
 	}
+\item{PE}{A \code{logical}. This should be set to TRUE for paired-end sequencing data.}
+\item{dataType}{A character string that can be set to use selected default parameters for the algorithm.}
+\item{detail}{An \code{integer}. Additional information are printed if set to a value > 0.}
+\item{rescale}{An \code{integer}.}
+
+
 }
 
 \section{Methods}{
