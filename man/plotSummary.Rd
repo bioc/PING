@@ -1,9 +1,5 @@
 \name{plotSummary}
 \alias{plotSummary}
-\alias{CoverageTrack}
-\alias{RawReadsTrack}
-\alias{NucleosomeTrack}
-%Ultimately, I'll make the doc for each track
 
 \title{
 Plot a summary of the prediction for given ranges.
@@ -11,25 +7,22 @@ Plot a summary of the prediction for given ranges.
 
 \description{
 This function use Gviz package to summarize the nucleosome position prediction from postPING.
-It displays 4 tracks:
-A \code{CoverageTrack} which displays the coverage of the given region by the reads used as input of the segmentation step.
-A \code{RawReadsTrack} which displays the start position of the forward and reverse reads.
-A \code{NucleosomeTrack} which displays the position of the predicted nucleosomes as well as the standard error associated with the prediction.
 }
 
 \usage{
-plotSummary(PS, reads, chr, gen="gen", from=NULL, to=NULL, FragmentLength=200, title="")
+plotSummary(PS, reads, chr, gen="gen", from=NULL, to=NULL, FragmentLength=200, title="", filter=TRUE)
 }
 
 \arguments{
-\item{PS}{A \code{data.frame}. The output of the \code{postPING}.}
+\item{PS}{An object of class \code{\linkS4class{pingList}} or \code{data.frame}. The output of \code{PING} or \code{postPING}. If a list of \code{data.frame} or \code{\linkS4class{pingList}} is passed, multiple \code{NucleosomeTrack} will be plotted.}
 \item{reads}{A \code{GRanges} object. The reads used in the segmentation process.}
 \item{chr}{A character string for the chromosome name.}
-\item{gen}{A character string for the genome name.}
+\item{gen}{An optional character string for the genome name.}
 \item{from}{An \code{integer}, the first base of the plot}
 \item{to}{An \code{integer}, the last base of the plot}
-\item{FragmentLength}{An \code{integer}, the length of XSET profile extension.}
+\item{FragmentLength}{An \code{integer}, the length of XSET profile extension in the \code{CoverageTrack}.}
 \item{title}{An optional character string that can be prepend to the automatically generated title.}
+\item{filter}{A \code{logical}. Screen out abnormal predictions whose parameters are too far from others in the \code{NucleosomeTrack}.}
 }
 
 \note{
@@ -42,6 +35,13 @@ This function returns an invisible \code{list} of tracks. The tracks can be used
 
 \author{
 Renan Sauteraud
+}
+
+\seealso{
+\code{\link{NucleosomeTrack}}
+\code{\link{RawReadsTrack}}
+\code{\link{CoverageTrack}}
+\code{\link[Gviz]{plotTracks}}
 }
 
 \keyword{functions}

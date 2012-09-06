@@ -16,22 +16,22 @@ postPING(ping, seg, rho2=8, sigmaB2=2500, alpha2=100, beta2=100000, min.dist= 10
   \item{seg}{An object of class 'segmentReadsList' containing the results for all regions pre-processed, 'segmentReads' function.}
   \item{paraEM}{A list of parameters for the EM algorithm. The default parameters should be good enough for most usages.}
 	\describe{
-		\item{}{\code{minK}: an \code{integer}, default=0. The minimum number of binding events per region. If the value is 0, the minimum number is automatically calculated.}
-		\item{}{\code{maxK}: an \code{integer}, default=0. The maximum number of binding events per region. If the value is 0, the maximum number is automatically calculated.}
-		\item{}{\code{tol}: a \code{numeric}, default=1e-4. The tolerance for the EM algorithm.}
-		\item{}{\code{B}: an \code{integer}, default=100. The maximum number of iterations to be used.}
-		\item{}{\code{mSelect}: a character string specifying the information criteria to be used when selecting the number of binding events. Default="AIC3"}
-		\item{}{\code{mergePeaks}: a \code{logical} stating whether overlapping binding events should be picked. Default=TRUE}
-		\item{}{\code{mapCorrect}: a \code{logical} stating whether mappability profiles should be incorporated in the estimation, i.e: missing reads estimated. Default=TRUE}
+		\item{\code{minK}:}{ An \code{integer}, default=0. The minimum number of binding events per region. If the value is 0, the minimum number is automatically calculated.}
+		\item{\code{maxK}:}{ An \code{integer}, default=0. The maximum number of binding events per region. If the value is 0, the maximum number is automatically calculated.}
+		\item{\code{tol}:}{ A \code{numeric}, default=1e-4. The tolerance for the EM algorithm.}
+		\item{\code{B}:}{ An \code{integer}, default=100. The maximum number of iterations to be used.}
+		\item{\code{mSelect}:}{ A character string specifying the information criteria to be used when selecting the number of binding events. Default="AIC3"}
+		\item{\code{mergePeaks}:}{ A \code{logical} stating whether overlapping binding events should be picked. Default=TRUE}
+		\item{\code{mapCorrect}:}{ A \code{logical} stating whether mappability profiles should be incorporated in the estimation, i.e: missing reads estimated. Default=TRUE}
 	}
   \item{paraPrior}{A list of parameters for the prior distribution. The default parameters should be good enough for most usages.}
 	\describe{
-		\item{}{\code{xi}: an \code{integer}. The average DNA fragment size.}
-		\item{}{\code{rho}: an \code{integer}. A variance parameter for the average DNA fragment size distribution.}
-		\item{}{\code{alpha}: an \code{integer}. First hyperparameter of the inverse Gamma distribution for sigma^2 in the PICS model}
-		\item{}{\code{beta}: an \code{integer}. Second hyperparameter of the inverse Gamma distribution for sigma^2 in the PING model}
-  		\item{}{\code{lambda}: an \code{integer}. The lambda control Gaussian Markov Random Field prior on the distance of adjacent nucleosomes, we do not recommend user change the default value.}
-		\item{}{\code{dMu}: an \code{integer}. Our best guess for the distance between two neighboring nucleosomes.}
+		\item{\code{xi}:}{ An \code{integer}. The average DNA fragment size.}
+		\item{\code{rho}:}{ An \code{integer}. A variance parameter for the average DNA fragment size distribution.}
+		\item{\code{alpha}:}{ An \code{integer}. First hyperparameter of the inverse Gamma distribution for sigma^2 in the PICS model}
+		\item{\code{beta}:}{ An \code{integer}. Second hyperparameter of the inverse Gamma distribution for sigma^2 in the PING model}
+  		\item{\code{lambda}:}{ An \code{integer}. The lambda control Gaussian Markov Random Field prior on the distance of adjacent nucleosomes, we do not recommend user change the default value.}
+		\item{\code{dMu}:}{ An \code{integer}. Our best guess for the distance between two neighboring nucleosomes.}
 	}
   \item{rho2, sigmaB2, alpha2, beta2}{Integer values, the parameters in the prior of mixture models to be re-fitted.}
   \item{min.dist}{The minimum distance of two adjacent nucleosomes predicted from different candidate regions, smaller than that will be treated as duplicated predictions for the same nucleosomes.}
@@ -40,8 +40,8 @@ postPING(ping, seg, rho2=8, sigmaB2=2500, alpha2=100, beta2=100000, min.dist= 10
   \item{makePlot}{A \code{logical}. Plot a summary of the output.}
   \item{FragmentLength, mart, seg.boundary, DupBound, IP, datname}{Plotting parameters and options.}
     \describe{
-  		\item{}{\code{IP}: A \code{GRanges} object. The reads used in segmentation process.}
-  		\item{}{\code{FragmentLength}: An \code{integer}. The length of XSET profile extension}
+  		\item{\code{IP}:}{ A \code{GRanges} object. The reads used in segmentation process.}
+  		\item{\code{FragmentLength}:}{ An \code{integer}. The length of XSET profile extension}
 	}
 }
 

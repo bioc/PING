@@ -68,7 +68,16 @@ library(PING)
 @
 
 \section{Data Input and Formatting}
-In order to use the PE version of PING, the input has to be slightly different. Instead of a GRanges object, the new segmentation method use a list of reads and a chromosome.
+In order to use the PE version of PING, the input has to be slightly different.
+Instead of a GRanges object, the new segmentation method use a list of reads and
+a chromosome.
+
+From a bed file, you can create such a list manually by first reading the file
+using read.table, then assigning the resulting data.frame to the 'P' attribute
+of a list. If some reads are missing an end or a start coordinate, they can
+still be used. The reads with a missing start are treated as reverse reads and
+should be assigned to an attribute 'yRm' to the same list. Reads with a missing
+end are treated as Forward reads and have to be assigned to an attribute 'yFm'.
 
 We provide a dataset for the chromosome M of yeast.
 <<Reading-the-data, echo=TRUE>>=
@@ -80,12 +89,23 @@ head(yeast_chrM$P)
 \section{PING analysis}
 
 \subsection{Genome segmentation}
-PING is used the same way for paired-end and single-end sequencing data. The function \texttt{segmentPING} will decide which segmentation method should be used based on the data type. Paired-end reads should be passed as a list with at least the three elements P, yFm, and yRm. With P being the paired-end reads, yFm and yRm being the reads where one end is missing.
-When dealing with paired-end data, four new arguments have to be passed to the function: a chromosome chr and three parameters used in candidate region selection: islandDepth, min_cut and max_cut.
+PING is used the same way for paired-end and single-end sequencing data. The
+function \texttt{segmentPING} will decide which segmentation method should be
+used based on the data type. 
+When dealing with paired-end data, four new arguments have to be passed to the
+function: a chromosome chr and three parameters used in candidate region
+selection: islandDepth, min_cut and max_cut.
 
-In order to improve the computational efficiency of the PING package, if you have access to multiple cores we recommend that you do parallel computations via the \texttt{parallel} package.
-In what follows, we assume that \texttt{parallel} is installed on your machine. If it is not, you could omit the first line, and calculations will occur on a single CPU. 
-By default the command is not run. Note that the \texttt{segmentPING} and \texttt{PING} functions will automatically detect whether you have initialized a cluster and will use it if you have. 
+These arguments control the size and required coverage for a region to be
+considered as a candidate.
+
+In order to improve the computational efficiency of the PING package, if you
+have access to multiple cores we recommend that you do parallel computations via
+the \texttt{parallel} package. In what follows, we assume that \texttt{parallel}
+is installed on your machine. If it is not, you could omit the first line, and
+calculations will occur on a single CPU. By default the command is not run. Note
+that the \texttt{segmentPING} and \texttt{PING} functions will automatically
+detect whether you have initialized a cluster and will use it if you have.
 
 <<Cluster-initialization>>=
 library(parallel)
@@ -118,6 +138,20 @@ PS=postPING(ping, segPE, rho2=rho2, alpha2=alpha2, beta2=beta2, sigmaB2=sigmaB2,
 The result output $PS$ is a dataframe that contains estimated parameters of each nucleosome, users can use write.table command to export the selected columns of the result.
 <<Display-result>>=
 head(PS)
+@
+
+\section{Using the results}
+\texttt{PING} comes with a set of tools to export or visualize the prediction.
+Here, we only show how to make a quick plot to summarize the prediction. For
+more information on how to export the results or make more complex plots, refer
+to the section 'Result output' of PING vignette.
+
+The function \texttt{plotSummary} will generate a plot displaying the coverage
+by the reads used as input ($yeast_chrM$) and the predicted position of the
+nucleosomes of $PS$ for the given ranges.
+
+<<plotSummary, fig=TRUE>>=
+plotSummary(PS, yeast_chrM, chr="chrM", from=1000, to=4000)
 @
 
 \end{document}

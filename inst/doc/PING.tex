@@ -214,14 +214,14 @@ We post-process results with the following command:
 \begin{Soutput}
 [1] "No regions with pingerror"
 
- The 15 Regions with following IDs are reprocessed for atypical delta: 
-[1] 144 174 120 262 162  22
+ The 10 Regions with following IDs are reprocessed for atypical delta: 
+[1] 144 120  22 162 266  76
 
- The 10 Peaks with following IDs are reprocessed for atypical sigma: 
-[1] 623 624 632 660 676 729
+ The 8 Peaks with following IDs are reprocessed for atypical sigma: 
+[1] 620 622 628 657 728 774
 
- The 10 regions with following IDs are reprocessed for Boundary problems: 
-[1] 166 183 330 657 700 889
+ The 12 regions with following IDs are reprocessed for Boundary problems: 
+[1] 166 183 333 351 409 662
 \end{Soutput}
 \end{Schunk}
 The result output $PS$ is a dataframe that contains estimated parameters of each nucleosome, users can use write.table command to export the selected columns of the result.
@@ -308,11 +308,9 @@ Here we add an Annotation track to the plot:
 \begin{Schunk}
 \begin{Sinput}
 > library(Gviz)
-> cTrack <- CoverageTrack(dataIP, "chr1", "gen", from = 149000, 
-+     to = 153000)
-> rTrack <- RawReadsTrack(dataIP, "chr1", "gen", from = 149000, 
-+     to = 153000)
-> nTrack <- NucleosomeTrack(PS, "chr1", "gen", from = 149000, to = 153000)
+> cTrack <- CoverageTrack(dataIP, "chr1", "gen")
+> rTrack <- RawReadsTrack(dataIP, "chr1", "gen")
+> nTrack <- NucleosomeTrack(PS, "chr1", "gen")
 \end{Sinput}
 \end{Schunk}
 

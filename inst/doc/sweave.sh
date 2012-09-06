@@ -6,3 +6,4 @@ pdflatex PING.tex
 rm *.aux
 rm *.log
 rm *.out
+rm *.Rout

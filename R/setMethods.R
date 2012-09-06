@@ -396,11 +396,21 @@ setMethod("plot", signature("data.frame", "data.frame"),
 ############################################################################################
 
 # CoverageTrack
-CoverageTrack<-function(reads, chr, gen, from=NULL, to=NULL, FragmentLength=200)
+CoverageTrack<-function(reads, chr, gen="gen", FragmentLength=200)
 {
-	EXT<-resize(reads[seqnames(reads)==chr], width=FragmentLength)
-	EXT   = EXT[start(EXT)>=from-FragmentLength]
-	EXT   = EXT[start(EXT)<=to]
+	#if not GRanges, assume it is PE
+	if(class(reads)!="GRanges")
+	{
+		if(is.null(reads$P))
+			stop("The object 'reads' should be of class 'GRanges' or a 'list' with an attribute P")
+		EXT<-GRanges(ranges=IRanges(start=reads$P$`pos.+`, end=reads$P$`pos.-`), seqnames=chr)
+	}
+	else
+	{#no need to resize for PE sequencing data (width known)
+		EXT<-resize(reads[seqnames(reads)==chr], width=FragmentLength)
+	}
+#	EXT   = EXT[start(EXT)>=from-FragmentLength]
+#	EXT   = EXT[start(EXT)<=to]
 	XSET  = coverage(EXT)
 	covTrack<-DataTrack(data=XSET[[chr]]@values, start=start(XSET[[chr]]), width=width(XSET[[chr]]),
 			chromosome=chr, genome=gen, name="XSET", type="s", col.axis="black", cex.axis=1, col.title="black")
@@ -411,10 +421,10 @@ CoverageTrack<-function(reads, chr, gen, from=NULL, to=NULL, FragmentLength=200)
 # RawReadsTrack
 #   Shows the starting position of forward and reverse reads
 ##
-RawReadsTrack<-function(reads, chr, gen, from=NULL, to=NULL)
+RawReadsTrack<-function(reads, chr, gen="gen")#, from=NULL, to=NULL)
 {
-	#subset the reads by starting pos
-	reads<-reads[which(start(reads)>from & start(reads)<to)]
+#	#subset the reads by starting pos
+#	reads<-reads[which(start(reads)>from & start(reads)<to)]
 	idxF<-which(as.character(strand(reads))=="+")
 	idxR<-which(as.character(strand(reads))=="-")
 	#Make 2 values columns to use groups
@@ -435,8 +445,14 @@ RawReadsTrack<-function(reads, chr, gen, from=NULL, to=NULL)
 # NucleosomeTrack
 #   Shows nucleosome positioning prediction with standard error
 ##
-NucleosomeTrack<-function(PS, chr, gen, from=NULL, to=NULL)
+NucleosomeTrack<-function(PS, chr, gen="gen", filter=FALSE)#, from=NULL, to=NULL)
 {
+	#If object is ping, coerce into df
+	if(class(PS)=="pingList")
+		PS<-as(PS, "data.frame")
+	#Filter the abnormal nucleosomes
+	if(isTRUE(filter))
+		PS<-FilterPING(PS)$ping.df
 	#Order the data.frame by start
 	PS<-PS[with(PS, order(mu)),]	
 	#wide nucleosomes are nucleosomes +se
@@ -463,24 +479,28 @@ NucleosomeTrack<-function(PS, chr, gen, from=NULL, to=NULL)
 
 ##
 # Plot a summary of PING estimates using Gviz
-#   PS : The ouput of postPING or a list of posPING output
+#   PS : The ouput of PING or postPING or a list.
 #   reads : The reads used for the segmentation (GRanges)
 #   chr : The chromosome to display
 #   from,to : The range to display
 #   title : A main title for the plot
 #   FragmentLength : Length of the DNA fragments used 
 ##
-plotSummary<-function(PS, reads, chr, gen="gen", from=NULL, to=NULL, FragmentLength=200, title="")
+plotSummary<-function(PS, reads, chr, gen="gen", from=NULL, to=NULL, FragmentLength=200, title="", filter=TRUE)
 {
 	if(class(PS)!="list")
 		PS<-list(PS)
 	gt<-GenomeAxisTrack(add53=TRUE, add35=TRUE)
-	covTrack<-CoverageTrack(reads=reads, chr=chr, gen=gen, from=from, to=to, FragmentLength=FragmentLength)
-	rrTrack<-RawReadsTrack(reads=reads, chr=chr, gen=gen, from=from, to=to)
-	tList<-list(gt, covTrack, rrTrack)
+	covTrack<-CoverageTrack(reads=reads, chr=chr, gen=gen, FragmentLength=FragmentLength)
+	tList<-list(gt, covTrack)
+	if(class(reads)=="GRanges")
+	{
+		rrTrack<-RawReadsTrack(reads=reads, chr=chr, gen=gen) #this track is irrelevan for PE
+		tList<-c(tList, rrTrack)
+	}
 	for(idxPS in 1:length(PS))
 	{
-		tList<-c(tList,NucleosomeTrack(PS=PS[[idxPS]], chr=chr, gen=gen, from=from, to=to))
+		tList<-c(tList,NucleosomeTrack(PS=PS[[idxPS]], chr=chr, gen=gen, filter=filter))
 	}
 	plotTitle<-paste(title,chr,":",from,"-",to,"(",to-from,"bps)", sep="")
 	# Plotting

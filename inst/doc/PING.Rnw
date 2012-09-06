@@ -268,9 +268,9 @@ Available track creation functions are:
 Here we add an Annotation track to the plot:
 <<custom-plot>>=
 library(Gviz)
-cTrack<-CoverageTrack(dataIP, "chr1", "gen", from=149000, to=153000)
-rTrack<-RawReadsTrack(dataIP, "chr1", "gen", from=149000, to=153000)
-nTrack<-NucleosomeTrack(PS, "chr1", "gen", from=149000, to=153000)
+cTrack<-CoverageTrack(dataIP, "chr1", "gen")
+rTrack<-RawReadsTrack(dataIP, "chr1", "gen")
+nTrack<-NucleosomeTrack(PS, "chr1", "gen")
 @
 
 <<Gviz-tracks, fig=TRUE>>=

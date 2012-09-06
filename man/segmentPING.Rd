@@ -26,10 +26,10 @@
   \item{minLregion}{The minimum length.}
   \item{islandDepth, min_cut, max_cut, chr}{Parameters used for paired-end sequencing data segmentation.}
 	\describe{
-		\item{islandDepth}{}
-		\item{min_cut}{}
-		\item{max_cut}{}
-		\item{chr}{}
+		\item{islandDepth}{An \code{integer}. The minimum number of reads to cover a candidate region.}
+		\item{min_cut}{An \code{integer}. The minimum length of a candidate region.}
+		\item{max_cut}{An \code{integer}. The maximum length of a candidate region.}
+		\item{chr}{A character string for the name of the chromosome.}
 	}
 
 }
