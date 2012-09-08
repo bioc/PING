@@ -10,6 +10,8 @@ importFrom(stats, dt, integrate, kmeans, pt)
 #importFrom(BiocGenerics, density)
 importFrom(stats4, summary)
 
+importFrom(Rsamtools, ScanBamParam, scanBam)
+
 importFrom(IRanges, IRanges, RangedData)
 importClassesFrom(IRanges, IRanges, RangedData)
 importMethodsFrom(IRanges, duplicated, end, levels, lapply, order, score, sort, space, start, as.matrix)
@@ -38,6 +40,7 @@ exportMethods(show, summary, plot, chromosome, score, se, seF, seR, sigmaSqF, si
 export("PING","postPING","newPingError",
 	"segReads","segReadsPE","segReadsList","segReadsListPE",
 	"segmentPING",
-	"NucleosomeTrack","CoverageTrack","RawReadsTrack","plotSummary")
+	"NucleosomeTrack","CoverageTrack","RawReadsTrack","plotSummary",
+	"prePING")
 #Export imported stuff
 export("makeRangedDataOutput","setParaPrior","setParaEM")

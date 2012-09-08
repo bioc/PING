@@ -15,8 +15,9 @@
 \newcommand{\scscst}{\scriptscriptstyle}
 \newcommand{\scst}{\scriptstyle}
 
-\author{Xuekui Zhang\footnote{ubcxzhang@gmail.com} and Raphael
-  Gottardo\footnote{rgottard@fhcrc.org}}
+\author{Xuekui Zhang\footnote{ubcxzhang@gmail.com}, Sangsoon
+Woo\footnote{swoo@fhcrc.org}, Raphael Gottardo\footnote{rgottard@fhcrc.org} and
+Renan Sauteraud\footnote{rsautera@fhcrc.org}}
 
 \usepackage{Sweave}
 \begin{document}
@@ -72,29 +73,47 @@ In order to use the PE version of PING, the input has to be slightly different.
 Instead of a GRanges object, the new segmentation method use a list of reads and
 a chromosome.
 
-From a bed file, you can create such a list manually by first reading the file
-using read.table, then assigning the resulting data.frame to the 'P' attribute
-of a list. If some reads are missing an end or a start coordinate, they can
-still be used. The reads with a missing start are treated as reverse reads and
-should be assigned to an attribute 'yRm' to the same list. Reads with a missing
-end are treated as Forward reads and have to be assigned to an attribute 'yFm'.
+%From a bed file, you can create such a list manually by first reading the file
+%using read.table, then assigning the resulting data.frame to the 'P' attribute
+%of a list. If some reads are missing an end or a start coordinate, they can
+%still be used. The reads with a missing start are treated as reverse reads and
+%should be assigned to an attribute 'yRm' to the same list. Reads with a missing
+%end are treated as Forward reads and have to be assigned to an attribute 'yFm'.
 
-We provide a dataset for the chromosome M of yeast.
+The package comes with a function to convert bam files into the appropriate
+list. We provide a small bam file with two chromosomes of the yeast to be used
+as an example in this vignette.
+
 \begin{Schunk}
 \begin{Sinput}
-> data(yeast_chrM)
-> head(yeast_chrM$P)
+> yeastBam <- system.file("extdata/yeastChrI_M.bam", package = "PING")
+\end{Sinput}
+\end{Schunk}
+
+Bam files can be huge, therefore, the default behaviour is to save the resulting
+R objects on disk with one file per chromosome.
+
+\begin{Schunk}
+\begin{Sinput}
+> prePING(bamFile = yeastBam, outpath = "./")
+\end{Sinput}
+\end{Schunk}
+This will create one file for each chromosome found in `micro.bam' in the curent
+folder. Then, the files can be loaded separately in order to use the
+segmentation function.
+
+If the bam file is small enough that it can be handled by the computer's memory,
+it is possible to return a list of lists to be used as input. 
+\begin{Schunk}
+\begin{Sinput}
+> inputList <- prePING(bamFile = yeastBam, save = FALSE)
 \end{Sinput}
 \begin{Soutput}
-                 qname pos.- pos.+
-4059237  120:6253:2074   338   187
-4059238  42:9052:11042   313   194
-4059239  17:6495:10151   341   209
-4059240  81:14542:7245   341   209
-4059241 87:14926:13898   341   209
-4059242 101:5324:18045   341   209
+[1] "chrI"
+[1] "chrM"
 \end{Soutput}
 \end{Schunk}
+$inputList$ has one attribute per chromosome, here `chrI' and `chrM'.
 
 
 \section{PING analysis}
@@ -127,10 +146,11 @@ detect whether you have initialized a cluster and will use it if you have.
 
 \begin{Schunk}
 \begin{Sinput}
-> segPE <- segmentPING(yeast_chrM, chr = "chrM", islandDepth = 3, 
+> segPE <- segmentPING(inputList$chrM, chr = "chrM", islandDepth = 3, 
      min_cut = 50, max_cut = 1000)
 \end{Sinput}
 \end{Schunk}
+
 It returns a \texttt{segReadsListPE} object.
 
 
@@ -189,28 +209,45 @@ The result output $PS$ is a dataframe that contains estimated parameters of each
 700 228 chrM 0.3263701 84916.4188 149.8338  955.7443 1378.1164  8.668972
 524 164 chrM 0.4261601 64274.6381 141.5827 2071.6632 1815.6545 13.725905
         score   scoreF   scoreR minRange maxRange      seF       seR rank
-96  1347036.2 695244.5 651791.7    11290    12500 15.98384 11.486267    1
-518 1133054.1 566527.1 566527.1    62728    63762  7.37211  6.219118    2
-1   1057351.0 564886.2 492464.9      187      949  9.26240  9.202644    3
-62  1028382.5 449012.1 579370.4     6838     8133 11.68977 11.680681    4
-700 1005585.5 580690.2 424895.3    84565    85803 11.57234  9.151415    5
-524  977259.2 410732.1 566527.1    63281    64582 15.56970 14.943394    6
+96  1328347.9 685598.9 642749.0    11290    12500 15.98384 11.486267    1
+518 1141956.1 570978.1 570978.1    62728    63762  7.37211  6.219118    2
+1   1042681.7 557049.1 485632.6      187      949  9.26240  9.202644    3
+62  1014115.0 442782.6 571332.4     6838     8133 11.68977 11.680681    4
+700 1013486.1 585252.5 428233.6    84565    85803 11.57234  9.151415    5
+524  984937.2 413959.1 570978.1    63281    64582 15.56970 14.943394    6
 \end{Soutput}
 \end{Schunk}
 
 \section{Using the results}
 \texttt{PING} comes with a set of tools to export or visualize the prediction.
-Here, we only show how to make a quick plot to summarize the prediction. For
-more information on how to export the results or make more complex plots, refer
-to the section 'Result output' of PING vignette.
+Here, we only show how to export the results into bed format for further use
+and how to make a quick plot to summarize the prediction. For more information
+on how to export the results or make more complex plots, refer to the section
+`Result output' of PING vignette.
 
+The function \texttt{makeRangedDataOutput} offers a simple way to convert the
+prediction results into a \texttt{RangedData} object ready to be exported with
+the package \texttt{rtracklayer}.
+
+\begin{Schunk}
+\begin{Sinput}
+> rdBed <- makeRangedDataOutput(PS, type = "bed")
+> library(rtracklayer)
+> export(rdBed, "nucPrediction.bed")
+\end{Sinput}
+\end{Schunk}
+
+The exported file contain all the predicted nucleosomes displayed in bed format
+and ranked by score.
+
+\vspace{10pt}
 The function \texttt{plotSummary} will generate a plot displaying the coverage
-by the reads used as input ($yeast_chrM$) and the predicted position of the
+by the reads used as input and the predicted position of the
 nucleosomes of $PS$ for the given ranges.
 
 \begin{Schunk}
 \begin{Sinput}
-> plotSummary(PS, yeast_chrM, chr = "chrM", from = 1000, to = 4000)
+> plotSummary(PS, inputList$chrM, chr = "chrM", from = 1000, to = 4000)
 \end{Sinput}
 \end{Schunk}
 \includegraphics{PING-PE-plotSummary}

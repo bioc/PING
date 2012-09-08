@@ -8,7 +8,7 @@ This track displays the position of the predicted nucleosomes as well as the sta
 }
 
 \usage{
-NucleosomeTrack(PS, chr, gen="gen", filter=TRUE)
+NucleosomeTrack(PS, chr, gen="gen", filter=FALSE)
 }
 
 \arguments{
