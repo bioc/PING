@@ -193,32 +193,9 @@ We post-process results with the following command:
 <<Post-process-PING-result>>=
 PS=postPING(ping, seg)
 @
-The result output $PS$ is a dataframe that contains estimated parameters of each nucleosome, users can use write.table command to export the selected columns of the result.
-
-%\section{Result output}
-%
-%To facilitate data processing and data output, we make use of the \texttt{IRanges} package to summarize our results as `RangedData' objects. The resulting `RangedData' objects can then be analyzed with the \texttt{IRanges} package and/or exported to bed/wig files with the \texttt{rtracklayer} package. In each case, we can make use of filters noisy regions and or regions with too low of score. %In particular the \texttt{picsFDR} function can be used to set the score threshold leading to the desired `FDR'.
-%
-%\subsection{Writing enriched regions to BED files}
-%
-%<<Create RangedData data object of enriched regions>>=
-%myFilter=list(delta=c(50,300),se=c(0,50),sigmaSqF=c(0,22500),sigmaSqR=c(0,22500))
-%rdBed<-makeRangedDataOutput(ping,type="bed",filter=c(myFilter,list(score=c(0,Inf))))
-%@
-%The following command will create the appropriate bed files, and because it requires the \texttt{rtracklayer} package, we do not run it here but simply displayed for your purpose.
-%<<Create the bed file,eval=FALSE>>=
-%library(rtracklayer)
-%export(rdBed,"myfile.bed")
-%@
-%
-%% writing WIG files have bugs, error message complain about overlaped ranges
-%\subsection{Writing density scores to WIG files}
-%The following command will create the appropriate `RangedData' and corresponding wig file, and because it requires the \texttt{rtracklayer} package, we do not run it here but simply displayed for your purpose.
-%
-%<<Create the wig file,eval=FALSE>>=
-%rdBed<-makeRangedDataOutput(ping,type="wig",filter=c(myFilter,list(score=c(0,Inf))))
-%export(rdBed,"myfile.wig")
-%@
+The result output $PS$ is a dataframe that contains estimated parameters of each
+nucleosome, users can use write.table command to export the selected columns of
+the result.
 
 \section{Result output}
 

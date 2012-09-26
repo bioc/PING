@@ -8,7 +8,7 @@ This track displays the position of the predicted nucleosomes as well as the sta
 }
 
 \usage{
-NucleosomeTrack(PS, chr, gen="gen", filter=FALSE)
+NucleosomeTrack(PS, chr, gen="gen", filter=FALSE, ...)
 }
 
 \arguments{
@@ -16,6 +16,7 @@ NucleosomeTrack(PS, chr, gen="gen", filter=FALSE)
 \item{chr}{A character string for the chromosome name.}
 \item{gen}{An optional character string for the genome name.}
 \item{filter}{A \code{logical}. Screen out abnormal predictions whose parameters are too far from others.}
+\item{...}{A list of supplemental argument that can be provided to the \code{\link[Gviz]{AnnotationTrack}} track constructor.}
 }
 
 \value{

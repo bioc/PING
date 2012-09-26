@@ -10,7 +10,7 @@ This function use Gviz package to summarize the nucleosome position prediction f
 }
 
 \usage{
-plotSummary(PS, reads, chr, gen="gen", from=NULL, to=NULL, FragmentLength=200, title="", filter=TRUE)
+plotSummary(PS, reads, chr, gen="gen", from=NULL, to=NULL, FragmentLength=200, title="", filter=FALSE, GRT=FALSE, PE=FALSE)
 }
 
 \arguments{
@@ -20,8 +20,10 @@ plotSummary(PS, reads, chr, gen="gen", from=NULL, to=NULL, FragmentLength=200, t
 \item{gen}{An optional character string for the genome name.}
 \item{from}{An \code{integer}, the first base of the plot}
 \item{to}{An \code{integer}, the last base of the plot}
-\item{FragmentLength}{An \code{integer}, the length of XSET profile extension in the \code{CoverageTrack}.}
+\item{FragmentLength}{An \code{integer}, the length of XSET profile extension in the \code{CoverageTrack}. This argument can be ignored if PE is set to TRUE.}
+\item{GRT}{A \code{logical}. If set to TRUE, Gviz will attempt to create a \code{\link[Gviz]{BiomartGeneRegionTrack}} using the provided genome and chromosome arguments.}
 \item{title}{An optional character string that can be prepend to the automatically generated title.}
+\item{PE}{A \code{logical}. Set to true for paired-end sequencing data, where the read length is already known.}
 \item{filter}{A \code{logical}. Screen out abnormal predictions whose parameters are too far from others in the \code{NucleosomeTrack}.}
 }
 

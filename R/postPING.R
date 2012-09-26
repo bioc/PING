@@ -9,7 +9,7 @@
 # min.dist=100, minimum distance of two adjacent nucs, smaller than that will be treated as duplicated prediction on boudary
 #postPING <- function(ping, seg, rho=8, makePlot=FALSE, datname="", seg.boundary=NULL, DupBound=NULL, IP=NULL, FragmentLength=100,mart=NULL,sigmaB2=2500,rho1=0.8,alpha1=20,alpha2=100,beta2=100000,xi=160, PE=FALSE, min.dist=100, lambda=-0.000064)
 #postPING <- function(ping, seg, rho=8, sigmaB2=2500,rho1=0.8,alpha1=20,alpha2=100,beta2=100000,xi=150,  min.dist=100, lambda=-0.000064)
-postPING <- function(ping, seg, rho2=8, sigmaB2=2500, alpha2=100, beta2=100000, min.dist= 100, paraEM=NULL, paraPrior=NULL, PE=FALSE, dataType="MNase", makePlot=FALSE, FragmentLength=100, mart=NULL, seg.boundary=NULL, DupBound=NULL, IP=NULL, datname="")
+postPING <- function(ping, seg, rho2=NULL, sigmaB2=NULL, alpha2=NULL, beta2=NULL, min.dist= 100, paraEM=NULL, paraPrior=NULL, score=0.05, PE=FALSE, dataType="MNase", makePlot=FALSE, FragmentLength=100, mart=NULL, seg.boundary=NULL, DupBound=NULL, IP=NULL, datname="")
 {
 	if(length(paraPrior)!=6)
 	{
@@ -19,6 +19,24 @@ postPING <- function(ping, seg, rho2=8, sigmaB2=2500, alpha2=100, beta2=100000, 
 	{
 	  paraEM<-setParaEM(dataType=dataType)
 	}
+	if(length(c(rho2, sigmaB2, alpha2, beta2))!=4 | !is.numeric(c(rho2, sigmaB2, alpha2, beta2)))
+	{
+	  if(tolower(dataType)=="mnase")
+	  {
+	    message("Using default refitting parameters for MNase data, for sonicated data, set the argument dataType")
+	    rho2<-8; sigmaB2<-4900; alpha2<-100; beta2<-100000;
+	  }
+	  else if(tolower(dataType)=="sonicated")
+	  {
+	    message("Using default refitting parameters for sonicated data")
+	    rho2<-15; sigmaB2<-6400; alpha2<-98; beta2<-200000;
+	  }
+	  else
+	  {
+	    stop("Invalid dataType, must be either 'MNase' or 'sonicated'")
+	  }
+	}
+	
 
 # "Sonication":  {rho1=1.2; sigmaB2=6400;rho=15;alpha1=10; alpha2=98; beta2=200000}
 # MNase:  {rho1=3; sigmaB2=4900; rho=8; alpha1=20; alpha2=100; beta2=100000}
@@ -40,9 +58,9 @@ postPING <- function(ping, seg, rho2=8, sigmaB2=2500, alpha2=100, beta2=100000, 
 	#ps1=PostError(ps=ps, ping=ping, seg=seg, rho=rho, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLength=FragmentLength,rho1=rho1,alpha1=alpha1,xi=xi, PE=PE, lambda=lambda)
 	ps1=PostError(ps=ps, ping=ping, seg=seg, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLength=FragmentLength, paraEM=paraEM, paraPrior=paraPrior, rho2=rho2, PE=PE) 
 	#ps2=PostDelta(ps=ps1, ping=ping, seg=seg, rho=rho, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLength=FragmentLength,sigmaB2=sigmaB2,rho1=rho1,alpha1=alpha1,xi=xi, PE=PE,lambda=lambda)
-	ps2=PostDelta(ps=ps1, ping=ping, seg=seg, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLength=FragmentLength, paraEM=paraEM, paraPrior=paraPrior, rho2=rho2, sigmaB2=sigmaB2, PE=PE)
+	ps2=PostDelta(ps=ps1, ping=ping, seg=seg, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLength=FragmentLength, paraEM=paraEM, paraPrior=paraPrior, rho2=rho2, sigmaB2=sigmaB2, score=score, PE=PE)
 	#ps3=PostSigma(ps=ps2, ping=ping, seg=seg, rho=rho, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLength=FragmentLength,mart=mart,sigmaB2=sigmaB2,rho1=rho1,alpha1=alpha1,alpha2=alpha2,beta2=beta2,xi=xi, PE=PE,lambda=lambda)
-	ps3=PostSigma(ps=ps2, ping=ping, seg=seg, rho2=rho2, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLength=FragmentLength, mart=mart, sigmaB2=sigmaB2, paraEM=paraEM, paraPrior=paraPrior, alpha2=alpha2,beta2=beta2, PE=PE)
+	ps3=PostSigma(ps=ps2, ping=ping, seg=seg, rho2=rho2, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLength=FragmentLength, mart=mart, sigmaB2=sigmaB2, paraEM=paraEM, paraPrior=paraPrior, alpha2=alpha2,beta2=beta2, score=score, PE=PE)
 	#PS=PostDup(ps=ps3, ping=ping, seg=seg, rho=rho,rho1=rho1,alpha1=alpha1,xi=xi, PE=PE,min.dist=min.dist,lambda=lambda)
 	PS=PostDup(ps=ps3, ping=ping, seg=seg, rho2=rho2,paraPrior=paraPrior, PE=PE, min.dist=min.dist)
 
@@ -127,7 +145,6 @@ PostError <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBoun
 	}
 	
 
-	
 	return(PS)
 }
 
@@ -150,9 +167,9 @@ PostError <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBoun
 ########################################################
 
 #PostDelta <- function(ps, ping, seg, rho=8, makePlot=FALSE, datname="", DupBound=NULL, IP=NULL, FragmentLength=100, sigmaB2,rho1,alpha1,xi, PE,lambda)
-PostDelta <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBound=NULL, IP=NULL, FragmentLength=100, paraEM, paraPrior, sigmaB2, PE)
+PostDelta <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBound=NULL, IP=NULL, FragmentLength=100, paraEM, paraPrior, sigmaB2, score, PE)
 {
-	temp0=FilterPING(ps,detail=FALSE,deltaB=c(80,250),sigmaB2=sigmaB2,sigmaB1=10000,seB=Inf,score=0)
+	temp0=FilterPING(ps,detail=FALSE,deltaB=c(80,250),sigmaB2=sigmaB2,sigmaB1=10000,seB=Inf,score=score)
 	
 	#find out who is filtered out by delta	
 	idx=(ps$delta<temp0$myFilter$delta[1])|(ps$delta>temp0$myFilter$delta[2])
@@ -230,9 +247,9 @@ PostDelta <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBoun
 # PS: the post-processed PING results used to replace input "ps"
 ########################################################
 #PostSigma <- function(ps, ping, seg, rho=8, makePlot=FALSE, datname="", DupBound=NULL, IP=NULL, FragmentLength=100,mart,sigmaB2,rho1,alpha1,alpha2,beta2,xi,PE,lambda)
-PostSigma <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBound=NULL, IP=NULL, FragmentLength=100, mart, paraEM, paraPrior, sigmaB2, alpha2, beta2, PE)
+PostSigma <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBound=NULL, IP=NULL, FragmentLength=100, mart, paraEM, paraPrior, sigmaB2, alpha2, beta2, score, PE)
 {
-	temp=FilterPING(ps,detail=FALSE,deltaB=c(80,250),sigmaB2=sigmaB2,sigmaB1=10000,seB=Inf, score=0)
+	temp=FilterPING(ps,detail=FALSE,deltaB=c(80,250),sigmaB2=sigmaB2,sigmaB1=10000,seB=Inf, score=score)
 	
 	#find out who is filtered out by SigmaSq2
 	idx4=(ps$sigmaSqF>temp$myFilter$sigmaSq2[2])&(ps$sigmaSqR>temp$myFilter$sigmaSq2[2])
@@ -306,7 +323,7 @@ PostSigma <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBoun
 PostDup <- function(ps, ping, seg, rho2=8, paraPrior, PE, min.dist)
 {
 	ps=ps[order(ps$chr,ps$mu),]
-	dups=which((diff(ps$ID)!=0)&(diff(ps$mu)<min.dist))
+	dups=which((diff(ps$ID)!=0)&(diff(ps$mu)<min.dist)) #same ID or center too close to each other
 	dups=dups[ps$chr[dups]==ps$chr[dups+1]]
 	ndup=length(dups)
 
@@ -322,7 +339,7 @@ PostDup <- function(ps, ping, seg, rho2=8, paraPrior, PE, min.dist)
 		newseg=vector("list",ndup)
 		for(i in 1:ndup) { newseg[[i]]=processDup(paras=ps[dups[i]+c(0,1),],seg=seg,PE=PE) }
 		segDup=seg; segDup@List=newseg
-		paraEM<-setParaEM(minK=1,maxK=2,tol=1e-4,B=100,mSelect="AIC3",mergePeaks=TRUE,mapCorrect=TRUE)
+		paraEM<-setParaEM(minK=1,maxK=15,tol=1e-4,B=100,mSelect="BIC",mergePeaks=TRUE,mapCorrect=TRUE)
 		paraPriorPostDup<-setParaPrior(xi=paraPrior$xi, rho=rho2, alpha=paraPrior$alpha, beta=paraPrior$beta, lambda=paraPrior$lambda, dMu=paraPrior$dMu)
 		system.time(pingDup<-PING(segDup, paraEM=paraEM, paraPrior=paraPriorPostDup, PE=PE))
 
@@ -355,7 +372,6 @@ PostDup <- function(ps, ping, seg, rho2=8, paraPrior, PE, min.dist)
 ##################
 processDup <- function(paras,seg,nsigma=1,PE)
 {
-	
 	chr=as.character(paras$chr[1])
 	muv=paras$mu
 	deltav=paras$delta

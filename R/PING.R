@@ -88,7 +88,7 @@ FilterPING <- function(ping.df,detail=F,alpha=0.05,deltaB=c(80,250),sigmaB1=1000
 	#sigmaSq2=c(0,max(sigmaB2,quantile(ping.df$sigmaSqF,1-alpha),quantile(ping.df$sigmaSqR,1-alpha)))
 	sigmaSq2=c(0,sigmaB2)
 	delta=c(delta.m,delta.M)
-	myFilter=list(score=c(0,Inf),delta=delta,se=se,sigmaSqF=sigmaSqF, sigmaSqR=sigmaSqR,sigmaSq2=sigmaSq2,scoreF=score,scoreR=score)
+	myFilter=list(score=c(score,Inf),delta=delta,se=se,sigmaSqF=sigmaSqF, sigmaSqR=sigmaSqR,sigmaSq2=sigmaSq2,scoreF=score,scoreR=score)
 
 	if(detail)
 	{

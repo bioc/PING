@@ -7,5 +7,9 @@ rm -rf $f
 done
 if [ -e src/Makevars ]; then
 rm -f src/Makevars
+#Renan
+rm src/init.o
+rm src/ping.o
+rm src/PING.so
 fi
 exit 0 

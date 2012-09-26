@@ -69,9 +69,9 @@ library(PING)
 @
 
 \section{Data Input and Formatting}
-In order to use the PE version of PING, the input has to be slightly different.
-Instead of a GRanges object, the new segmentation method use a list of reads and
-a chromosome.
+%In order to use the PE version of PING, the input has to be slightly different.
+%Instead of a GRanges object, the new segmentation method use a list of reads and
+%a chromosome.
 
 %From a bed file, you can create such a list manually by first reading the file
 %using read.table, then assigning the resulting data.frame to the 'P' attribute
@@ -80,30 +80,30 @@ a chromosome.
 %should be assigned to an attribute 'yRm' to the same list. Reads with a missing
 %end are treated as Forward reads and have to be assigned to an attribute 'yFm'.
 
-The package comes with a function to convert bam files into the appropriate
-list. We provide a small bam file with two chromosomes of the yeast to be used
-as an example in this vignette.
+%The package comes with a function to convert bam files into the appropriate
+%list. We provide a small bam file with two chromosomes of the yeast to be used
+%as an example in this vignette.
 
 <<Read-data>>=
 yeastBam<- system.file("extdata/yeastChrI_M.bam",package="PING")
 @
 
-Bam files can be huge, therefore, the default behaviour is to save the resulting
-R objects on disk with one file per chromosome.
+%Bam files can be huge, therefore, the default behaviour is to save the resulting
+%R objects on disk with one file per chromosome.
 
-<<prePING-default, eval=FALSE>>=
-prePING(bamFile=yeastBam, outpath="./")
-@
-This will create one file for each chromosome found in `micro.bam' in the curent
-folder. Then, the files can be loaded separately in order to use the
-segmentation function.
+%<<prePING-default, eval=FALSE>>=
+%prePING(bamFile=yeastBam, outpath="./")
+%@
+%This will create one file for each chromosome found in `micro.bam' in the curent
+%folder. Then, the files can be loaded separately in order to use the
+%segmentation function.
 
-If the bam file is small enough that it can be handled by the computer's memory,
-it is possible to return a list of lists to be used as input. 
-<<prePING-no-save>>=
-inputList<-prePING(bamFile=yeastBam, save=FALSE)
+%If the bam file is small enough that it can be handled by the computer's memory,
+%it is possible to return a list of lists to be used as input. 
+<<bam2gr-no-save>>=
+inputList<-bam2gr(bamFile=yeastBam)
 @
-$inputList$ has one attribute per chromosome, here `chrI' and `chrM'.
+%$inputList$ has one attribute per chromosome, here `chrI' and `chrM'.
 
 
 \section{PING analysis}
@@ -133,7 +133,7 @@ library(parallel)
 
 
 <<Genome-segmentation, results=hide>>=
-segPE<-segmentPING(inputList$chrM,  chr="chrM", islandDepth=3, min_cut=50, max_cut=1000)
+segPE<-segmentPING(inputList,  chr="chrM", islandDepth=3, min_cut=50, max_cut=1000)
 @
 
 It returns a \texttt{segReadsListPE} object.
@@ -182,12 +182,12 @@ The exported file contain all the predicted nucleosomes displayed in bed format
 and ranked by score.
 
 \vspace{10pt}
-The function \texttt{plotSummary} will generate a plot displaying the coverage
-by the reads used as input and the predicted position of the
+For PE data, the function \texttt{plotSummary} will generate a plot displaying 
+the coverage by the reads used as input and the predicted position of the
 nucleosomes of $PS$ for the given ranges.
 
-<<plotSummary, fig=TRUE>>=
-plotSummary(PS, inputList$chrM, chr="chrM", from=1000, to=4000)
+<<plotSummary-PE, fig=TRUE>>=
+plotSummary(PS, inputList, chr="chrM", from=1000, to=4000, PE=TRUE)
 @
 
 \end{document}

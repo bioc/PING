@@ -18,20 +18,14 @@ importMethodsFrom(IRanges, duplicated, end, levels, lapply, order, score, sort, 
 
 importMethodsFrom(GenomicRanges, strand, seqnames)
 
-#importFrom(BSgenome, GenomeData)
-#importClassesFrom(BSgenome, GenomeData)
-
-#importFrom(GenomeGraphs, makeGenomeAxis, makeGene, DisplayPars, makeGeneRegion, makeTitle,
-#	gdPlot, makeBaseTrack, makeRectangleOverlay, makeSegmentation)
-
 importClassesFrom(PICS, segReads, segReadsPE, segReadsList, segReadsListPE, pics, picsError, picsList)
 importMethodsFrom(PICS, coerce, show, summary, score, minRange, maxRange, scoreReverse, scoreForward, chromosome, map,
 	 se, seF,seR,sigmaSqF, sigmaSqR, delta, mu, w, K, code, length, "[","[[")
 importFrom(PICS, segReads, segReadsPE, segReadsList, segReadsListPE,
 	segReadsGeneric, summarySeg, makeRangedDataOutput, setParaEM, setParaPrior,
 	candidate.region, segChrRead)
-importClassesFrom(Gviz, AnnotationTrack, DataTrack, GenomeAxisTrack)
-importFrom(Gviz, AnnotationTrack, DataTrack, GenomeAxisTrack)
+importClassesFrom(Gviz, AnnotationTrack, DataTrack, GenomeAxisTrack, BiomartGeneRegionTrack)
+importFrom(Gviz, AnnotationTrack, DataTrack, GenomeAxisTrack, BiomartGeneRegionTrack)
 importFrom(Gviz, plotTracks)
 
 
@@ -41,6 +35,6 @@ export("PING","postPING","newPingError",
 	"segReads","segReadsPE","segReadsList","segReadsListPE",
 	"segmentPING",
 	"NucleosomeTrack","CoverageTrack","RawReadsTrack","plotSummary",
-	"prePING")
+	"bam2gr")
 #Export imported stuff
 export("makeRangedDataOutput","setParaPrior","setParaEM")

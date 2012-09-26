@@ -310,7 +310,6 @@ SEXP fitModelAllk(SEXP segReads, SEXP paraEM, SEXP paraPrior, SEXP minReads, SEX
   sF=REAL(VECTOR_ELT(Para,3));
   sR=REAL(VECTOR_ELT(Para,4));
   
-  
   for(k=0;k<K;k++)
   {
     sumF=0;
@@ -329,11 +328,14 @@ SEXP fitModelAllk(SEXP segReads, SEXP paraEM, SEXP paraPrior, SEXP minReads, SEX
         sumR++;
       }
     }
+    /*Rprintf("k: %d\n", k);*/
+    /*Rprintf("sumF: %lf\nsumR: %lf\nsF: %lf\nsR: %lf\n---------------------------\n", sumF, sumR, sF[k], sR[k]);*/
 
     /** If we have control data, we can normalize the scores **/
     // INTEGER(Nc)[0]==0;
     if(INTEGER(Nc)[0]>0)
     { 
+	    /*Rprintf("Control\n");*/
       sumcF=0.0;
       for(i=0;i<length(cF);i++)
       {
@@ -359,6 +361,7 @@ SEXP fitModelAllk(SEXP segReads, SEXP paraEM, SEXP paraPrior, SEXP minReads, SEX
     }
     else
     {
+	    /*Rprintf("No control\n");*/
       REAL(scoreF)[k]=sumF/(sqrt(sF[k])*calpha*2.0);
       REAL(scoreR)[k]=sumR/(sqrt(sR[k])*calpha*2.0);
 	  REAL(score)[k]=(sumF+sumR)/((sqrt(sF[k])+sqrt(sR[k]))*calpha*2.0);
@@ -587,7 +590,6 @@ SEXP fitModel(SEXP kk, SEXP iMax, SEXP tol, SEXP mselect, SEXP yR, SEXP yF, SEXP
 	iter=iterEM(iMax, nu, yR, yF, para, xi, alpha, betap, rho, a, b, tol, cst, lambda, dMu, detail, PE);
 	if(detail>0) Rprintf("*** EM result of  %i mixture\n", K);
 	if(detail>0) printPara(para);
-	//Rprintf("iterEM ok \n");
 
 	//Handle the case of 'smallest weight too small'	
 	double *w=REAL(VECTOR_ELT(para, 0));
@@ -675,10 +677,18 @@ SEXP iterEM(SEXP iMax, SEXP nu, SEXP yR, SEXP yF, SEXP para, SEXP xi, SEXP alpha
 		}
 		if(PE==0)
 		{	
+			/*Rprintf("PE, before ECM2\n");*/
+			/*printPara(para);*/
 			ECM2(INTEGER(nu)[0], yR, yF, para, REAL(xi)[0], REAL(alpha)[0], REAL(betap)[0], REAL(rho)[0], a, b, REAL(tol)[0], REAL(cst)[0], REAL(lambda)[0], REAL(dMu)[0]);	  
+			/*Rprintf("PE, after ECM2\n");*/
+			/*printPara(para);*/
 		}else
 		{
+			/*Rprintf("PE, before ECM2PE\n");*/
+			/*printPara(para);*/
 			ECM2PE(INTEGER(nu)[0], yR, yF, para, REAL(xi)[0], REAL(alpha)[0], REAL(betap)[0], REAL(rho)[0], a, b, REAL(tol)[0], REAL(cst)[0], REAL(lambda)[0], REAL(dMu)[0]);	  
+			/*Rprintf("PE, after ECM2PE\n");*/
+			/*printPara(para);*/
 		}
 		if(detail>2)
 		{
@@ -2261,6 +2271,7 @@ SEXP initPara(SEXP F, SEXP R, SEXP kk, SEXP xi) {
 		REAL(sigmaSqF)[i]	= varF;
 		REAL(sigmaSqR)[i]	= varR;
 	}
+
 	
 	SEXP para;
 	PROTECT(para = allocVector(VECSXP, 5)); nProtected++; 

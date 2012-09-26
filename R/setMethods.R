@@ -395,57 +395,125 @@ setMethod("plot", signature("data.frame", "data.frame"),
 
 ############################################################################################
 
+
 # CoverageTrack
-CoverageTrack<-function(reads, chr, gen="gen", FragmentLength=200)
+CoverageTrack<-function(reads, chr, gen="gen", FragmentLength=200, PE=FALSE)
 {
 	#if not GRanges, assume it is PE
 	if(class(reads)!="GRanges")
 	{
-		if(is.null(reads$P))
-			stop("The object 'reads' should be of class 'GRanges' or a 'list' with an attribute P")
-		EXT<-GRanges(ranges=IRanges(start=reads$P$`pos.+`, end=reads$P$`pos.-`), seqnames=chr)
+		#if(is.null(reads$P))
+			#stop("The object 'reads' should be of class 'GRanges' or a 'list' with an attribute P")
+		#EXT<-GRanges(ranges=IRanges(start=reads$P$`pos.+`, end=reads$P$`pos.-`), seqnames=chr)
+		stop("The reads should be of class 'GRanges'")
 	}
-	else
+	else if(!isTRUE(PE))
 	{#no need to resize for PE sequencing data (width known)
 		EXT<-resize(reads[seqnames(reads)==chr], width=FragmentLength)
 	}
-#	EXT   = EXT[start(EXT)>=from-FragmentLength]
-#	EXT   = EXT[start(EXT)<=to]
+	else
+	{
+	  EXT<-reads[seqnames(reads)==chr]
+	}
 	XSET  = coverage(EXT)
 	covTrack<-DataTrack(data=XSET[[chr]]@values, start=start(XSET[[chr]]), width=width(XSET[[chr]]),
+			col="black",
 			chromosome=chr, genome=gen, name="XSET", type="s", col.axis="black", cex.axis=1, col.title="black")
 	return(covTrack)
 }
 
+###
+## RawReadsTrack
+##   Shows the starting position of forward and reverse reads
+###
+#RawReadsTrack<-function(reads, chr, gen="gen")#, from=NULL, to=NULL)
+#{
+##	#subset the reads by starting pos
+##	reads<-reads[which(start(reads)>from & start(reads)<to)]
+#	idxF<-which(as.character(strand(reads))=="+")
+#	idxR<-which(as.character(strand(reads))=="-")
+#	#Make 2 values columns to use groups
+#	rev<-c(rep(1, length(idxR)),rep(NA, length(idxF)))
+#	fwd<-c(rep(NA, length(idxR)), rep(-1, length(idxF)))
+#	values(reads)<-cbind(rev,fwd)
+#	
+#	RawTrack<-DataTrack(data=t(as.matrix(elementMetadata(reads))),
+#			groups=c("rev", "fwd"),
+#			col=c("red", "blue"), pch=c("<",">"), font="sans",
+#			cex=2, size=1,
+#			ylim=c(-4,4), title=FALSE, col.title="black", name="Raw reads",
+#			showAxis=FALSE, col.axis="transparent",
+#			start=start(reads), end=start(reads), chromosome=chr, genome=gen)
+#	return(RawTrack)
+#}
+
+
 ##
 # RawReadsTrack
-#   Shows the starting position of forward and reverse reads
+#   INPUT: The reads used in the segmentation step
+#   OUTPUT: An AnnotationTrack object showing the starting position of forward and reverse reads
 ##
-RawReadsTrack<-function(reads, chr, gen="gen")#, from=NULL, to=NULL)
+RawReadsTrack<-function(reads, chr, gen="gen")
 {
-#	#subset the reads by starting pos
-#	reads<-reads[which(start(reads)>from & start(reads)<to)]
+	#R# I could use args to and from if not null to subset the reads and make the loops faster
 	idxF<-which(as.character(strand(reads))=="+")
 	idxR<-which(as.character(strand(reads))=="-")
-	#Make 2 values columns to use groups
-	rev<-c(rep(1, length(idxR)),rep(NA, length(idxF)))
-	fwd<-c(rep(NA, length(idxR)), rep(-1, length(idxF)))
-	values(reads)<-cbind(rev,fwd)
-	
-	RawTrack<-DataTrack(data=t(as.matrix(elementMetadata(reads))),
-			groups=c("rev", "fwd"),
-			col=c("red", "blue"), pch=c("<",">"), font="sans",
-			cex=2, size=1,
-			ylim=c(-4,4), title=FALSE, col.title="black", name="Raw reads",
-			showAxis=FALSE, col.axis="transparent",
-			start=start(reads), end=start(reads), chromosome=chr, genome=gen)
-	return(RawTrack)
+	coordsF<-start(reads[idxF]) 
+	coordsR<-end(reads[idxR])
+	pos<-unique(c(coordsF, coordsR))
+
+	val<-vector("list", length(pos))
+	s1<-system.time({	
+	for(idx in 1:length(pos))
+	{
+		val[[idx]]<-c(length(which(coordsF==pos[[idx]])), -length(which(coordsR==pos[[idx]])))# get m$M
+	}
+	})#end s1
+	m<-min(unlist((val)))
+	M<-max(unlist((val)))
+	#add the NA
+	s2<-system.time({
+	vec<-unlist(lapply(val, function(x){
+								if(x[[1]]==0)
+								{
+									c(rep(NA, abs(x[[2]]-m)), seq(x[[2]], -1), rep(NA, M))
+								}
+								else if(x[[2]]==0)
+								{
+									c(rep(NA, abs(m)), seq(1,x[[1]]), rep(NA, M-x[[1]]))
+								}
+								else
+								{
+									c(rep(NA, abs(x[[2]]-m)), seq(x[[2]], -1), seq(1,x[[1]]), rep(NA, M-x[[1]]))
+								}
+							}))
+	})#end s2
+	s3<-system.time({
+	mat<-matrix(vec, nrow=M+abs(m), ncol=length(pos), dimnames=list(c(seq(m,-1),seq(1,M)) ,pos))
+	})#end s3
+	s4<-system.time({
+			RawReadsTrack<-DataTrack(data=mat, start=pos, end=pos, chromosome=chr, genome=gen,
+			groups=rep(c("rev", "fwd"),c(abs(m),M)),
+			col=c("black","black"), pch=c(">", "<"), font="sans",
+			ylim=c(m, M), size=1,
+			name="Raw reads", showAxis=FALSE, col.axis="transparent", col.title="black")	
+	})#end s4
+#	print(s1)
+#	print(s2)
+#	print(s3)
+#	print(s4)
+return(RawReadsTrack)
 }
+
+
+
+
+
 ##
 # NucleosomeTrack
 #   Shows nucleosome positioning prediction with standard error
 ##
-NucleosomeTrack<-function(PS, chr, gen="gen", filter=FALSE)#, from=NULL, to=NULL)
+NucleosomeTrack<-function(PS, chr, gen="gen", filter=FALSE, ...) #name="PING", from=NULL, to=NULL)
 {
 	#If object is ping, coerce into df
 	if(class(PS)=="pingList")
@@ -472,7 +540,8 @@ NucleosomeTrack<-function(PS, chr, gen="gen", filter=FALSE)#, from=NULL, to=NULL
 			lwd=1, col="darkgray", alpha=1, size=0.5,# showFeatureId=TRUE,
 			stacking="dense",feature=c(rep("wide", nrow(PS)), rep("small", nrow(PS))),
 			wide="darkgray",small="white", 
-			shape="ellipse", col.title="black", name="PING", collapse=FALSE) #collapse=FALSE is important. Prevents Gviz to change the element order during prepare mode.
+			shape="ellipse", col.title="black", collapse=FALSE,
+			...) #collapse=FALSE is important. Prevents Gviz to change the element order during prepare mode.
 
 	return(nucTrack)
 }
@@ -486,21 +555,35 @@ NucleosomeTrack<-function(PS, chr, gen="gen", filter=FALSE)#, from=NULL, to=NULL
 #   title : A main title for the plot
 #   FragmentLength : Length of the DNA fragments used 
 ##
-plotSummary<-function(PS, reads, chr, gen="gen", from=NULL, to=NULL, FragmentLength=200, title="", filter=TRUE)
+plotSummary<-function(PS, reads, chr, gen="gen", from=NULL, to=NULL, FragmentLength=200, title="", filter=FALSE, GRT=FALSE, PE=FALSE)
 {
 	if(class(PS)!="list")
 		PS<-list(PS)
-	gt<-GenomeAxisTrack(add53=TRUE, add35=TRUE)
-	covTrack<-CoverageTrack(reads=reads, chr=chr, gen=gen, FragmentLength=FragmentLength)
-	tList<-list(gt, covTrack)
-	if(class(reads)=="GRanges")
+	gt<-GenomeAxisTrack(add53=TRUE, add35=TRUE, col="black")
+	tList<-list(gt)
+	
+	if(isTRUE(GRT))
+	{	
+		bgrTrack<-tryCatch(expr={
+					r<-BiomartGeneRegionTrack(chromosome=chr, genome=gen, start=from, end=to, col.title="black", name="Exons", size=0.5, showId=TRUE)
+				}, error=function(err){
+					print(paste("WARNING: Unable to create BiomartGeneRegionTrack:", err))
+					print("The 'gen' and 'chr' argument should be named as in the UCSC website")
+					r<-NULL
+				})# end tryCatch. r is returned (last assigned value)
+		tList<-c(tList, bgrTrack)
+	}
+			
+	covTrack<-CoverageTrack(reads=reads, chr=chr, gen=gen, FragmentLength=FragmentLength, PE=PE)
+	tList<-c(tList, covTrack)
+	if(!isTRUE(PE))
 	{
 		rrTrack<-RawReadsTrack(reads=reads, chr=chr, gen=gen) #this track is irrelevan for PE
 		tList<-c(tList, rrTrack)
 	}
 	for(idxPS in 1:length(PS))
 	{
-		tList<-c(tList,NucleosomeTrack(PS=PS[[idxPS]], chr=chr, gen=gen, filter=filter))
+		tList<-c(tList,NucleosomeTrack(PS=PS[[idxPS]], chr=chr, gen=gen, filter=filter, name="PING"))
 	}
 	plotTitle<-paste(title,chr,":",from,"-",to,"(",to-from,"bps)", sep="")
 	# Plotting
