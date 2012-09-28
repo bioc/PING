@@ -10,13 +10,15 @@ importFrom(stats, dt, integrate, kmeans, pt)
 #importFrom(BiocGenerics, density)
 importFrom(stats4, summary)
 
-importFrom(Rsamtools, ScanBamParam, scanBam)
+importFrom(Rsamtools, ScanBamParam, scanBam, scanBamFlag, readBamGappedAlignments)
 
 importFrom(IRanges, IRanges, RangedData)
 importClassesFrom(IRanges, IRanges, RangedData)
-importMethodsFrom(IRanges, duplicated, end, levels, lapply, order, score, sort, space, start, as.matrix)
+importMethodsFrom(IRanges, duplicated, end, levels, lapply, order, score, sort, space, start, width, as.matrix, runValue, elementMetadata, "elementMetadata<-")
 
 importMethodsFrom(GenomicRanges, strand, seqnames)
+importClassesFrom(GenomicRanges, GRanges)
+importFrom(GenomicRanges, GRanges)
 
 importClassesFrom(PICS, segReads, segReadsPE, segReadsList, segReadsListPE, pics, picsError, picsList)
 importMethodsFrom(PICS, coerce, show, summary, score, minRange, maxRange, scoreReverse, scoreForward, chromosome, map,

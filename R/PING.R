@@ -35,7 +35,7 @@ PING<-function(segReadsList, paraEM=NULL, paraPrior=NULL, PE=FALSE, dataType="MN
 	cl <- makeCluster(getOption("cl.cores", nCores))
 	segSplit<-split(segReadsList,cut(1:length(segReadsList),nCores))
 	#Use parallel version of lapply
-	res<-unlist(parLapply(cl,segSplit,.fitModelAllkSplit,paraEM,paraPrior,minReads,detail,rescale, calpha, PE),recursive=FALSE)
+	res<-unlist(parallel:::parLapply(cl,segSplit,.fitModelAllkSplit,paraEM,paraPrior,minReads,detail,rescale, calpha, PE),recursive=FALSE) #::: in case parallel is imported by another package (in that case, parLapply would not be exposed)
 	stopCluster(cl)
   }
   else

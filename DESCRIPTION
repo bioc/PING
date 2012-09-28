@@ -6,7 +6,7 @@ Version: 0.99.2
 Author: Xuekui Zhang <xuezhang@jhsph.edu>, Raphael Gottardo <raph@stat.ubc.ca>, Sangsoon Woo, <swoo@fhcrc.org>
 Maintainer: Xuekui Zhang <xuezhang@jhsph.edu>, Raphael Gottardo
         <raph@stat.ubc.ca>, Sangsoon Woo, <swoo@fhcrc.org>
-Depends: R(>= 2.14.0),chipseq
+Depends: R(>= 2.14.0)
 Imports: methods, PICS, graphics, grDevices, stats, Gviz, fda ,
         IRanges, GenomicRanges, BSgenome, stats4, BiocGenerics, Rsamtools
 Suggests: parallel, ShortRead, rtracklayer

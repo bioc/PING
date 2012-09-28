@@ -453,7 +453,7 @@ CoverageTrack<-function(reads, chr, gen="gen", FragmentLength=200, PE=FALSE)
 #   INPUT: The reads used in the segmentation step
 #   OUTPUT: An AnnotationTrack object showing the starting position of forward and reverse reads
 ##
-RawReadsTrack<-function(reads, chr, gen="gen")
+RawReadsTrack<-function(reads, chr, gen="gen", ...)
 {
 	#R# I could use args to and from if not null to subset the reads and make the loops faster
 	idxF<-which(as.character(strand(reads))=="+")
@@ -496,7 +496,7 @@ RawReadsTrack<-function(reads, chr, gen="gen")
 			groups=rep(c("rev", "fwd"),c(abs(m),M)),
 			col=c("black","black"), pch=c(">", "<"), font="sans",
 			ylim=c(m, M), size=1,
-			name="Raw reads", showAxis=FALSE, col.axis="transparent", col.title="black")	
+			showAxis=FALSE, col.axis="transparent", col.title="black", ...)	
 	})#end s4
 #	print(s1)
 #	print(s2)
@@ -578,7 +578,7 @@ plotSummary<-function(PS, reads, chr, gen="gen", from=NULL, to=NULL, FragmentLen
 	tList<-c(tList, covTrack)
 	if(!isTRUE(PE))
 	{
-		rrTrack<-RawReadsTrack(reads=reads, chr=chr, gen=gen) #this track is irrelevan for PE
+		rrTrack<-RawReadsTrack(reads=reads, chr=chr, gen=gen, name="Aligned reads") #this track is irrelevan for PE
 		tList<-c(tList, rrTrack)
 	}
 	for(idxPS in 1:length(PS))
