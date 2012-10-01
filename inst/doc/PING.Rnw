@@ -26,7 +26,6 @@
 
 \textnormal {\normalfont}
 A step-by-step guide to inferring nucleosome positioning with high-throughput sequencing data using the PING package in R.
-%A step-by-step guide in the nucleosome positioning with high-throughput sequencing data using the PING package in R.
 
 \tableofcontents
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

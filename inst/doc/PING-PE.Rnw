@@ -191,4 +191,3 @@ plotSummary(PS, inputList, chr="chrM", from=1000, to=4000, PE=TRUE)
 @
 
 \end{document}
-

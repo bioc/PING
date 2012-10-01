@@ -46,6 +46,8 @@ segmentPING<-function(data, dataC=NULL, map=NULL,
 	  
 	  #with GRanges as input
 	  data<-data[seqnames(data)==chr]
+	  #Save xi for later
+	  xi<-mean(width(data))
 	  PE.RD<-IRanges(start=start(data), end=end(data))
 	  PE.RD<-PE.RD[which(width(PE.RD)>min_cut | width(PE.RD)<max_cut)]		
 	  PE.RD<-IRanges(start=start(PE.RD), end=end(PE.RD))
@@ -80,7 +82,7 @@ segmentPING<-function(data, dataC=NULL, map=NULL,
 		  segmentation <- segChrRead(candidate_RD, PE.RD, PEMF.RD, PEMR.RD, PEC.RD=NULL, PECMF.RD=NULL, PECMR.RD=NULL, 
 				  map.Start=start(map[chr]), map.End=end(map[chr]), chr=chr)
 	  }
-	  paraSW<-list(islandDepth=islandDepth, min_cut=min_cut, max_cut=max_cut)
+	  paraSW<-list(islandDepth=islandDepth, min_cut=min_cut, max_cut=max_cut, xi=xi)
 	  newSet<-segReadsListPE(segmentation, paraSW=paraSW, N=N, NFm, NRm, Nc, NcFm, NcRm)
   }
   

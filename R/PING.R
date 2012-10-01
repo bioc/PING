@@ -21,7 +21,10 @@ PING<-function(segReadsList, paraEM=NULL, paraPrior=NULL, PE=FALSE, dataType="MN
   }
   if(length(paraPrior)!=6)
   {
-    paraPrior<-setParaPrior(dataType=dataType)
+    if(isTRUE(PE))
+      paraPrior<-setParaPrior(dataType=dataType, xi=segReadsList@paraSW$xi) #average reads length is already known
+    else
+      paraPrior<-setParaPrior(dataType=dataType)
   }
   calpha <- 1.5
   

@@ -2,6 +2,7 @@
 # NAMESPACE
 #
 useDynLib(PING,.registration=TRUE)
+import(methods)
 
 
 importFrom(graphics, abline, axis, grid, layout, lines, mtext, par, plot, points, segments, stripchart, symbols, title)
@@ -14,9 +15,9 @@ importFrom(Rsamtools, ScanBamParam, scanBam, scanBamFlag, readBamGappedAlignment
 
 importFrom(IRanges, IRanges, RangedData)
 importClassesFrom(IRanges, IRanges, RangedData)
-importMethodsFrom(IRanges, duplicated, end, levels, lapply, order, score, sort, space, start, width, as.matrix, runValue, elementMetadata, "elementMetadata<-")
+importMethodsFrom(IRanges, coerce, duplicated, end, levels, lapply, order, score, sort, space, start, width, as.matrix, runValue, elementMetadata, "elementMetadata<-")
 
-importMethodsFrom(GenomicRanges, strand, seqnames)
+importMethodsFrom(GenomicRanges, coerce, strand, seqnames, width)
 importClassesFrom(GenomicRanges, GRanges)
 importFrom(GenomicRanges, GRanges)
 
