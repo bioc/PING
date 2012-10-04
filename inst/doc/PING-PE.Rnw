@@ -69,20 +69,10 @@ library(PING)
 @
 
 \section{Data Input and Formatting}
-%In order to use the PE version of PING, the input has to be slightly different.
-%Instead of a GRanges object, the new segmentation method use a list of reads and
-%a chromosome.
+As with the Single-End \texttt{PING}, the input used for the segmentation step is a \texttt{GRanges} object.
 
-%From a bed file, you can create such a list manually by first reading the file
-%using read.table, then assigning the resulting data.frame to the 'P' attribute
-%of a list. If some reads are missing an end or a start coordinate, they can
-%still be used. The reads with a missing start are treated as reverse reads and
-%should be assigned to an attribute 'yRm' to the same list. Reads with a missing
-%end are treated as Forward reads and have to be assigned to an attribute 'yFm'.
-
-%The package comes with a function to convert bam files into the appropriate
-%list. We provide a small bam file with two chromosomes of the yeast to be used
-%as an example in this vignette.
+Because Paired-End sequencing data often comes in the for of a .bam file, we provide a function to convert these files into \texttt{GRanges} with all the appropriate information.
+We provide a small bam file with two chromosomes of the yeast to be used as an example in this vignette.
 
 <<Read-data>>=
 yeastBam<- system.file("extdata/yeastChrI_M.bam",package="PING")
@@ -101,9 +91,9 @@ yeastBam<- system.file("extdata/yeastChrI_M.bam",package="PING")
 %If the bam file is small enough that it can be handled by the computer's memory,
 %it is possible to return a list of lists to be used as input. 
 <<bam2gr-no-save>>=
-inputList<-bam2gr(bamFile=yeastBam)
+gr<-bam2gr(bamFile=yeastBam)
 @
-%$inputList$ has one attribute per chromosome, here `chrI' and `chrM'.
+$gr$ is a \texttt{GRanges} object containing all the reads from the .bam file. 
 
 
 \section{PING analysis}
@@ -133,7 +123,7 @@ library(parallel)
 
 
 <<Genome-segmentation, results=hide>>=
-segPE<-segmentPING(inputList,  chr="chrM", islandDepth=3, min_cut=50, max_cut=1000)
+segPE<-segmentPING(gr,  chr="chrM", islandDepth=3, min_cut=50, max_cut=1000)
 @
 
 It returns a \texttt{segReadsListPE} object.
@@ -187,7 +177,7 @@ the coverage by the reads used as input and the predicted position of the
 nucleosomes of $PS$ for the given ranges.
 
 <<plotSummary-PE, fig=TRUE>>=
-plotSummary(PS, inputList, chr="chrM", from=1000, to=4000, PE=TRUE)
+plotSummary(PS, gr, chr="chrM", from=1000, to=4000, PE=TRUE)
 @
 
 \end{document}

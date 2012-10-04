@@ -453,13 +453,25 @@ CoverageTrack<-function(reads, chr, gen="gen", FragmentLength=200, PE=FALSE)
 #   INPUT: The reads used in the segmentation step
 #   OUTPUT: An AnnotationTrack object showing the starting position of forward and reverse reads
 ##
-RawReadsTrack<-function(reads, chr, gen="gen", ...)
+RawReadsTrack<-function(reads, chr, gen="gen", from=NULL, to=NULL, PE=FALSE, ...)
 {
-	#R# I could use args to and from if not null to subset the reads and make the loops faster
-	idxF<-which(as.character(strand(reads))=="+")
-	idxR<-which(as.character(strand(reads))=="-")
-	coordsF<-start(reads[idxF]) 
-	coordsR<-end(reads[idxR])
+	reads<-reads[seqnames(reads)==chr]
+	if(length(c(from,to))==2 | is.numeric(c(from, to)))
+	{
+		reads<-reads[start(reads)>from & end(reads)<to]
+	}
+	if(!isTRUE(PE))
+	{
+		idxF<-which(as.character(strand(reads))=="+")
+		idxR<-which(as.character(strand(reads))=="-")
+		coordsF<-start(reads[idxF]) 
+		coordsR<-end(reads[idxR])
+	}
+	else
+	{
+		coordsF<-start(reads)
+		coordsR<-end(reads)
+	}
 	pos<-unique(c(coordsF, coordsR))
 
 	val<-vector("list", length(pos))
@@ -469,24 +481,24 @@ RawReadsTrack<-function(reads, chr, gen="gen", ...)
 		val[[idx]]<-c(length(which(coordsF==pos[[idx]])), -length(which(coordsR==pos[[idx]])))# get m$M
 	}
 	})#end s1
-	m<-min(unlist((val)))
-	M<-max(unlist((val)))
+	m<-min(unlist((val)), -1)
+	M<-max(unlist((val)), 1)
 	#add the NA
 	s2<-system.time({
 	vec<-unlist(lapply(val, function(x){
-								if(x[[1]]==0)
-								{
-									c(rep(NA, abs(x[[2]]-m)), seq(x[[2]], -1), rep(NA, M))
-								}
-								else if(x[[2]]==0)
-								{
-									c(rep(NA, abs(m)), seq(1,x[[1]]), rep(NA, M-x[[1]]))
-								}
-								else
-								{
-									c(rep(NA, abs(x[[2]]-m)), seq(x[[2]], -1), seq(1,x[[1]]), rep(NA, M-x[[1]]))
-								}
-							}))
+						if(x[[1]]==0)
+						{
+							c(rep(NA, abs(x[[2]]-m)), seq(x[[2]], -1), rep(NA, M))
+						}
+						else if(x[[2]]==0)
+						{
+							c(rep(NA, abs(m)), seq(1,x[[1]]), rep(NA, M-x[[1]]))
+						}
+						else
+						{
+							c(rep(NA, abs(x[[2]]-m)), seq(x[[2]], -1), seq(1,x[[1]]), rep(NA, M-x[[1]]))
+						}
+					}))
 	})#end s2
 	s3<-system.time({
 	mat<-matrix(vec, nrow=M+abs(m), ncol=length(pos), dimnames=list(c(seq(m,-1),seq(1,M)) ,pos))
@@ -535,15 +547,23 @@ NucleosomeTrack<-function(PS, chr, gen="gen", filter=FALSE, ...) #name="PING", f
 	
 	nucTrack<-AnnotationTrack(start=starts, 
 			width=widths,
-#			id=c(PS[-negWidth,]$ID, rep(" ", len)),
 			chromosome=chr, genome=gen,
 			lwd=1, col="darkgray", alpha=1, size=0.5,# showFeatureId=TRUE,
 			stacking="dense",feature=c(rep("wide", nrow(PS)), rep("small", nrow(PS))),
 			wide="darkgray",small="white", 
 			shape="ellipse", col.title="black", collapse=FALSE,
-			...) #collapse=FALSE is important. Prevents Gviz to change the element order during prepare mode.
+			...) #collapse=FALSE is important. Prevents Gviz from changing the element order during prepare mode.
 
 	return(nucTrack)
+}
+
+NucScoreTrack<-function(PS, chr, gen="gen", ...)
+{
+	NSTrack<-DataTrack(data=score(PS), start=mu(PS)-73, width=10, chromosome=chr, genome=gen,
+		type="histogram", size=2,
+		col.axis="black", cex.axis=0.5, col.title="black", ...)
+	return(NSTrack)
+	
 }
 
 ##
@@ -578,12 +598,15 @@ plotSummary<-function(PS, reads, chr, gen="gen", from=NULL, to=NULL, FragmentLen
 	tList<-c(tList, covTrack)
 	if(!isTRUE(PE))
 	{
-		rrTrack<-RawReadsTrack(reads=reads, chr=chr, gen=gen, name="Aligned reads") #this track is irrelevan for PE
+		rrTrack<-RawReadsTrack(reads=reads, chr=chr, gen=gen, from=from, to=to, name="Aligned reads", PE=PE) #this track is irrelevan for PE
 		tList<-c(tList, rrTrack)
 	}
 	for(idxPS in 1:length(PS))
 	{
-		tList<-c(tList,NucleosomeTrack(PS=PS[[idxPS]], chr=chr, gen=gen, filter=filter, name="PING"))
+		tList<-c(tList,
+			NucScoreTrack(PS=PS[[idxPS]], chr=chr, gen=gen, name="score"),
+			NucleosomeTrack(PS=PS[[idxPS]], chr=chr, gen=gen, filter=filter, name="PING")
+			)
 	}
 	plotTitle<-paste(title,chr,":",from,"-",to,"(",to-from,"bps)", sep="")
 	# Plotting

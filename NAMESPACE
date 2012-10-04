@@ -45,7 +45,7 @@ exportMethods(show, summary, plot, se, seF, seR, sigmaSqF, sigmaSqR, mu, delta, 
 export("PING","postPING","newPingError",
 	"segReads","segReadsPE","segReadsList","segReadsListPE",
 	"segmentPING",
-	"NucleosomeTrack","CoverageTrack","RawReadsTrack","plotSummary",
+	"NucleosomeTrack","NucScoreTrack","CoverageTrack","RawReadsTrack","plotSummary",
 	"bam2gr")
 #Export imported stuff
 export("makeRangedDataOutput","setParaPrior","setParaEM")
