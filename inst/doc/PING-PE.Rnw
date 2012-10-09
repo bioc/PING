@@ -3,18 +3,21 @@
 %\VignetteKeywords{Preprocessing, ChIP-Seq, Sequencing}
 %\VignettePackage{PING}
 \documentclass[11pt]{article}
-%\usepackage{hyperref}
-\usepackage{url}
-\usepackage{color, pdfcolmk}
+\usepackage{Sweave}
 \usepackage{underscore}
-\usepackage[authoryear,round]{natbib}
-\bibliographystyle{plainnat}
+%\usepackage{hyperref}
+%\usepackage{url}
+%\usepackage{color, pdfcolmk}
+%\usepackage[authoryear,round]{natbib}
+%\bibliographystyle{plainnat}
+%\usepackage[hmargin=2cm, vmargin=3cm]{geometry}
 \SweaveOpts{keep.source=FALSE} %Introduce newlines automatically in R code
 
 
-\newcommand{\scscst}{\scriptscriptstyle}
-\newcommand{\scst}{\scriptstyle}
+%\newcommand{\scscst}{\scriptscriptstyle}
+%\newcommand{\scst}{\scriptstyle}
 
+\title{Using PING with Paired-End sequencing data}
 \author{Xuekui Zhang\footnote{ubcxzhang@gmail.com}, Sangsoon
 Woo\footnote{swoo@fhcrc.org}, Raphael Gottardo\footnote{rgottard@fhcrc.org} and
 Renan Sauteraud\footnote{rsautera@fhcrc.org}}
@@ -25,7 +28,6 @@ Renan Sauteraud\footnote{rsautera@fhcrc.org}}
 options(continue=" ")
 @
 
-\title{PING: Probabilistic Inference for Nucleosome Positioning with MNase-based or Sonicated Short-read Data.}
 \maketitle
 
 
@@ -71,26 +73,14 @@ library(PING)
 \section{Data Input and Formatting}
 As with the Single-End \texttt{PING}, the input used for the segmentation step is a \texttt{GRanges} object.
 
-Because Paired-End sequencing data often comes in the for of a .bam file, we provide a function to convert these files into \texttt{GRanges} with all the appropriate information.
+Because Paired-End sequencing data often comes in the form of a .bam file, we provide a function to convert these files into \texttt{GRanges} with all the appropriate information.
 We provide a small bam file with two chromosomes of the yeast to be used as an example in this vignette.
 
 <<Read-data>>=
 yeastBam<- system.file("extdata/yeastChrI_M.bam",package="PING")
 @
 
-%Bam files can be huge, therefore, the default behaviour is to save the resulting
-%R objects on disk with one file per chromosome.
-
-%<<prePING-default, eval=FALSE>>=
-%prePING(bamFile=yeastBam, outpath="./")
-%@
-%This will create one file for each chromosome found in `micro.bam' in the curent
-%folder. Then, the files can be loaded separately in order to use the
-%segmentation function.
-
-%If the bam file is small enough that it can be handled by the computer's memory,
-%it is possible to return a list of lists to be used as input. 
-<<bam2gr-no-save>>=
+<<bam2gr>>=
 gr<-bam2gr(bamFile=yeastBam)
 @
 $gr$ is a \texttt{GRanges} object containing all the reads from the .bam file. 
@@ -101,7 +91,7 @@ $gr$ is a \texttt{GRanges} object containing all the reads from the .bam file.
 \subsection{Genome segmentation}
 PING is used the same way for paired-end and single-end sequencing data. The
 function \texttt{segmentPING} will decide which segmentation method should be
-used based on the data type. 
+used based on the arguments provided. 
 When dealing with paired-end data, four new arguments have to be passed to the
 function: a chromosome chr and three parameters used in candidate region
 selection: islandDepth, min_cut and max_cut.
@@ -148,10 +138,10 @@ PS=postPING(ping, segPE, rho2=rho2, alpha2=alpha2, beta2=beta2, sigmaB2=sigmaB2,
 @
 The result output $PS$ is a dataframe that contains estimated parameters of each nucleosome, users can use write.table command to export the selected columns of the result.
 <<Display-result>>=
-head(PS)
+head(PS, 3)
 @
 
-\section{Using the results}
+\section{Analyzing the prediction}
 \texttt{PING} comes with a set of tools to export or visualize the prediction.
 Here, we only show how to export the results into bed format for further use
 and how to make a quick plot to summarize the prediction. For more information
@@ -174,10 +164,12 @@ and ranked by score.
 \vspace{10pt}
 For PE data, the function \texttt{plotSummary} will generate a plot displaying 
 the coverage by the reads used as input and the predicted position of the
-nucleosomes of $PS$ for the given ranges.
+nucleosomes of $PS$ for the given ranges as well as theur associated prediction score.
 
 <<plotSummary-PE, fig=TRUE>>=
 plotSummary(PS, gr, chr="chrM", from=1000, to=4000, PE=TRUE)
 @
+
+Note that the argument PE should be set to TRUE. All the arguments for this function will work for Paired-end data as well. Refer to PING vignette and ?plotSummary for more information.
 
 \end{document}

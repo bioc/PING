@@ -525,14 +525,14 @@ return(RawReadsTrack)
 # NucleosomeTrack
 #   Shows nucleosome positioning prediction with standard error
 ##
-NucleosomeTrack<-function(PS, chr, gen="gen", filter=FALSE, ...) #name="PING", from=NULL, to=NULL)
+NucleosomeTrack<-function(PS, chr, gen="gen", scoreTrack=TRUE, scoreThreshold=0.05, name="PING", ...) #from=NULL, to=NULL)
 {
+	if(!is.null(scoreThreshold))
+		PS<-FilterPING(PS, score=scoreThreshold)$ping.df
+
 	#If object is ping, coerce into df
 	if(class(PS)=="pingList")
 		PS<-as(PS, "data.frame")
-	#Filter the abnormal nucleosomes
-	if(isTRUE(filter))
-		PS<-FilterPING(PS)$ping.df
 	#Order the data.frame by start
 	PS<-PS[with(PS, order(mu)),]	
 	#wide nucleosomes are nucleosomes +se
@@ -544,27 +544,42 @@ NucleosomeTrack<-function(PS, chr, gen="gen", filter=FALSE, ...) #name="PING", f
 	#Drawing the wide first is important
 	starts<-c(wideStart, smallStart)
 	widths<-c(wideWidth, smallWidth)
-	
+
+	tList<-list()
+	if(isTRUE(scoreTrack))
+	{
+		NSTrack<-DataTrack(data=score(PS), start=mu(PS)-5, width=10, chromosome=chr, genome=gen,
+			type="histogram", size=1,
+			col.axis="black", cex.axis=0.5, col.title="black", name="score", ...)
+		tList<-c(tList, NSTrack)
+	}	
 	nucTrack<-AnnotationTrack(start=starts, 
 			width=widths,
 			chromosome=chr, genome=gen,
 			lwd=1, col="darkgray", alpha=1, size=0.5,# showFeatureId=TRUE,
 			stacking="dense",feature=c(rep("wide", nrow(PS)), rep("small", nrow(PS))),
 			wide="darkgray",small="white", 
-			shape="ellipse", col.title="black", collapse=FALSE,
+			shape="ellipse", col.title="black", collapse=FALSE, name=name,
 			...) #collapse=FALSE is important. Prevents Gviz from changing the element order during prepare mode.
-
-	return(nucTrack)
+	tList<-c(tList, nucTrack)
+	return(tList)
 }
 
-NucScoreTrack<-function(PS, chr, gen="gen", ...)
-{
-	NSTrack<-DataTrack(data=score(PS), start=mu(PS)-73, width=10, chromosome=chr, genome=gen,
-		type="histogram", size=2,
-		col.axis="black", cex.axis=0.5, col.title="black", ...)
-	return(NSTrack)
-	
-}
+##
+# NucScoreTrack: Shows the score associated with the prediction of the nucleosomes.
+#   INPUT:
+#     PS: The output of postPING
+#     chr: Name of the chr to display
+#     gen: Name of the genome
+##
+#NucScoreTrack<-function(PS, chr, gen="gen", ...)
+#{
+	#NSTrack<-DataTrack(data=score(PS), start=mu(PS)-5, width=10, chromosome=chr, genome=gen,
+		#type="histogram", size=1,
+		#col.axis="black", cex.axis=0.5, col.title="black", ...)
+	#return(NSTrack)
+#	
+#}
 
 ##
 # Plot a summary of PING estimates using Gviz
@@ -573,10 +588,15 @@ NucScoreTrack<-function(PS, chr, gen="gen", ...)
 #   chr : The chromosome to display
 #   from,to : The range to display
 #   title : A main title for the plot
-#   FragmentLength : Length of the DNA fragments used 
+#   FragmentLength : Length of the DNA fragments used. For CoverageTrack.
+#   scoreThreshold : Nucleosomes with a score < scoreThreshold are not displayed on the plot.
+#   GRT : Doesn't  work in the current version of Gviz.
+#   PE : Set to TRUE for Paired-End Sequencing data.
 ##
-plotSummary<-function(PS, reads, chr, gen="gen", from=NULL, to=NULL, FragmentLength=200, title="", filter=FALSE, GRT=FALSE, PE=FALSE)
+plotSummary<-function(PS, reads, chr, gen="gen", from=NULL, to=NULL, FragmentLength=200, title="", scoreThreshold=0.05, PE=FALSE)
 {
+	GRT<-FALSE
+ 
 	if(class(PS)!="list")
 		PS<-list(PS)
 	gt<-GenomeAxisTrack(add53=TRUE, add35=TRUE, col="black")
@@ -598,20 +618,19 @@ plotSummary<-function(PS, reads, chr, gen="gen", from=NULL, to=NULL, FragmentLen
 	tList<-c(tList, covTrack)
 	if(!isTRUE(PE))
 	{
-		rrTrack<-RawReadsTrack(reads=reads, chr=chr, gen=gen, from=from, to=to, name="Aligned reads", PE=PE) #this track is irrelevan for PE
+		rrTrack<-RawReadsTrack(reads=reads, chr=chr, gen=gen, from=from, to=to, name="Aligned reads", PE=PE)
 		tList<-c(tList, rrTrack)
 	}
 	for(idxPS in 1:length(PS))
 	{
 		tList<-c(tList,
-			NucScoreTrack(PS=PS[[idxPS]], chr=chr, gen=gen, name="score"),
-			NucleosomeTrack(PS=PS[[idxPS]], chr=chr, gen=gen, filter=filter, name="PING")
+			#NucScoreTrack(PS=PS[[idxPS]], chr=chr, gen=gen, name="score"),
+			NucleosomeTrack(PS=PS[[idxPS]], chr=chr, gen=gen, scoreThreshold=scoreThreshold)
 			)
 	}
 	plotTitle<-paste(title,chr,":",from,"-",to,"(",to-from,"bps)", sep="")
 	# Plotting
-	plotTracks(trackList=tList, from=from, to=to,
-			main=plotTitle)
+	plotTracks(trackList=tList, from=from, to=to, main=plotTitle)
 	#Return the tracks so they can be added to other plots. invisible=no print()
 	return(invisible(tList))
 }

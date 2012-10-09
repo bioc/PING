@@ -3,27 +3,28 @@
 %\VignetteKeywords{Preprocessing, ChIP-Seq, Sequencing}
 %\VignettePackage{PING}
 \documentclass[11pt]{article}
-%\usepackage{hyperref}
-\usepackage{url}
-\usepackage{color, pdfcolmk}
+\usepackage{Sweave}
 \usepackage{underscore}
-\usepackage[authoryear,round]{natbib}
-\bibliographystyle{plainnat}
+%\usepackage{hyperref}
+%\usepackage{url}
+%\usepackage{color, pdfcolmk}
+%\usepackage[authoryear,round]{natbib}
+%\bibliographystyle{plainnat}
+%\usepackage[hmargin=2cm, vmargin=3cm]{geometry}
  %Introduce newlines automatically in R code
 
 
-\newcommand{\scscst}{\scriptscriptstyle}
-\newcommand{\scst}{\scriptstyle}
+%\newcommand{\scscst}{\scriptscriptstyle}
+%\newcommand{\scst}{\scriptstyle}
 
+\title{Using PING with Paired-End sequencing data}
 \author{Xuekui Zhang\footnote{ubcxzhang@gmail.com}, Sangsoon
 Woo\footnote{swoo@fhcrc.org}, Raphael Gottardo\footnote{rgottard@fhcrc.org} and
 Renan Sauteraud\footnote{rsautera@fhcrc.org}}
 
-\usepackage{Sweave}
 \begin{document}
 %To display nice multilines chunks of code
 
-\title{PING: Probabilistic Inference for Nucleosome Positioning with MNase-based or Sonicated Short-read Data.}
 \maketitle
 
 
@@ -69,20 +70,10 @@ As with any R package, you should first load it with the following command:
 \end{Schunk}
 
 \section{Data Input and Formatting}
-In order to use the PE version of PING, the input has to be slightly different.
-Instead of a GRanges object, the new segmentation method use a list of reads and
-a chromosome.
+As with the Single-End \texttt{PING}, the input used for the segmentation step is a \texttt{GRanges} object.
 
-%From a bed file, you can create such a list manually by first reading the file
-%using read.table, then assigning the resulting data.frame to the 'P' attribute
-%of a list. If some reads are missing an end or a start coordinate, they can
-%still be used. The reads with a missing start are treated as reverse reads and
-%should be assigned to an attribute 'yRm' to the same list. Reads with a missing
-%end are treated as Forward reads and have to be assigned to an attribute 'yFm'.
-
-The package comes with a function to convert bam files into the appropriate
-list. We provide a small bam file with two chromosomes of the yeast to be used
-as an example in this vignette.
+Because Paired-End sequencing data often comes in the form of a .bam file, we provide a function to convert these files into \texttt{GRanges} with all the appropriate information.
+We provide a small bam file with two chromosomes of the yeast to be used as an example in this vignette.
 
 \begin{Schunk}
 \begin{Sinput}
@@ -90,30 +81,16 @@ as an example in this vignette.
 \end{Sinput}
 \end{Schunk}
 
-Bam files can be huge, therefore, the default behaviour is to save the resulting
-R objects on disk with one file per chromosome.
-
 \begin{Schunk}
 \begin{Sinput}
-> prePING(bamFile = yeastBam, outpath = "./")
-\end{Sinput}
-\end{Schunk}
-This will create one file for each chromosome found in `micro.bam' in the curent
-folder. Then, the files can be loaded separately in order to use the
-segmentation function.
-
-If the bam file is small enough that it can be handled by the computer's memory,
-it is possible to return a list of lists to be used as input. 
-\begin{Schunk}
-\begin{Sinput}
-> inputList <- prePING(bamFile = yeastBam, save = FALSE)
+> gr <- bam2gr(bamFile = yeastBam)
 \end{Sinput}
 \begin{Soutput}
-[1] "chrI"
-[1] "chrM"
+Chromosome  chrI 
+Chromosome  chrM 
 \end{Soutput}
 \end{Schunk}
-$inputList$ has one attribute per chromosome, here `chrI' and `chrM'.
+$gr$ is a \texttt{GRanges} object containing all the reads from the .bam file. 
 
 
 \section{PING analysis}
@@ -121,7 +98,7 @@ $inputList$ has one attribute per chromosome, here `chrI' and `chrM'.
 \subsection{Genome segmentation}
 PING is used the same way for paired-end and single-end sequencing data. The
 function \texttt{segmentPING} will decide which segmentation method should be
-used based on the data type. 
+used based on the arguments provided. 
 When dealing with paired-end data, four new arguments have to be passed to the
 function: a chromosome chr and three parameters used in candidate region
 selection: islandDepth, min_cut and max_cut.
@@ -146,8 +123,8 @@ detect whether you have initialized a cluster and will use it if you have.
 
 \begin{Schunk}
 \begin{Sinput}
-> segPE <- segmentPING(inputList$chrM, chr = "chrM", islandDepth = 3, 
-     min_cut = 50, max_cut = 1000)
+> segPE <- segmentPING(gr, chr = "chrM", islandDepth = 3, min_cut = 50, 
+     max_cut = 1000)
 \end{Sinput}
 \end{Schunk}
 
@@ -181,44 +158,36 @@ Here again, we set the argument PE to TRUE, and use postPING normally.
      sigmaB2 = sigmaB2, PE = TRUE)
 \end{Sinput}
 \begin{Soutput}
- The 6 Regions with following IDs are reprocessed for singularity problem: 
-(0.773,114]80   (114,228]39   (114,228]51   (114,228]79   (114,228]82 
-           80           153           165           193           196 
- (114,228]106 
-          220 
+ The 5 Regions with following IDs are reprocessed for singularity problem: 
+(0.783,110]84   (110,218]37   (110,218]50   (110,218]76   (110,218]79 
+           84           146           159           185           188 
 
- The 17 Regions with following IDs are reprocessed for atypical delta: 
-[1] 155 190 129  41  37  28
+ The 1 Regions with following IDs are reprocessed for atypical delta: 
+[1] 149
 [1] "No predictions with atypical sigma"
 
- The 172 regions with following IDs are reprocessed for Boundary problems: 
-[1]  4  6  7 12 18 20
+ The 138 regions with following IDs are reprocessed for Boundary problems: 
+[1]  4 17 25 38 40 47
 \end{Soutput}
 \end{Schunk}
 The result output $PS$ is a dataframe that contains estimated parameters of each nucleosome, users can use write.table command to export the selected columns of the result.
 \begin{Schunk}
 \begin{Sinput}
-> head(PS)
+> head(PS, 3)
 \end{Sinput}
 \begin{Soutput}
-     ID  chr         w         mu    delta  sigmaSqF  sigmaSqR        se
-96   32 chrM 0.3593627 11633.3048 119.5366  876.2446  925.5663 12.894380
-518 163 chrM 0.6357604 63067.6607 139.9552 1377.8030 1047.7658  5.252400
-1     1 chrM 0.5649540   334.6209 135.6721 1224.5633 1536.3315  8.075665
-62   21 chrM 0.3226948  7231.8196 171.9921 1509.9668 1268.8164 10.375752
-700 228 chrM 0.3263701 84916.4188 149.8338  955.7443 1378.1164  8.668972
-524 164 chrM 0.4261601 64274.6381 141.5827 2071.6632 1815.6545 13.725905
-        score   scoreF   scoreR minRange maxRange      seF       seR rank
-96  1328347.9 685598.9 642749.0    11290    12500 15.98384 11.486267    1
-518 1141956.1 570978.1 570978.1    62728    63762  7.37211  6.219118    2
-1   1042681.7 557049.1 485632.6      187      949  9.26240  9.202644    3
-62  1014115.0 442782.6 571332.4     6838     8133 11.68977 11.680681    4
-700 1013486.1 585252.5 428233.6    84565    85803 11.57234  9.151415    5
-524  984937.2 413959.1 570978.1    63281    64582 15.56970 14.943394    6
+     ID  chr         w       mu    delta  sigmaSqF sigmaSqR        se     score
+88   28 chrM 0.3926403 11626.37 119.9353 1015.1863 941.0201 11.636744 0.4903682
+367 117 chrM 0.2141183 47288.11 129.3172  803.2646 808.8207  7.837640 0.4402827
+490 157 chrM 0.6212985 63073.44 131.2461  960.0974 879.2203  5.211408 0.4397749
+       scoreF    scoreR minRange maxRange       seF       seR rank
+88  0.5021658 0.4781146    11409    12499 12.847227 11.572460    1
+367 0.3881176 0.4922684    46653    47604  9.068648  8.931158    2
+490 0.4303097 0.4496658    62728    63760  5.678614  6.750760    3
 \end{Soutput}
 \end{Schunk}
 
-\section{Using the results}
+\section{Analyzing the prediction}
 \texttt{PING} comes with a set of tools to export or visualize the prediction.
 Here, we only show how to export the results into bed format for further use
 and how to make a quick plot to summarize the prediction. For more information
@@ -241,16 +210,17 @@ The exported file contain all the predicted nucleosomes displayed in bed format
 and ranked by score.
 
 \vspace{10pt}
-The function \texttt{plotSummary} will generate a plot displaying the coverage
-by the reads used as input and the predicted position of the
-nucleosomes of $PS$ for the given ranges.
+For PE data, the function \texttt{plotSummary} will generate a plot displaying 
+the coverage by the reads used as input and the predicted position of the
+nucleosomes of $PS$ for the given ranges as well as theur associated prediction score.
 
 \begin{Schunk}
 \begin{Sinput}
-> plotSummary(PS, inputList$chrM, chr = "chrM", from = 1000, to = 4000)
+> plotSummary(PS, gr, chr = "chrM", from = 1000, to = 4000, PE = TRUE)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{PING-PE-plotSummary}
+\includegraphics{PING-PE-plotSummary-PE}
+
+Note that the argument PE should be set to TRUE. All the arguments for this function will work for Paired-end data as well. Refer to PING vignette and ?plotSummary for more information.
 
 \end{document}
-

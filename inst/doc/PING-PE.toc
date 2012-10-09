@@ -6,4 +6,4 @@
 \contentsline {subsection}{\numberline {5.1}Genome segmentation}{3}
 \contentsline {subsection}{\numberline {5.2}Parameter estimation}{4}
 \contentsline {section}{\numberline {6}Post-processing PING results}{4}
-\contentsline {section}{\numberline {7}Using the results}{5}
+\contentsline {section}{\numberline {7}Analyzing the prediction}{5}

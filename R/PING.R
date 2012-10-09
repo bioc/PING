@@ -32,14 +32,14 @@ PING<-function(segReadsList, paraEM=NULL, paraPrior=NULL, PE=FALSE, dataType="MN
   if("parallel" %in% names(getLoadedDLLs()) )
   {
 	#Number of cores
-	nCores<-detectCores()
+	nCores<-parallel:::detectCores()
 	message("Using the parallel version of PING with ", nCores, " cpus or cores")
 	#Split into nCores segReadsList
-	cl <- makeCluster(getOption("cl.cores", nCores))
+	cl <- parallel:::makeCluster(getOption("cl.cores", nCores))
 	segSplit<-split(segReadsList,cut(1:length(segReadsList),nCores))
 	#Use parallel version of lapply
 	res<-unlist(parallel:::parLapply(cl,segSplit,.fitModelAllkSplit,paraEM,paraPrior,minReads,detail,rescale, calpha, PE),recursive=FALSE) #::: in case parallel is imported by another package (in that case, parLapply would not be exposed)
-	stopCluster(cl)
+	parallel:::stopCluster(cl)
   }
   else
   {

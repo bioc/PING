@@ -40,12 +40,12 @@ importFrom(Gviz, plotTracks)
 
 
 exportClasses(ping, pingError, pingList)
-exportMethods(show, summary, plot, se, seF, seR, sigmaSqF, sigmaSqR, mu, delta, w, code, length, K,"[","[[")
-	#chromosome, score,
+exportMethods(show, summary, plot, se, seF, seR, sigmaSqF, sigmaSqR, mu, delta, w, code, length, K,"[","[[",
+	chromosome, score)
 export("PING","postPING","newPingError",
 	"segReads","segReadsPE","segReadsList","segReadsListPE",
 	"segmentPING",
-	"NucleosomeTrack","NucScoreTrack","CoverageTrack","RawReadsTrack","plotSummary",
+	"NucleosomeTrack","CoverageTrack","RawReadsTrack","plotSummary",
 	"bam2gr")
 #Export imported stuff
 export("makeRangedDataOutput","setParaPrior","setParaEM")

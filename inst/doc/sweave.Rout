@@ -1,0 +1,89 @@
+
+R Under development (unstable) (2012-09-27 r60832) -- "Unsuffered Consequences"
+Copyright (C) 2012 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+Platform: i686-pc-linux-gnu (32-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> #R CMD BATCH '--args rnw="Pviz.Rnw"' sweave.R
+> args=(commandArgs(TRUE))
+> if (length(args)>0) for(i in 1:length(args)) eval(parse(text=args[[i]]))
+> Sweave(rnw)
+Writing to file PING-PE.tex
+Processing code chunks with options ...
+ 1 : term verbatim (PING-PE.Rnw:24)
+ 2 : echo term verbatim (label = Loading-PING, PING-PE.Rnw:67)
+Loading required package: chipseq
+Loading required package: BiocGenerics
+
+Attaching package: ‘BiocGenerics’
+
+The following object is masked from ‘package:stats’:
+
+    xtabs
+
+The following objects are masked from ‘package:base’:
+
+    anyDuplicated, cbind, colnames, duplicated, eval, Filter, Find,
+    get, intersect, lapply, Map, mapply, mget, order, paste, pmax,
+    pmax.int, pmin, pmin.int, Position, rbind, Reduce, rep.int,
+    rownames, sapply, setdiff, table, tapply, union, unique
+
+Loading required package: IRanges
+Loading required package: GenomicRanges
+Loading required package: BSgenome
+Loading required package: Biostrings
+Loading required package: ShortRead
+Loading required package: lattice
+Loading required package: Rsamtools
+Loading required package: latticeExtra
+Loading required package: RColorBrewer
+ 3 : echo term verbatim (label = Read-data, PING-PE.Rnw:77)
+ 4 : echo term verbatim (label = bam2gr-no-save, PING-PE.Rnw:93)
+ 5 : echo term verbatim (label = Cluster-initialization, PING-PE.Rnw:120)
+ 6 : echo term hide (label = Genome-segmentation, PING-PE.Rnw:125)
+ 7 : echo term verbatim (label = PING-analysis, PING-PE.Rnw:136)
+Using the default paraEM for MNase/sonicated data
+Using the default paraPrior for MNase data, for ChIP-Seq data use the argument dataType='chip-seq'
+Using the parallel version of PING with 2 cpus or cores
+ 8 : echo term verbatim (label = Post-process-PING-result, PING-PE.Rnw:145)
+Using the default paraPrior for MNase data, for ChIP-Seq data use the argument dataType='chip-seq'
+Using the default paraEM for MNase/sonicated data
+Using the parallel version of PING with 2 cpus or cores
+Using the parallel version of PING with 2 cpus or cores
+Using the parallel version of PING with 2 cpus or cores
+ 9 : echo term verbatim (label = Display-result, PING-PE.Rnw:150)
+10 : echo (label = makeRangedDataOutput, PING-PE.Rnw:165)
+11 : echo term verbatim pdf  (label = plotSummary-PE, PING-PE.Rnw:179)
+
+You can now run (pdf)latex on ‘PING-PE.tex’
+Warning messages:
+1: In reshapeWide(data, idvar = idvar, timevar = timevar, varying = varying,  :
+  multiple rows match for strand=+: first taken
+2: In reshapeWide(data, idvar = idvar, timevar = timevar, varying = varying,  :
+  multiple rows match for strand=-: first taken
+3: In reshapeWide(data, idvar = idvar, timevar = timevar, varying = varying,  :
+  multiple rows match for strand=+: first taken
+4: In .Seqinfo.mergexy(x, y) :
+  Each of the 2 combined objects has sequence levels not in the other:
+  - in 'x': chrI
+  - in 'y': chrM
+  Make sure to always combine/compare objects based on the same reference
+  genome (use suppressWarnings() to suppress this warning).
+> q(save="no")
+> proc.time()
+   user  system elapsed 
+ 46.374   0.764 116.487 

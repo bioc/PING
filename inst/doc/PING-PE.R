@@ -15,26 +15,25 @@ library(PING)
 ###################################################
 ### code chunk number 3: Read-data
 ###################################################
-#yeastBam<- system.file("extdata/yeastChrI_M.bam",package="PING")
+yeastBam<- system.file("extdata/yeastChrI_M.bam",package="PING")
 
 
 ###################################################
 ### code chunk number 4: bam2gr-no-save
 ###################################################
-#inputList<-bam2gr(bamFile=yeastBam)
+gr<-bam2gr(bamFile=yeastBam)
 
 
 ###################################################
 ### code chunk number 5: Cluster-initialization
 ###################################################
-#library(parallel)
-load("tmp.rda")
+library(parallel)
 
 
 ###################################################
 ### code chunk number 6: Genome-segmentation
 ###################################################
-segPE<-segmentPING(inputList,  chr="chrM", islandDepth=3, min_cut=50, max_cut=1000)
+segPE<-segmentPING(gr,  chr="chrM", islandDepth=3, min_cut=50, max_cut=1000)
 
 
 ###################################################
@@ -67,6 +66,6 @@ head(PS)
 ###################################################
 ### code chunk number 11: plotSummary-PE
 ###################################################
-plotSummary(PS, inputList, chr="chrM", from=1000, to=4000, PE=TRUE)
+plotSummary(PS, gr, chr="chrM", from=1000, to=4000, PE=TRUE)
 
 

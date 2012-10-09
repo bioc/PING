@@ -7,13 +7,15 @@
 This track displays the start position of the forward and reverse reads used as input for the segmentation step}
 
 \usage{
-RawReadsTrack(reads, chr, gen="gen", ...)
+RawReadsTrack(reads, chr, gen="gen", from=NULL, to=NULL, PE=FALSE, ...)
 }
 
 \arguments{
 \item{reads}{An object of class \code{\linkS4class{GRanges}}. The reads used in the segmentation process.}
 \item{chr}{A character string for the chromosome name.}
 \item{gen}{An optional character string for the genome name.}
+\item{from, to}{Two \code{numeric}. A subset of the reads can be selected in order to speed up the computation.}
+\item{PE}{A \code{logical}. If set to TRUE, the start of the reads is used as forward reads, while the end is used as reverse reads.}
 \item{...}{Optional arguments (\code{DisplayParameters}) that can be passed on to the \code{DataTrack}. Refer to Gviz help and vignette for a list of arguments.}
 
 }
