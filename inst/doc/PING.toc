@@ -1,11 +1,11 @@
-\contentsline {section}{\numberline {1}Licensing and citing}{2}
-\contentsline {section}{\numberline {2}Introduction}{2}
-\contentsline {section}{\numberline {3}PING analysis steps}{3}
-\contentsline {section}{\numberline {4}Data Input and Formatting}{3}
-\contentsline {section}{\numberline {5}PING analysis}{4}
-\contentsline {subsection}{\numberline {5.1}Genome segmentation}{4}
-\contentsline {subsection}{\numberline {5.2}Parameter estimation}{5}
-\contentsline {section}{\numberline {6}Post-processing PING results}{5}
-\contentsline {section}{\numberline {7}Result output}{6}
-\contentsline {subsection}{\numberline {7.1}Exporting the results}{6}
-\contentsline {subsection}{\numberline {7.2}Visualizing the results}{7}
+\contentsline {section}{\numberline {1}Licensing and citing}{2}{section.1}
+\contentsline {section}{\numberline {2}Introduction}{2}{section.2}
+\contentsline {section}{\numberline {3}PING analysis steps}{3}{section.3}
+\contentsline {section}{\numberline {4}Data Input and Formatting}{3}{section.4}
+\contentsline {section}{\numberline {5}PING analysis}{4}{section.5}
+\contentsline {subsection}{\numberline {5.1}Genome segmentation}{4}{subsection.5.1}
+\contentsline {subsection}{\numberline {5.2}Parameter estimation}{5}{subsection.5.2}
+\contentsline {section}{\numberline {6}Post-processing PING results}{5}{section.6}
+\contentsline {section}{\numberline {7}Result output}{6}{section.7}
+\contentsline {subsection}{\numberline {7.1}Exporting the results}{6}{subsection.7.1}
+\contentsline {subsection}{\numberline {7.2}Visualizing the results}{7}{subsection.7.2}

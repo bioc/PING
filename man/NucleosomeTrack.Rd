@@ -17,7 +17,7 @@ NucleosomeTrack(PS, chr, gen="gen", scoreTrack=TRUE, scoreThreshold=0.05, name="
 \item{gen}{An optional character string for the genome name.}
 \item{scoreTrack}{A \code{logical}. If set to FALSE, the track showing the histogram of the score is removed.}
 \item{scoreThreshold}{A \code{numeric}. Nucleosomes predicted with a score inferior to this threshold are removed.}
-%\item{filter}{A \code{logical}. Screen out abnormal predictions whose parameters are too far from others.}
+\item{name}{A character string for the title of the track.}
 \item{...}{A list of supplemental argument that can be provided to the \code{\link[Gviz]{AnnotationTrack}} track constructor.}
 }
 

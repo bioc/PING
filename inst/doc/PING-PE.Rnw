@@ -5,7 +5,7 @@
 \documentclass[11pt]{article}
 \usepackage{Sweave}
 \usepackage{underscore}
-%\usepackage{hyperref}
+\usepackage{hyperref}
 %\usepackage{url}
 %\usepackage{color, pdfcolmk}
 %\usepackage[authoryear,round]{natbib}
@@ -23,7 +23,6 @@ Woo\footnote{swoo@fhcrc.org}, Raphael Gottardo\footnote{rgottard@fhcrc.org} and
 Renan Sauteraud\footnote{rsautera@fhcrc.org}}
 
 \begin{document}
-%To display nice multilines chunks of code
 <<echo=false>>=
 options(continue=" ")
 @
@@ -33,7 +32,7 @@ options(continue=" ")
 
 
 \textnormal {\normalfont}
-This vignette presents a workflow to use PING on paired-end sequencing data.
+This vignette presents a workflow to use PING for analyzing paired-end sequencing data.
 
 \tableofcontents
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -52,7 +51,7 @@ If you use this package for a publication, we would ask you to cite the followin
 
 
 \section{Introduction}
-For an introduction to the biological background and PING method, please refer to the PING user guide.
+For an introduction to the biological background and \texttt{PING} method, please refer to the other vignette: `The \texttt{PING} user guide'. Because the structure of paired-end sequencing data requires a slightly different treatment , we are separately presenting how to use \texttt{PING} for these data in this vignette. 
 
 
 \section{PING analysis steps}
@@ -73,8 +72,8 @@ library(PING)
 \section{Data Input and Formatting}
 As with the Single-End \texttt{PING}, the input used for the segmentation step is a \texttt{GRanges} object.
 
-Because Paired-End sequencing data often comes in the form of a .bam file, we provide a function to convert these files into \texttt{GRanges} with all the appropriate information.
-We provide a small bam file with two chromosomes of the yeast to be used as an example in this vignette.
+Because Paired-End sequencing data often comes in the form of BAM files, we provide a function called \texttt{bam2gr} to convert these files into \texttt{GRanges} objects with all the appropriate information.
+A small BAM file including two chromosomes of the yeast is provided to be used as an example in this vignette.
 
 <<Read-data>>=
 yeastBam<- system.file("extdata/yeastChrI_M.bam",package="PING")
@@ -93,19 +92,11 @@ PING is used the same way for paired-end and single-end sequencing data. The
 function \texttt{segmentPING} will decide which segmentation method should be
 used based on the arguments provided. 
 When dealing with paired-end data, four new arguments have to be passed to the
-function: a chromosome chr and three parameters used in candidate region
-selection: islandDepth, min_cut and max_cut.
+function: \texttt{chr} for a chromosome, \texttt{islandDepth}, \texttt{min_cut} 
+and \texttt{max_cut} for candidate region selection. These arguments control the 
+size and required coverage for a region to be considered as a candidate.
 
-These arguments control the size and required coverage for a region to be
-considered as a candidate.
-
-In order to improve the computational efficiency of the PING package, if you
-have access to multiple cores we recommend that you do parallel computations via
-the \texttt{parallel} package. In what follows, we assume that \texttt{parallel}
-is installed on your machine. If it is not, you could omit the first line, and
-calculations will occur on a single CPU. By default the command is not run. Note
-that the \texttt{segmentPING} and \texttt{PING} functions will automatically
-detect whether you have initialized a cluster and will use it if you have.
+Parallelisation will also work with paired-end data. In what follows, we assume that \texttt{parallel} is installed on your machine. If it is not, the first line should be omitted and calculations will occur on a single CPU.
 
 <<Cluster-initialization>>=
 library(parallel)
@@ -120,56 +111,52 @@ It returns a \texttt{segReadsListPE} object.
 
 
 \subsection{Parameter estimation}
-The only difference when using \texttt{PING} for paired-end data is the argument PE that has to be set to TRUE.
+For paired-end data in \texttt{PING}, the users have to set the argument of PE as TRUE. 
 
-%paraP<-setParaPriorPING(xi=150, rho=1.2, alpha=12, beta=20000, lambda=-0.000064, dMu=200)
 <<PING-analysis>>=
 ping<-PING(segPE, PE=TRUE)
 @
-The returned object is of class pingList and can be post-processed.
+The returned object is a \texttt{pingList}, which will go through a post-processing step using \texttt{postPING} function.
 
 
 \section{Post-processing PING results}
-Here again, we set the argument PE to TRUE, and use postPING normally.
+Here again, the only difference with single-end data is that the argument PE should be set to TRUE.
 
 <<Post-process-PING-result>>=
 {sigmaB2=3600; rho2=15; alpha2=98; beta2=200000}
 PS=postPING(ping, segPE, rho2=rho2, alpha2=alpha2, beta2=beta2, sigmaB2=sigmaB2, PE=TRUE)
 @
-The result output $PS$ is a dataframe that contains estimated parameters of each nucleosome, users can use write.table command to export the selected columns of the result.
-<<Display-result>>=
-head(PS, 3)
-@
+The result output of \texttt{postPING} is a dataframe that contains estimated parameters of each nucleosome.
+%<<Display-result>>=
+%head(PS, 3)
+%@
 
 \section{Analyzing the prediction}
 \texttt{PING} comes with a set of tools to export or visualize the prediction.
-Here, we only show how to export the results into bed format for further use
-and how to make a quick plot to summarize the prediction. For more information
-on how to export the results or make more complex plots, refer to the section
+Here, we only show how to export the results into bed format for further analysis
+and how to make a quick plot to summarize the nucleosome prediction. For more information
+on how to export the results or make more complex figures, please refer to the section
 `Result output' of PING vignette.
 
 The function \texttt{makeRangedDataOutput} offers a simple way to convert the
-prediction results into a \texttt{RangedData} object ready to be exported with
-the package \texttt{rtracklayer}.
+prediction results into a \texttt{RangedData} objec that can be exported into a file using 
+the \texttt{rtracklayer} package. 
 
 <<makeRangedDataOutput, eval=FALSE>>=
 rdBed<-makeRangedDataOutput(PS, type="bed")
 library(rtracklayer)
 export(rdBed, "nucPrediction.bed")
 @
-
-The exported file contain all the predicted nucleosomes displayed in bed format
-and ranked by score.
+The exported file includes all information about the predicted nucleosomes, which are already automatically ranked by their score. 
 
 \vspace{10pt}
-For PE data, the function \texttt{plotSummary} will generate a plot displaying 
-the coverage by the reads used as input and the predicted position of the
-nucleosomes of $PS$ for the given ranges as well as theur associated prediction score.
+For paired-end sequencing data, the bult-in plotting function \texttt{plotSummary} can be used to visualize the predicted nucleosome positions obtained from \texttt{postPING} function. 
+
 
 <<plotSummary-PE, fig=TRUE>>=
 plotSummary(PS, gr, chr="chrM", from=1000, to=4000, PE=TRUE)
 @
 
-Note that the argument PE should be set to TRUE. All the arguments for this function will work for Paired-end data as well. Refer to PING vignette and ?plotSummary for more information.
+Note that the argument PE should be set to TRUE. All the arguments for this function will work for Paired-end data as well. Refer to PING vignette and  the man page ?plotSummary for more information.
 
 \end{document}

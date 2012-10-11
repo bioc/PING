@@ -13,7 +13,10 @@ postPING <- function(ping, seg, rho2=NULL, sigmaB2=NULL, alpha2=NULL, beta2=NULL
 {
 	if(length(paraPrior)!=6)
 	{
-	  paraPrior<-setParaPrior(dataType=dataType)
+	  if(isTRUE(PE))
+	    paraPrior<-setParaPrior(dataType=dataType, PExi=seg@paraSW$xi)
+	  else
+	    paraPrior<-setParaPrior(dataType=dataType)
 	}
 	if(length(paraEM)!=7)
 	{
