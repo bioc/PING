@@ -8,12 +8,13 @@ Reads a bam file using \code{Rsamtools} and extract the reads for each chromosom
 }
 
 \usage{
-bam2gr(bamFile, chr=NULL)
+bam2gr(bamFile, chr=NULL, PE=FALSE)
 }
 
 \arguments{
 \item{bamFile}{A character string, the name of the .bam file to read.}
 \item{chr}{An optional character string. If specified, only the selected chromosome will be returned. Speed up the computation.}
+\item{PE}{A \code{logical}. This should be set to TRUE for paired-end sequencing data.}
 }
 
 \value{

@@ -80,9 +80,11 @@ yeastBam<- system.file("extdata/yeastChrI_M.bam",package="PING")
 @
 
 <<bam2gr>>=
-gr<-bam2gr(bamFile=yeastBam)
+gr<-bam2gr(bamFile=yeastBam, PE=TRUE)
 @
 $gr$ is a \texttt{GRanges} object containing all the reads from the .bam file. 
+
+Note that this function will also work for single-end sequencing data and the argument \texttt{PE} should be set to TRUE when dealing with paired-end data.
 
 
 \section{PING analysis}

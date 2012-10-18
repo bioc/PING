@@ -142,7 +142,7 @@ prePING<-function(bamFile, outpath="./", save=TRUE)
 #          An optional chr if only selected chr are needed
 #   OUTPUT: A GRanges object that can be used in segmentPING
 ###
-bam2gr<-function(bamFile, chr=NULL)
+bam2gr<-function(bamFile, chr=NULL, PE=FALSE)
 {
 	paras <- ScanBamParam(what=c("qname", "rname", "strand", "pos", "mapq", "qwidth"), flag=scanBamFlag(isUnmappedQuery=FALSE,isDuplicate=FALSE))
 	bga<-readBamGappedAlignments(bamFile, use.names=TRUE, param=paras)
@@ -151,28 +151,36 @@ bam2gr<-function(bamFile, chr=NULL)
 	if(!is.null(chr))
 	  chrs<-chr
 	else
-	  chrs<-as.character(runValue(seqnames(bga)))
+	  chrs<-unique(as.character(runValue(seqnames(bga))))#
 	for(i in 1:length(chrs))
 	{ 
 	  cat("Chromosome ", chrs[[i]], "\n")
 	  bga2<-bga[seqnames(bga)==chrs[i]]
 	  bga2<-bga2[elementMetadata(bga2)$mapq>10]#filter out elt with low quality scores
-	  #change names
-	  qname<-elementMetadata(bga2)$qname
-	  qname<-substring(qname,15)
-	  qname<-gsub(pattern="/3", replacement="", qname)
-	  elementMetadata(bga2)$qname<-qname
-	  #merge pairs
-	  asdf<-as(bga2, "data.frame")
-	  df<-reshape(asdf, timevar="strand", idvar="qname", direction="wide")
-	  df2<-df[,c("start.+", "end.-")]
-	  rownames(df2)<-df[,"qname"]
-	  #Split PE and SE
-	  idx <- is.na(df2[,c("start.+","end.-")])
-	  reads <- list(P=df2[!(idx[,1]|idx[,2]),], yFm=df2[idx[,2],], yRm=df2[idx[,1],])
-	  #Build object
-	  ir<-IRanges(start=reads$P$`start.+`, end=reads$P$`end.-`)
-	  gr<-c(gr,GRanges(ranges=ir, seqnames=chrs[i])) #GR with PE (no SE)
+	  if(isTRUE(PE))
+	  {
+	    #change names
+	    qname<-elementMetadata(bga2)$qname
+	    qname<-substring(qname,15)
+	    qname<-gsub(pattern="/3", replacement="", qname)
+	    elementMetadata(bga2)$qname<-qname
+	    #merge pairs
+	    asdf<-as(bga2, "data.frame")
+	    df<-reshape(asdf, timevar="strand", idvar="qname", direction="wide")
+	    df2<-df[,c("start.+", "end.-")]
+	    rownames(df2)<-df[,"qname"]
+	    #Split PE and SE
+	    idx <- is.na(df2[,c("start.+","end.-")])
+	    reads <- list(P=df2[!(idx[,1]|idx[,2]),], yFm=df2[idx[,2],], yRm=df2[idx[,1],])
+	    #Build object
+	    ir<-IRanges(start=reads$P$`start.+`, end=reads$P$`end.-`)
+	    gr<-c(gr,GRanges(ranges=ir, seqnames=chrs[i])) #GR with PE (no SE)
+	  }
+	  else
+	  {
+	    ir<-IRanges(start=elementMetadata(bga2)$pos, width=elementMetadata(bga2)$qwidth)
+	    gr<-GRanges(ranges=ir, strand=elementMetadata(bga2)$strand, seqnames=chrs[i])
+	  }
 	}
 	return(gr)
 }
