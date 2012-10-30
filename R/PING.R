@@ -1,11 +1,16 @@
 #PING<-function(segReadsList,detail=0, rescale=1, PE=F)
-PING<-function(segReadsList, paraEM=NULL, paraPrior=NULL, PE=FALSE, dataType="MNase", detail=0, rescale=1)
+PING<-function(segReadsList, paraEM=NULL, paraPrior=NULL, dataType="MNase", detail=0, rescale=1)#, PE=FALSE
 {
 # detail is an integer indicate how much detail to print
 # detail=0 print no details, The larger detail, the more detail I print 
 # rescale is an integer indicate how reads was rescaled by yF/rescale and yR/rescale, default rescale=1
 # PE=F or PE=0 means single-end sequencing data, otherwise Paired-Ends sequencing data.
 
+  #get PE/SE
+  if(class(segReadsList)=="segReadsListPE")
+    PE<-TRUE
+  else
+    PE<-FALSE
 
   ### Constant used in the calculations
   cst<-gamma(3.5)/gamma(3)/sqrt(pi)
@@ -51,7 +56,7 @@ PING<-function(segReadsList, paraEM=NULL, paraPrior=NULL, PE=FALSE, dataType="MN
 	res<-.Call("fitPING", segReadsList, paraEM, paraPrior, minReads, detail,rescale, calpha, PE, PACKAGE="PING")
   }
 
-  myPingList<-newPingList(res,paraEM,paraPrior,minReads,segReadsList@N,segReadsList@Nc)
+  myPingList<-newPingList(res,paraEM,paraPrior,minReads,segReadsList@N,segReadsList@Nc, PE)
   return(myPingList)
 }
 

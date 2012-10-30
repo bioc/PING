@@ -9,8 +9,9 @@
 # min.dist=100, minimum distance of two adjacent nucs, smaller than that will be treated as duplicated prediction on boudary
 #postPING <- function(ping, seg, rho=8, makePlot=FALSE, datname="", seg.boundary=NULL, DupBound=NULL, IP=NULL, FragmentLength=100,mart=NULL,sigmaB2=2500,rho1=0.8,alpha1=20,alpha2=100,beta2=100000,xi=160, PE=FALSE, min.dist=100, lambda=-0.000064)
 #postPING <- function(ping, seg, rho=8, sigmaB2=2500,rho1=0.8,alpha1=20,alpha2=100,beta2=100000,xi=150,  min.dist=100, lambda=-0.000064)
-postPING <- function(ping, seg, rho2=NULL, sigmaB2=NULL, alpha2=NULL, beta2=NULL, min.dist= 100, paraEM=NULL, paraPrior=NULL, score=0.05, PE=FALSE, dataType="MNase", makePlot=FALSE, FragmentLength=100, mart=NULL, seg.boundary=NULL, DupBound=NULL, IP=NULL, datname="")
+postPING <- function(ping, seg, rho2=NULL, sigmaB2=NULL, alpha2=NULL, beta2=NULL, min.dist= 100, paraEM=NULL, paraPrior=NULL, score=0.05, dataType="MNase", makePlot=FALSE, FragmentLength=100, mart=NULL, seg.boundary=NULL, DupBound=NULL, IP=NULL, datname="")#, PE=FALSE
 {
+	PE<-ping@PE
 	if(length(paraPrior)!=6)
 	{
 	  if(isTRUE(PE))
@@ -100,11 +101,11 @@ PostError <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBoun
 	}else
 	{
 		cat("\n The", length(idxE), "Regions with following IDs are reprocessed for singularity problem: \n")
-		print(head(idxE))
+		print(head(as.integer(idxE)))
 
 		ssE=summarySeg(seg)[idxE,]
 		paraPriorPostError<-setParaPrior(xi=paraPrior$xi, rho=rho2, alpha=paraPrior$alpha, beta=paraPrior$beta, lambda=paraPrior$lambda, dMu=paraPrior$dMu)
-		pingE=PING(seg[idxE], paraEM=paraEM, paraPrior=paraPriorPostError, PE=PE)
+		pingE=PING(seg[idxE], paraEM=paraEM, paraPrior=paraPriorPostError)#, PE=PE)
 
 		
 		PS1=as(pingE,"data.frame")
@@ -190,10 +191,7 @@ PostDelta <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBoun
 		print(head(idxFilt))
 
 		paraPriorPostDelta<-setParaPrior(xi=paraPrior$xi,rho=rho2, alpha=paraPrior$alpha, beta=paraPrior$beta, lambda=paraPrior$lambda, dMu=paraPrior$dMu)
-		pingFilt=PING(seg[idxFilt], paraEM=paraEM, paraPrior=paraPriorPostDelta, PE=PE)
-		#change Prior back to default setting
-
-
+		pingFilt=PING(seg[idxFilt], paraEM=paraEM, paraPrior=paraPriorPostDelta)#, PE=PE)
 	
 		tempPS1=as(pingFilt,"data.frame")
 		#tempPS1=as.df(pingFilt,seg[idxFilt])
@@ -277,7 +275,7 @@ PostSigma <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBoun
 		
 		#change hyper-parameters for rho (to avoid atypical delta) and beta (to ask for smaller "sigma")
 		paraPriorPostSigma<-setParaPrior(xi=paraPrior$xi, rho=rho2, alpha=alpha2, beta=beta2, lambda=paraPrior$lambda, dMu=paraPrior$dMu)
-		system.time(pingSigma<-PING(segSigma, paraEM=paraEM, paraPrior=paraPriorPostSigma, PE=PE))
+		system.time(pingSigma<-PING(segSigma, paraEM=paraEM, paraPrior=paraPriorPostSigma))#, PE=PE))
 
 
 		tempPS1=as(pingSigma,"data.frame")
@@ -342,9 +340,10 @@ PostDup <- function(ps, ping, seg, rho2=8, paraPrior, PE, min.dist)
 		newseg=vector("list",ndup)
 		for(i in 1:ndup) { newseg[[i]]=processDup(paras=ps[dups[i]+c(0,1),],seg=seg,PE=PE) }
 		segDup=seg; segDup@List=newseg
-		paraEM<-setParaEM(minK=1,maxK=15,tol=1e-4,B=100,mSelect="BIC",mergePeaks=TRUE,mapCorrect=TRUE)
+		#paraEM<-setParaEM(minK=1,maxK=15,tol=1e-4,B=100,mSelect="BIC",mergePeaks=TRUE,mapCorrect=TRUE)
+		paraEM<-setParaEM(minK=1,maxK=2,tol=1e-4,B=100,mSelect="AIC3",mergePeaks=TRUE,mapCorrect=TRUE)
 		paraPriorPostDup<-setParaPrior(xi=paraPrior$xi, rho=rho2, alpha=paraPrior$alpha, beta=paraPrior$beta, lambda=paraPrior$lambda, dMu=paraPrior$dMu)
-		system.time(pingDup<-PING(segDup, paraEM=paraEM, paraPrior=paraPriorPostDup, PE=PE))
+		system.time(pingDup<-PING(segDup, paraEM=paraEM, paraPrior=paraPriorPostDup))#, PE=PE))
 
 		
 		tempPS1=as(pingDup,"data.frame")

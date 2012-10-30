@@ -1,9 +1,15 @@
 segmentPING<-function(data, dataC=NULL, map=NULL,
 		minReads=2, minReadsInRegion=3, jitter=FALSE, maxLregion=1200, minLregion=80, step=NULL, width=NULL, dataType="H",
-		islandDepth=NULL, min_cut=NULL, max_cut=NULL, chr=NULL)
+		#islandDepth=NULL, min_cut=NULL, max_cut=NULL, chr=NULL, PE=FALSE )
+		islandDepth=3, min_cut=50, max_cut=1000, chr=NULL, PE=FALSE )
 {
-  #get reads type: SE/PE
-  if(is.null(islandDepth))
+  ##Determine PE/SE based on reads width
+  #if(length(unique(width(data)))==1)
+    #PE<-FALSE
+  #else
+    #PE<-TRUE
+
+  if(!isTRUE(PE))
   {
 	  cat("Performing segmentation for single end reads\n")
 	  if(dataType=="TF")
@@ -32,9 +38,11 @@ segmentPING<-function(data, dataC=NULL, map=NULL,
 	  
 	  
   }
-  else #TODO: Find a safe way to determine SE/PE.
+  else
   {
 	  cat("Performing segmentation for paired-end reads\n")
+	  #TODO: Add message stating that we are using default PE args
+	  
 	  if(!is.character(chr))
 		  stop("Argument chr should be a character\n")
 	  if(length(chr)>1)
@@ -51,16 +59,9 @@ segmentPING<-function(data, dataC=NULL, map=NULL,
 	  PE.RD<-IRanges(start=start(data), end=end(data))
 	  PE.RD<-PE.RD[which(width(PE.RD)>min_cut | width(PE.RD)<max_cut)]		
 	  PE.RD<-IRanges(start=start(PE.RD), end=end(PE.RD))
+	  #Get the candidate regions (IRanges)
 	  candidate_RD<-candidate.region(PE.RD, islandDepth, min_cut, max_cut)
 	  
-	  #Formating data for candidate.region
-	  #idx <- ( data$P$"pos.-" >  data$P$"pos.+")
-	  #PE_data <- data$P[idx, ]
-	  #PE.RD.temp <- IRanges(start=PE_data$"pos.+" , end=PE_data$"pos.-")
-	  #PE.RD <- PE.RD.temp[width(PE.RD.temp)<max_cut, ]	## Exclude too wide fragment ##
-	  
-	  #Get the candidate regions (IRanges)
-	  #candidate_RD <- candidate.region(PE.RD, islandDepth, min_cut, max_cut)
 
 	  #Getting parameters for segmentation
 	  #PEMF.RD <- IRanges(start=data$yFm$"pos.+", end=data$yFm$"pos.+"+1)
@@ -90,51 +91,6 @@ segmentPING<-function(data, dataC=NULL, map=NULL,
   return(newSet)
 }
 
-
-
-###########################################
-## Pre-process bam files for segmentation
-## 
-#prePING<-function(bamFile, outpath="./", save=TRUE)
-#{
-	#paras <- ScanBamParam(what=c("qname", "rname", "strand", "pos", "mapq", "qwidth"), flag=scanBamFlag(isUnmappedQuery=FALSE,isDuplicate=FALSE))
-	#rawData <- scanBam(paste(bamFile), param=paras)[[1]]
-	#rawData$rname <- as.character(rawData$rname)
-	#rawData$qname=substring(as.character(rawData$qname),15)
-	#rawData$qname=gsub(pattern="/3", replacement="", rawData$qname)
-	#addon <- rawData$qwidth
-	#addon[rawData$strand!="-"] <- 0  # to get end of "-" reads, seq length need to be added to their positions
-	#retained <-  rawData$mapq > 10  # filter out reads with bad quality scores
-	#temp1 <- data.frame(qname=rawData$qname[retained], 
-			#rname=rawData$rname[retained], 
-			#strand=rawData$strand[retained], 
-			#pos=(rawData$pos+addon)[retained])
-	#temp1 <- split(temp1[,c( "qname", "strand", "pos" )],temp1$rname) # split data into chromosomes
-#	
-	#PEreads<-vector('list', length(temp1))
-	#names(PEreads)<-names(temp1)
-	#for(chrs in names(temp1))
-	#{
-		#print(chrs)
-	#	
-		#dat <- temp1[[chrs]]
-		#temp3=reshape(dat, timevar="strand", idvar="qname", direction="wide")
-		#idx <- is.na(temp3[,c("pos.+","pos.-")])
-		#reads <- list(P=temp3[!(idx[,1]|idx[,2]),], yFm=temp3[idx[,2],], yRm=temp3[idx[,1],])
-		#if(isTRUE(save))
-		#{
-			#fName=paste(outpath,"/",bamFile,"_",chrs,".rda",sep="")
-			#cat("Saving reads for chromosome", chrs, "in the file", fName,"\n")
-			#save(reads, file=fName)
-		#}
-		#else
-		#{
-			#PEreads[[chrs]]<-reads
-		#}
-	#}
-#	
-	#return(invisible(PEreads))
-#}
 
 ###
 # bam2gr:

@@ -352,19 +352,31 @@ SEXP fitModelAllk(SEXP segReads, SEXP paraEM, SEXP paraPrior, SEXP minReads, SEX
           sumcR++;
         }
       }
-      //REAL(scoreF)[k]=sumF/(INTEGER(N)[0]*fmax2(sumcF,2.)/INTEGER(Nc)[0]);
-      //REAL(scoreR)[k]=sumR/(INTEGER(N)[0]*fmax2(sumcR,2.)/INTEGER(Nc)[0]);
-		Nratio=(INTEGER(Nc)[0]+0.0)/(INTEGER(N)[0]+0.0);
-		REAL(scoreF)[k]=Nratio*sumF/fmax2(sumcF,2.);
-		REAL(scoreR)[k]=Nratio*sumR/fmax2(sumcR,2.);
+	Nratio=(INTEGER(Nc)[0]+0.0)/(INTEGER(N)[0]+0.0);
+	REAL(scoreF)[k]=Nratio*sumF/fmax2(sumcF,2.);
+	REAL(scoreR)[k]=Nratio*sumR/fmax2(sumcR,2.);
+       if(PE>0)//score is divided by 2 if PE
+       {
+		REAL(score)[k]=(Nratio*(sumR+sumF)/fmax2((sumcF+sumcR),2.))/2;
+       }
+       else
+       {
 		REAL(score)[k]=Nratio*(sumR+sumF)/fmax2((sumcF+sumcR),2.);
+       }
     }
     else
     {
 	    /*Rprintf("No control\n");*/
       REAL(scoreF)[k]=sumF/(sqrt(sF[k])*calpha*2.0);
       REAL(scoreR)[k]=sumR/(sqrt(sR[k])*calpha*2.0);
+      if(PE>0)//score is divided by 2 if PE
+      {
+	  REAL(score)[k]=((sumF+sumR)/((sqrt(sF[k])+sqrt(sR[k]))*calpha*2.0))/2;
+      }
+      else
+      {
 	  REAL(score)[k]=(sumF+sumR)/((sqrt(sF[k])+sqrt(sR[k]))*calpha*2.0);
+      }
 	//REAL(scoreF)[k]=sumF; 
 	//REAL(scoreR)[k]=sumR;
     }

@@ -397,14 +397,44 @@ setMethod("plot", signature("data.frame", "data.frame"),
 
 
 # CoverageTrack
-CoverageTrack<-function(reads, chr, gen="gen", FragmentLength=200, PE=FALSE)
+#CoverageTrack<-function(reads, chr, gen="gen", FragmentLength=200, name="XSET", PE=FALSE)
+#{
+	#if(class(reads)!="list")
+		#reads<-list(reads)
+#
+	#colList<-c("black", "red", "orange", "yellow", "green", "blue")
+	#for(idxReads in 1:length(reads))
+	#{
+	  #if not GRanges, assume it is PE
+	  #if(class(reads[[idxReads]])!="GRanges")
+	  #{
+	  	#stop("The reads should be of class 'GRanges'")
+	  #}
+	  #else if(!isTRUE(PE))
+	  #{#no need to resize for PE sequencing data (width known)
+	  	#EXT<-resize(reads[[idxReads]][seqnames(reads[[idxReads]])==chr], width=FragmentLength)
+	  #}
+	  #else
+	  #{
+	    #EXT<-reads[[idxReads]][seqnames(reads[[idxReads]])==chr]
+	  #}
+	  #start(EXT[start(EXT)<1,])<-1 #For reverse reads that have been extended into negative coordinates
+	  #XSET  <- c(XSET, coverage(EXT))
+	#}
+	  #covTrack<-DataTrack(data=XSET[[chr]]@values, start=start(XSET[[chr]]), width=width(XSET[[chr]]),
+	  		#col=colList,
+	  		#chromosome=chr, genome=gen, name=name, type="s", col.axis="black", cex.axis=1, col.title="black")
+	#return(covTrack)
+#}
+
+
+
+## CoverageTrack
+CoverageTrack<-function(ping, reads, chr, gen="gen", FragmentLength=200, name="XSET")#, PE=FALSE
 {
-	#if not GRanges, assume it is PE
+	PE<-ping@PE
 	if(class(reads)!="GRanges")
 	{
-		#if(is.null(reads$P))
-			#stop("The object 'reads' should be of class 'GRanges' or a 'list' with an attribute P")
-		#EXT<-GRanges(ranges=IRanges(start=reads$P$`pos.+`, end=reads$P$`pos.-`), seqnames=chr)
 		stop("The reads should be of class 'GRanges'")
 	}
 	else if(!isTRUE(PE))
@@ -413,39 +443,14 @@ CoverageTrack<-function(reads, chr, gen="gen", FragmentLength=200, PE=FALSE)
 	}
 	else
 	{
-	  EXT<-reads[seqnames(reads)==chr]
+		EXT<-reads[seqnames(reads)==chr]
 	}
-	XSET  = coverage(EXT)
+	XSET = coverage(EXT)
 	covTrack<-DataTrack(data=XSET[[chr]]@values, start=start(XSET[[chr]]), width=width(XSET[[chr]]),
-			col="black",
-			chromosome=chr, genome=gen, name="XSET", type="s", col.axis="black", cex.axis=1, col.title="black")
+	col="black",
+	chromosome=chr, genome=gen, type="s", col.axis="black", cex.axis=1, col.title="black", name=name)
 	return(covTrack)
 }
-
-###
-## RawReadsTrack
-##   Shows the starting position of forward and reverse reads
-###
-#RawReadsTrack<-function(reads, chr, gen="gen")#, from=NULL, to=NULL)
-#{
-##	#subset the reads by starting pos
-##	reads<-reads[which(start(reads)>from & start(reads)<to)]
-#	idxF<-which(as.character(strand(reads))=="+")
-#	idxR<-which(as.character(strand(reads))=="-")
-#	#Make 2 values columns to use groups
-#	rev<-c(rep(1, length(idxR)),rep(NA, length(idxF)))
-#	fwd<-c(rep(NA, length(idxR)), rep(-1, length(idxF)))
-#	values(reads)<-cbind(rev,fwd)
-#	
-#	RawTrack<-DataTrack(data=t(as.matrix(elementMetadata(reads))),
-#			groups=c("rev", "fwd"),
-#			col=c("red", "blue"), pch=c("<",">"), font="sans",
-#			cex=2, size=1,
-#			ylim=c(-4,4), title=FALSE, col.title="black", name="Raw reads",
-#			showAxis=FALSE, col.axis="transparent",
-#			start=start(reads), end=start(reads), chromosome=chr, genome=gen)
-#	return(RawTrack)
-#}
 
 
 ##
@@ -453,8 +458,9 @@ CoverageTrack<-function(reads, chr, gen="gen", FragmentLength=200, PE=FALSE)
 #   INPUT: The reads used in the segmentation step
 #   OUTPUT: An AnnotationTrack object showing the starting position of forward and reverse reads
 ##
-RawReadsTrack<-function(reads, chr, gen="gen", from=NULL, to=NULL, PE=FALSE, ...)
+RawReadsTrack<-function(ping, reads, chr, gen="gen", from=NULL, to=NULL,...)# PE=FALSE, 
 {
+	PE<-ping@PE
 	reads<-reads[seqnames(reads)==chr]
 	if(length(c(from,to))==2 | is.numeric(c(from, to)))
 	{
@@ -545,6 +551,8 @@ NucleosomeTrack<-function(PS, chr, gen="gen", scoreTrack=TRUE, scoreThreshold=0.
 	starts<-c(wideStart, smallStart)
 	widths<-c(wideWidth, smallWidth)
 
+	idList<-c(rep("", length(wideStart)), PS$ID)
+
 	tList<-list()
 	if(isTRUE(scoreTrack))
 	{
@@ -556,7 +564,7 @@ NucleosomeTrack<-function(PS, chr, gen="gen", scoreTrack=TRUE, scoreThreshold=0.
 	nucTrack<-AnnotationTrack(start=starts, 
 			width=widths,
 			chromosome=chr, genome=gen,
-			lwd=1, col="darkgray", alpha=1, size=0.5,# showFeatureId=TRUE,
+			lwd=1, col="darkgray", alpha=1, size=0.5,# featureID=idList, showFeatureId=TRUE,
 			stacking="dense",feature=c(rep("wide", nrow(PS)), rep("small", nrow(PS))),
 			wide="darkgray",small="white", 
 			shape="ellipse", col.title="black", collapse=FALSE, name=name,
@@ -565,21 +573,6 @@ NucleosomeTrack<-function(PS, chr, gen="gen", scoreTrack=TRUE, scoreThreshold=0.
 	return(tList)
 }
 
-##
-# NucScoreTrack: Shows the score associated with the prediction of the nucleosomes.
-#   INPUT:
-#     PS: The output of postPING
-#     chr: Name of the chr to display
-#     gen: Name of the genome
-##
-#NucScoreTrack<-function(PS, chr, gen="gen", ...)
-#{
-	#NSTrack<-DataTrack(data=score(PS), start=mu(PS)-5, width=10, chromosome=chr, genome=gen,
-		#type="histogram", size=1,
-		#col.axis="black", cex.axis=0.5, col.title="black", ...)
-	#return(NSTrack)
-#	
-#}
 
 ##
 # Plot a summary of PING estimates using Gviz
@@ -593,10 +586,11 @@ NucleosomeTrack<-function(PS, chr, gen="gen", scoreTrack=TRUE, scoreThreshold=0.
 #   GRT : Doesn't  work in the current version of Gviz.
 #   PE : Set to TRUE for Paired-End Sequencing data.
 ##
-plotSummary<-function(PS, reads, chr, gen="gen", from=NULL, to=NULL, FragmentLength=200, title="", scoreThreshold=0.05, PE=FALSE)
+plotSummary<-function(PS, ping, reads, chr, gen="gen", from=NULL, to=NULL, FragmentLength=200, title="", scoreThreshold=0.05)#, PE=FALSE)
 {
 	GRT<-FALSE
- 
+	PE<-ping@PE 
+
 	if(class(PS)!="list")
 		PS<-list(PS)
 	gt<-GenomeAxisTrack(add53=TRUE, add35=TRUE, col="black")
@@ -614,11 +608,11 @@ plotSummary<-function(PS, reads, chr, gen="gen", from=NULL, to=NULL, FragmentLen
 		tList<-c(tList, bgrTrack)
 	}
 			
-	covTrack<-CoverageTrack(reads=reads, chr=chr, gen=gen, FragmentLength=FragmentLength, PE=PE)
+	covTrack<-CoverageTrack(ping=ping, reads=reads, chr=chr, gen=gen, FragmentLength=FragmentLength)#, PE=PE)
 	tList<-c(tList, covTrack)
 	if(!isTRUE(PE))
 	{
-		rrTrack<-RawReadsTrack(reads=reads, chr=chr, gen=gen, from=from, to=to, name="Aligned reads", PE=PE)
+		rrTrack<-RawReadsTrack(ping=ping, reads=reads, chr=chr, gen=gen, from=from, to=to, name="Aligned reads")#, PE=PE)
 		tList<-c(tList, rrTrack)
 	}
 	for(idxPS in 1:length(PS))

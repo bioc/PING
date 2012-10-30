@@ -13,6 +13,7 @@ setClass("pingError",
 	)
 
 setClass("pingList", 
+	representation=representation(PE="logical"),
 	contains="picsList"
 	)
 
@@ -72,7 +73,7 @@ newPingError<-function(string)
   new("pingError", errorCode=string)
 }
 
-newPingList<-function(List, paraEM, paraPrior, minReads, N, Nc)
+newPingList<-function(List, paraEM, paraPrior, minReads, N, Nc, PE)
 {
   if(!is.list(paraEM) & !all(sapply(paraEM,"is.numeric")))
   {
@@ -94,5 +95,10 @@ newPingList<-function(List, paraEM, paraPrior, minReads, N, Nc)
   {
     stop("Argument 'N' and 'Nc' must be integers", call.=FALSE)    
   }
-  new("pingList", List=List, paraEM=paraEM, paraPrior=paraPrior, minReads=minReads, N=N, Nc=Nc)
+  PE<-as.logical(PE)
+  if(!is.logical(PE))
+  {
+    stop("Argument 'PE' must be logical", call.=FALSE)    
+  }
+  new("pingList", List=List, paraEM=paraEM, paraPrior=paraPrior, minReads=minReads, N=N, Nc=Nc, PE=PE)
 }

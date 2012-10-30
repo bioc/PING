@@ -113,20 +113,19 @@ It returns a \texttt{segReadsListPE} object.
 
 
 \subsection{Parameter estimation}
-For paired-end data in \texttt{PING}, the users have to set the argument of PE as TRUE. 
 
 <<PING-analysis>>=
-ping<-PING(segPE, PE=TRUE)
+ping<-PING(segPE)
 @
 The returned object is a \texttt{pingList}, which will go through a post-processing step using \texttt{postPING} function.
 
 
 \section{Post-processing PING results}
-Here again, the only difference with single-end data is that the argument PE should be set to TRUE.
+%Here again, the only difference with single-end data is that the argument PE should be set to TRUE.
 
 <<Post-process-PING-result>>=
 {sigmaB2=3600; rho2=15; alpha2=98; beta2=200000}
-PS=postPING(ping, segPE, rho2=rho2, alpha2=alpha2, beta2=beta2, sigmaB2=sigmaB2, PE=TRUE)
+PS=postPING(ping, segPE, rho2=rho2, alpha2=alpha2, beta2=beta2, sigmaB2=sigmaB2)
 @
 The result output of \texttt{postPING} is a dataframe that contains estimated parameters of each nucleosome.
 %<<Display-result>>=
@@ -156,9 +155,10 @@ For paired-end sequencing data, the bult-in plotting function \texttt{plotSummar
 
 
 <<plotSummary-PE, fig=TRUE>>=
-plotSummary(PS, gr, chr="chrM", from=1000, to=4000, PE=TRUE)
+plotSummary(PS, gr, chr="chrM", from=1000, to=4000)
 @
 
-Note that the argument PE should be set to TRUE. All the arguments for this function will work for Paired-end data as well. Refer to PING vignette and  the man page ?plotSummary for more information.
+%Note that the argument PE should be set to TRUE. 
+All the arguments for this function will work for Paired-end data as well. Refer to PING vignette and  the man page ?plotSummary for more information.
 
 \end{document}

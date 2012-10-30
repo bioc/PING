@@ -8,7 +8,7 @@
 \usage{
 	segmentPING(data, dataC=NULL, map=NULL, minReads=2, minReadsInRegion=3,
     jitter=FALSE, maxLregion=1200, minLregion=80, step=NULL, width=NULL, dataType="H",
-    islandDepth=NULL, min_cut=NULL, max_cut=NULL, chr=NULL)
+    islandDepth=NULL, min_cut=NULL, max_cut=NULL, chr=NULL, PE=FALSE)
 }
 
 
@@ -24,6 +24,7 @@
   \item{dataType}{Type of experiment.}
   \item{maxLregion}{The maximum length.}
   \item{minLregion}{The minimum length.}
+  \item{PE}{A \code{logical}. Set to TRUE for Paired-End sequencing data.}
   \item{islandDepth, min_cut, max_cut, chr}{Parameters used for paired-end sequencing data segmentation.}
 	\describe{
 		\item{islandDepth}{An \code{integer}. The minimum number of reads to cover a candidate region.}
