@@ -60,9 +60,9 @@ postPING <- function(ping, seg, rho2=NULL, sigmaB2=NULL, alpha2=NULL, beta2=NULL
 	ps$rank=1:nrow(ps)
 
 	#ps1=PostError(ps=ps, ping=ping, seg=seg, rho=rho, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLength=FragmentLength,rho1=rho1,alpha1=alpha1,xi=xi, PE=PE, lambda=lambda)
-	ps1=PostError(ps=ps, ping=ping, seg=seg, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLength=FragmentLength, paraEM=paraEM, paraPrior=paraPrior, rho2=rho2, PE=PE) 
+	ps1=PostError(ps=ps, ping=ping, seg=seg, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLength=FragmentLength, paraEM=paraEM, paraPrior=paraPrior, rho2=rho2)
 	#ps2=PostDelta(ps=ps1, ping=ping, seg=seg, rho=rho, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLength=FragmentLength,sigmaB2=sigmaB2,rho1=rho1,alpha1=alpha1,xi=xi, PE=PE,lambda=lambda)
-	ps2=PostDelta(ps=ps1, ping=ping, seg=seg, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLength=FragmentLength, paraEM=paraEM, paraPrior=paraPrior, rho2=rho2, sigmaB2=sigmaB2, score=score, PE=PE)
+	ps2=PostDelta(ps=ps1, ping=ping, seg=seg, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLength=FragmentLength, paraEM=paraEM, paraPrior=paraPrior, rho2=rho2, sigmaB2=sigmaB2, score=score)
 	#ps3=PostSigma(ps=ps2, ping=ping, seg=seg, rho=rho, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLength=FragmentLength,mart=mart,sigmaB2=sigmaB2,rho1=rho1,alpha1=alpha1,alpha2=alpha2,beta2=beta2,xi=xi, PE=PE,lambda=lambda)
 	ps3=PostSigma(ps=ps2, ping=ping, seg=seg, rho2=rho2, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLength=FragmentLength, mart=mart, sigmaB2=sigmaB2, paraEM=paraEM, paraPrior=paraPrior, alpha2=alpha2,beta2=beta2, score=score, PE=PE)
 	#PS=PostDup(ps=ps3, ping=ping, seg=seg, rho=rho,rho1=rho1,alpha1=alpha1,xi=xi, PE=PE,min.dist=min.dist,lambda=lambda)
@@ -91,7 +91,7 @@ postPING <- function(ping, seg, rho2=NULL, sigmaB2=NULL, alpha2=NULL, beta2=NULL
 # PS: the post-processed PING results used to replace input "ps"
 ########################################################
 #PostError <- function(ps, ping, seg, rho=8, makePlot=FALSE, datname="", DupBound=NULL, IP=NULL, FragmentLength=100,rho1,alpha1,xi, PE,lambda)
-PostError <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBound=NULL, IP=NULL, FragmentLength=100, paraEM, paraPrior, PE)
+PostError <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBound=NULL, IP=NULL, FragmentLength=100, paraEM, paraPrior)
 {
 	idxE=which(code(ping)!="")
 	if(length(idxE)==0)
@@ -105,7 +105,7 @@ PostError <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBoun
 
 		ssE=summarySeg(seg)[idxE,]
 		paraPriorPostError<-setParaPrior(xi=paraPrior$xi, rho=rho2, alpha=paraPrior$alpha, beta=paraPrior$beta, lambda=paraPrior$lambda, dMu=paraPrior$dMu)
-		pingE=PING(seg[idxE], paraEM=paraEM, paraPrior=paraPriorPostError)#, PE=PE)
+		pingE=PING(seg[idxE], paraEM=paraEM, paraPrior=paraPriorPostError)
 
 		
 		PS1=as(pingE,"data.frame")
@@ -171,7 +171,7 @@ PostError <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBoun
 ########################################################
 
 #PostDelta <- function(ps, ping, seg, rho=8, makePlot=FALSE, datname="", DupBound=NULL, IP=NULL, FragmentLength=100, sigmaB2,rho1,alpha1,xi, PE,lambda)
-PostDelta <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBound=NULL, IP=NULL, FragmentLength=100, paraEM, paraPrior, sigmaB2, score, PE)
+PostDelta <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBound=NULL, IP=NULL, FragmentLength=100, paraEM, paraPrior, sigmaB2, score)
 {
 	temp0=FilterPING(ps,detail=FALSE,deltaB=c(80,250),sigmaB2=sigmaB2,sigmaB1=10000,seB=Inf,score=score)
 	
@@ -191,7 +191,7 @@ PostDelta <- function(ps, ping, seg, rho2=8, makePlot=FALSE, datname="", DupBoun
 		print(head(idxFilt))
 
 		paraPriorPostDelta<-setParaPrior(xi=paraPrior$xi,rho=rho2, alpha=paraPrior$alpha, beta=paraPrior$beta, lambda=paraPrior$lambda, dMu=paraPrior$dMu)
-		pingFilt=PING(seg[idxFilt], paraEM=paraEM, paraPrior=paraPriorPostDelta)#, PE=PE)
+		pingFilt=PING(seg[idxFilt], paraEM=paraEM, paraPrior=paraPriorPostDelta)
 	
 		tempPS1=as(pingFilt,"data.frame")
 		#tempPS1=as.df(pingFilt,seg[idxFilt])

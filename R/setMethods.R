@@ -557,8 +557,8 @@ NucleosomeTrack<-function(PS, chr, gen="gen", scoreTrack=TRUE, scoreThreshold=0.
 	if(isTRUE(scoreTrack))
 	{
 		NSTrack<-DataTrack(data=score(PS), start=mu(PS)-5, width=10, chromosome=chr, genome=gen,
-			type="histogram", size=1,
-			col.axis="black", cex.axis=0.5, col.title="black", name="score", ...)
+			type=c("histogram","g"), size=1,
+			col.axis="black", cex.axis=0.5, col.title="black", name="score", v=0, ...)
 		tList<-c(tList, NSTrack)
 	}	
 	nucTrack<-AnnotationTrack(start=starts, 

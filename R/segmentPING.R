@@ -41,6 +41,8 @@ segmentPING<-function(data, dataC=NULL, map=NULL,
   else
   {
 	  cat("Performing segmentation for paired-end reads\n")
+	  if(var(width(data))<5)
+    		warning("This data seems to be Single-End reads")
 	  #TODO: Add message stating that we are using default PE args
 	  
 	  if(!is.character(chr))

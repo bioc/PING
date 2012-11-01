@@ -8,7 +8,7 @@
 \usage{
 	segmentPING(data, dataC=NULL, map=NULL, minReads=2, minReadsInRegion=3,
     jitter=FALSE, maxLregion=1200, minLregion=80, step=NULL, width=NULL, dataType="H",
-    islandDepth=NULL, min_cut=NULL, max_cut=NULL, chr=NULL, PE=FALSE)
+    islandDepth=3, min_cut=50, max_cut=1000, chr=NULL, PE=FALSE)
 }
 
 
