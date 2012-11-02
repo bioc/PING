@@ -506,7 +506,7 @@ s,@PKG_CONFIG@,|#_!!_#|/usr/bin/pkg-config,g
 s,@GSL_CFLAGS@,|#_!!_#| ,g
 s,@GSL_LIBS@,|#_!!_#|-lgsl -lgslcblas -lm  ,g
 s,@GSL_CONFIG@,|#_!!_#|,g
-s,@CC@,|#_!!_#|gcc -std=gnu99,g
+s,@CC@,|#_!!_#|gcc -m64 -std=gnu99,g
 s,@CFLAGS@,|#_!!_#|-g -O2,g
 s,@LDFLAGS@,|#_!!_#|,g
 s,@CPPFLAGS@,|#_!!_#|,g

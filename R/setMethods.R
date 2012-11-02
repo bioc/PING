@@ -448,7 +448,7 @@ CoverageTrack<-function(ping, reads, chr, gen="gen", FragmentLength=200, name="X
 	XSET = coverage(EXT)
 	covTrack<-DataTrack(data=XSET[[chr]]@values, start=start(XSET[[chr]]), width=width(XSET[[chr]]),
 	col="black",
-	chromosome=chr, genome=gen, type="s", col.axis="black", cex.axis=1, col.title="black", name=name)
+	chromosome=chr, genome=gen, type=c("g","s"), v=0, col.axis="black", cex.axis=1, col.title="black", col.grid="gray", name=name)
 	return(covTrack)
 }
 
@@ -516,10 +516,6 @@ RawReadsTrack<-function(ping, reads, chr, gen="gen", from=NULL, to=NULL,...)# PE
 			ylim=c(m, M), size=1,
 			showAxis=FALSE, col.axis="transparent", col.title="black", ...)	
 	})#end s4
-#	print(s1)
-#	print(s2)
-#	print(s3)
-#	print(s4)
 return(RawReadsTrack)
 }
 
@@ -558,7 +554,7 @@ NucleosomeTrack<-function(PS, chr, gen="gen", scoreTrack=TRUE, scoreThreshold=0.
 	{
 		NSTrack<-DataTrack(data=score(PS), start=mu(PS)-5, width=10, chromosome=chr, genome=gen,
 			type=c("histogram","g"), size=1,
-			col.axis="black", cex.axis=0.5, col.title="black", name="score", v=0, ...)
+			col.axis="black", cex.axis=0.5, col.title="black", name="score", v=0, col.grid="gray", ...)
 		tList<-c(tList, NSTrack)
 	}	
 	nucTrack<-AnnotationTrack(start=starts, 
@@ -586,7 +582,7 @@ NucleosomeTrack<-function(PS, chr, gen="gen", scoreTrack=TRUE, scoreThreshold=0.
 #   GRT : Doesn't  work in the current version of Gviz.
 #   PE : Set to TRUE for Paired-End Sequencing data.
 ##
-plotSummary<-function(PS, ping, reads, chr, gen="gen", from=NULL, to=NULL, FragmentLength=200, title="", scoreThreshold=0.05)#, PE=FALSE)
+plotSummary<-function(PS, ping, reads, chr, gen="gen", from=NULL, to=NULL, FragmentLength=200, title="", scoreThreshold=0.05)
 {
 	GRT<-FALSE
 	PE<-ping@PE 
@@ -608,17 +604,16 @@ plotSummary<-function(PS, ping, reads, chr, gen="gen", from=NULL, to=NULL, Fragm
 		tList<-c(tList, bgrTrack)
 	}
 			
-	covTrack<-CoverageTrack(ping=ping, reads=reads, chr=chr, gen=gen, FragmentLength=FragmentLength)#, PE=PE)
+	covTrack<-CoverageTrack(ping=ping, reads=reads, chr=chr, gen=gen, FragmentLength=FragmentLength)
 	tList<-c(tList, covTrack)
 	if(!isTRUE(PE))
 	{
-		rrTrack<-RawReadsTrack(ping=ping, reads=reads, chr=chr, gen=gen, from=from, to=to, name="Aligned reads")#, PE=PE)
+		rrTrack<-RawReadsTrack(ping=ping, reads=reads, chr=chr, gen=gen, from=from, to=to, name="Aligned reads")
 		tList<-c(tList, rrTrack)
 	}
 	for(idxPS in 1:length(PS))
 	{
 		tList<-c(tList,
-			#NucScoreTrack(PS=PS[[idxPS]], chr=chr, gen=gen, name="score"),
 			NucleosomeTrack(PS=PS[[idxPS]], chr=chr, gen=gen, scoreThreshold=scoreThreshold)
 			)
 	}

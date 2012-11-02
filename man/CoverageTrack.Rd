@@ -7,15 +7,16 @@
 This track displays the coverage of the genomic region by the reads used as input for the segmentation step.}
 
 \usage{
-CoverageTrack(reads, chr, gen="gen", FragmentLength=200, PE=FALSE)
+CoverageTrack(ping, reads, chr, gen="gen", FragmentLength=200)
 }
 
 \arguments{
+\item{ping}{An object of class \code{\linkS4class{pingList}}. The output of \code{PING}.}
 \item{reads}{An object of class \code{\linkS4class{GRanges}}. The reads used in the segmentation process.}
 \item{chr}{A character string for the chromosome name.}
 \item{gen}{An optional character string for the genome name.}
 \item{FragmentLength}{An \code{integer}. The fixed length of the reads. If PE is set to TRUE, this argument can be ignored.}
-\item{PE}{A \code{logical}. Set to true for paired-end sequencing data, where the read length is already known.}
+%\item{PE}{A \code{logical}. Set to true for paired-end sequencing data, where the read length is already known.}
 }
 
 \value{
