@@ -7,7 +7,7 @@
 This track displays the coverage of the genomic region by the reads used as input for the segmentation step.}
 
 \usage{
-CoverageTrack(ping, reads, chr, gen="gen", FragmentLength=200)
+CoverageTrack(ping, reads, chr, gen="gen", FragmentLength=200, name="XSET")
 }
 
 \arguments{
@@ -16,6 +16,7 @@ CoverageTrack(ping, reads, chr, gen="gen", FragmentLength=200)
 \item{chr}{A character string for the chromosome name.}
 \item{gen}{An optional character string for the genome name.}
 \item{FragmentLength}{An \code{integer}. The fixed length of the reads. If PE is set to TRUE, this argument can be ignored.}
+\item{name}{A \code{character} string. The title of the track.}
 %\item{PE}{A \code{logical}. Set to true for paired-end sequencing data, where the read length is already known.}
 }
 

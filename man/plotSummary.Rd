@@ -39,7 +39,6 @@ Renan Sauteraud
 \seealso{
 \code{\link{CoverageTrack}}
 \code{\link{RawReadsTrack}}
-\code{\link{NucScoreTrack}}
 \code{\link{NucleosomeTrack}}
 \code{\link[Gviz]{plotTracks}}
 }

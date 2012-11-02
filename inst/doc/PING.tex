@@ -84,7 +84,7 @@ http:/wiki.rglab.org/index.php?title=Public:Mappability_Profile
 \end{verbatim}
 
 
-Once the data have been read in, we can create a list of `GRanges' objects storing the sequences of genomic locations and associated annotations. When reading the data, reads are automatically sorted, which is required for a PING analysis. As well, we recommend that the number of duplicates be controlled by using PING's default protocol-specific thresholds.
+Once the data have been read in, we can create a `GRanges' object storing the sequences of genomic locations and associated annotations. When reading the data, reads are automatically sorted, which is required for a PING analysis. As well, we recommend that the number of duplicates be controlled by using PING's default protocol-specific thresholds.
 
 We supply a demonstration set of MNase-seq data for chr1 from budding yeast GSM351492, NOCL\_R4 (Kaplan et al, Nature, 2009, 458(7236):362-6). The demonstration data is in the 'extdata' folder of the PING installation:  .../PING/inst/extdata.
 
@@ -96,6 +96,7 @@ We supply a demonstration set of MNase-seq data for chr1 from budding yeast GSM3
 > dataIP <- as(dataIP, "GRanges")
 \end{Sinput}
 \end{Schunk}
+The PING package also includes \texttt{bam2gr} function for converting a BAM-format data file into a `GRanges' object. Please refer to the section `Data Input and Formatting' of PING-PE vignette.
 
 %<<Reading the mappability profile>>=
 %map<-read.table(paste(path,"mapProfileShort",sep=""),header=TRUE,colClasses=c("factor","integer","integer","NULL"))
@@ -108,23 +109,9 @@ We supply a demonstration set of MNase-seq data for chr1 from budding yeast GSM3
 \section{PING analysis}
 
 \subsection{Genome segmentation}
-We segment the genome by pre-processing aligned read data from a single-end
-ChIP-Seq experiment to detect `candidate regions' that have a minimum number of
-forward and reverse reads. Each candidate region will then be processed
-separately by PING. The segmentation `minReads' parameter can heavily influence
-the number of candidate regions returned. In principle, it is better to use a
-small value for `minReads' in order not to miss any nucleosomes. However, a very 
-small value will likely return many false positive regions, which can result
-in long computation time for the \texttt{PING} function. 
-If users are not sure what values to use, they can assign `minReads=NULL', so
-that the value will be estimated from data. See below for an illustration.
+We segment the genome by pre-processing aligned read data from a single-end ChIP-Seq experiment to detect `candidate regions' that have a minimum number of forward and reverse reads. Each candidate region will then be processed separately by PING. The segmentation `minReads' parameter can heavily influence the number of candidate regions returned. In principle, it is better to use a small value for `minReads' in order not to miss any nucleosomes. However, a very small value will likely return many false positive regions, which can result in long computation time for the \texttt{PING} function. If users are not sure what values to use, they can assign `minReads=NULL', so that the value will be estimated from data. See below for an illustration.
 
-In order to improve the computational efficiency of the PING package, if you
-have access to multiple cores we recommend you to do parallel computations via
-the \texttt{parallel} package.
-In what follows, we assume that \texttt{parallel} is installed on your machine.
-If it is not, you could omit the first line, and calculations will occur on a
-single CPU.
+In order to improve the computational efficiency of the PING package, if you have access to multiple cores we recommend you to do parallel computations via the \texttt{parallel} package. In what follows, we assume that \texttt{parallel} is installed on your machine. If it is not, you could omit the first line, and calculations will occur on a single CPU.
 By default the command is not run. Note that the \texttt{PING} function will automatically detect whether you have initialized a
 cluster and will use it if you have.
 
@@ -143,6 +130,9 @@ cluster and will use it if you have.
 \begin{Soutput}
 Performing segmentation for single end reads
 [1] "We automatically calculated minReads, which is 5."
+nChr=1
+Finished chr 0 
+[1] "Saving the args of the constructor"
 \end{Soutput}
 \end{Schunk}
 
@@ -161,7 +151,7 @@ As the warning message states it, all the default parameters are set for MNase d
 
 
 \section{Post-processing PING results}
-Given the variation in nucleosome-based short-read data, some of PING's predictions may be inaccurate. Therefore we need to detect and resolve such problematic cases. 
+Given the variation in nucleosome-based short-read data, some of PING's predictions may be inaccurate. Therefore we need to detect and resolve such problematic regions. 
 For example, a nucleosome having relatively strong aligned-read signals can be adjacent to nucleosomes having weaker signals. In this case, PING might fit two forward mixture components and one reverse mixture component, which will cause a mismatch of forward/reverse peaks of other nucleosomes. We can detect such cases by evaluating abnormal $\delta$ value estimates, which are estimated DNA fragment lengths. 
 As another example, a few adjacent nucleosomes with weak signals might be described as one wide (forward/reverse) peak. To detect such regions, we examine extremely large estimates of $\sigma_f$ or $\sigma_r$ values. When we detect candidate regions with such cases, we reanalyze them with stronger prior on $\delta$,  $\sigma_f$, or $\sigma_r$ to penalize atypical estimations.
 
@@ -177,14 +167,14 @@ We post-process results with the following command:
 \begin{Soutput}
 [1] "No regions with pingerror"
 
- The 2 Regions with following IDs are reprocessed for atypical delta: 
-[1] 185 214
+ The 1 Regions with following IDs are reprocessed for atypical delta: 
+[1] 262
 
  The 1 Peaks with following IDs are reprocessed for atypical sigma: 
-[1] 781
+[1] 774
 
- The 16 regions with following IDs are reprocessed for Boundary problems: 
-[1]  79 108 301 333 347 397
+ The 10 regions with following IDs are reprocessed for Boundary problems: 
+[1]  80 182 328 346 581 650
 \end{Soutput}
 \end{Schunk}
 If the users analyze sonicated data, the argument \texttt{dataType} in both \texttt{PING} and \texttt{postPING} functions should be consistent as "sonicated".
@@ -195,16 +185,10 @@ The result output of \texttt{postPING} is a dataframe that contains estimated pa
 \section{Result output}
 
 \subsection{Exporting the results}
-To facilitate data processing, we use the \texttt{IRanges} package to
-summarize our results as \texttt{RangedData} objects and prepare them for
-export with different formats.
+To facilitate data processing, we use the \texttt{IRanges} package to summarize our results as \texttt{RangedData} objects and prepare them for export with different formats.
 
 
-The function \texttt{makeRangedDataOutput} takes a \texttt{pingList} or the
-\texttt{data.frame} returned by \texttt{postPING} and a type of file as arguments,
-as well as an optional \texttt{list} of filters.
-The 'fixed' type is a bed format with a fixed size of $147bp$ for the predicted nucleosome
-while the 'bed' type will use the predicted estimate of $\delta$ to infer the ranges.
+The function \texttt{makeRangedDataOutput} takes a \texttt{pingList} or the \texttt{data.frame} returned by \texttt{postPING} and a type of file as arguments, as well as an optional \texttt{list} of filters. The 'fixed' type is a bed format with a fixed size of $147bp$ for the predicted nucleosome while the 'bed' type will use the predicted estimate of $\delta$ to infer the ranges.
 \begin{Schunk}
 \begin{Sinput}
 > rdBed <- makeRangedDataOutput(ping, type = "bed")
@@ -212,8 +196,7 @@ while the 'bed' type will use the predicted estimate of $\delta$ to infer the ra
 \end{Sinput}
 \end{Schunk}
 
-The function \texttt{makeRangedDataOutput} returns a \texttt{RangedData} object that can be written into a file using
-the \texttt{export} function in the \texttt{rtracklayer} package.
+The function \texttt{makeRangedDataOutput} returns a \texttt{RangedData} object that can be written into a file using the \texttt{export} function in the \texttt{rtracklayer} package.
 \begin{Schunk}
 \begin{Sinput}
 > library(rtracklayer)
@@ -228,14 +211,14 @@ the \texttt{export} function in the \texttt{rtracklayer} package.
 The easiest way is to use a built-in plotting function called \texttt{plotSummary}. With minimal input, this function will display data profile and the predicted nucleosomes.
 \begin{Schunk}
 \begin{Sinput}
-> plotSummary(PS, dataIP, "chr1", "gen", from = 149000, to = 153000)
+> plotSummary(PS, ping, dataIP, "chr1", "gen", from = 149000, to = 153000)
 \end{Sinput}
 \end{Schunk}
 \includegraphics{PING-plotSummary}
 
 The plot shows the coverage of the reads used as input, the start position of the forward and reverse reads and the predicted position of the nucleosome as well as the associated score for each nucleosome. The fuzzy gray border around some nucleosomes represents the uncertainty associated with its position.
 
-This plotting function includes a filtering: by default, only nucleosomes having score over 0.05 are shown. This can be modified by the users with the argument \texttt{scoreThreshold}. To hide the score track on the graph, the argument \texttt{scoreTrack} should be set to FALSE.
+This plotting function includes a filtering: by default, only nucleosomes having score over $0.05$ are shown. This can be modified by the users with the argument \texttt{scoreThreshold}. To hide the score track on the graph, the argument \texttt{scoreTrack} should be set to FALSE.
 
 It is also possible to submit a list of several \texttt{postPING} results instead of a single \texttt{data.frame}. In this case, the graph shows nucleosome positioning tracks of the number of elelments in the list. For example, each track correponds to a different biological condition. 
 
@@ -248,12 +231,12 @@ Alternately, users experienced with \texttt{Gviz} can create their own desired p
 \item \textbf{NucleosomeTrack}
 \end{itemize}
 
-As an example, we first create $3$ tracks of a profile, aligned reads, and the predicted nucleosomes based on the data information and \texttt{postPING} result. In this new plot, we also want to screen out the nucleosomes with a score inferior to 0.1:
+As an example, we first create $3$ tracks of a profile, aligned reads, and the predicted nucleosomes based on the data information and \texttt{postPING} result. In this new plot, we also want to screen out the nucleosomes with a score inferior to $0.1$:
 \begin{Schunk}
 \begin{Sinput}
 > library(Gviz)
-> cTrack <- CoverageTrack(dataIP, "chr1", "gen")
-> rTrack <- RawReadsTrack(dataIP, "chr1", "gen", name = "Reads")
+> cTrack <- CoverageTrack(ping, dataIP, "chr1", "gen")
+> rTrack <- RawReadsTrack(ping, dataIP, "chr1", "gen", name = "Reads")
 > nTrack <- NucleosomeTrack(PS, "chr1", "gen", scoreThreshold = 0.1, 
 +     name = "NEW")
 \end{Sinput}

@@ -82,7 +82,7 @@ A small BAM file including two chromosomes of the yeast is provided to be used a
 
 \begin{Schunk}
 \begin{Sinput}
-> gr <- bam2gr(bamFile = yeastBam)
+> gr <- bam2gr(bamFile = yeastBam, PE = TRUE)
 \end{Sinput}
 \begin{Soutput}
 Chromosome  chrI 
@@ -90,6 +90,8 @@ Chromosome  chrM
 \end{Soutput}
 \end{Schunk}
 $gr$ is a \texttt{GRanges} object containing all the reads from the .bam file. 
+
+Note that this function will also work for single-end sequencing data and the argument \texttt{PE} should be set to TRUE when dealing with paired-end data.
 
 
 \section{PING analysis}
@@ -114,8 +116,7 @@ Parallelisation will also work with paired-end data. In what follows, we assume 
 
 \begin{Schunk}
 \begin{Sinput}
-> segPE <- segmentPING(gr, chr = "chrM", islandDepth = 3, min_cut = 50, 
-     max_cut = 1000)
+> segPE <- segmentPING(gr, chr = "chrM", PE = TRUE)
 \end{Sinput}
 \end{Schunk}
 
@@ -123,18 +124,16 @@ It returns a \texttt{segReadsListPE} object.
 
 
 \subsection{Parameter estimation}
-For paired-end data in \texttt{PING}, the users have to set the argument of PE as TRUE. 
 
 \begin{Schunk}
 \begin{Sinput}
-> ping <- PING(segPE, PE = TRUE)
+> ping <- PING(segPE)
 \end{Sinput}
 \end{Schunk}
 The returned object is a \texttt{pingList}, which will go through a post-processing step using \texttt{postPING} function.
 
 
 \section{Post-processing PING results}
-Here again, the only difference with single-end data is that the argument PE should be set to TRUE.
 
 \begin{Schunk}
 \begin{Sinput}
@@ -145,36 +144,27 @@ Here again, the only difference with single-end data is that the argument PE sho
      beta2 = 2e+05
  }
 > PS = postPING(ping, segPE, rho2 = rho2, alpha2 = alpha2, beta2 = beta2, 
-     sigmaB2 = sigmaB2, PE = TRUE)
+     sigmaB2 = sigmaB2)
 \end{Sinput}
 \begin{Soutput}
  The 5 Regions with following IDs are reprocessed for singularity problem: 
-(0.783,110]84   (110,218]37   (110,218]50   (110,218]76   (110,218]79 
-           84           146           159           185           188 
+[1]  84 146 159 185 188
 
  The 1 Regions with following IDs are reprocessed for atypical delta: 
 [1] 149
 [1] "No predictions with atypical sigma"
 
- The 147 regions with following IDs are reprocessed for Boundary problems: 
+ The 146 regions with following IDs are reprocessed for Boundary problems: 
 [1]  4 17 25 37 39 46
 \end{Soutput}
 \end{Schunk}
 The result output of \texttt{postPING} is a dataframe that contains estimated parameters of each nucleosome.
-%<<Display-result>>=
-%head(PS, 3)
-%@
 
 \section{Analyzing the prediction}
 \texttt{PING} comes with a set of tools to export or visualize the prediction.
-Here, we only show how to export the results into bed format for further analysis
-and how to make a quick plot to summarize the nucleosome prediction. For more information
-on how to export the results or make more complex figures, please refer to the section
-`Result output' of PING vignette.
+Here, we only show how to export the results into bed format for further analysis and how to make a quick plot to summarize the nucleosome prediction. For more information on how to export the results or make more complex figures, please refer to the section `Result output' of PING vignette.
 
-The function \texttt{makeRangedDataOutput} offers a simple way to convert the
-prediction results into a \texttt{RangedData} objec that can be exported into a file using 
-the \texttt{rtracklayer} package. 
+The function \texttt{makeRangedDataOutput} offers a simple way to convert the prediction results into a \texttt{RangedData} objec that can be exported into a file using the \texttt{rtracklayer} package. 
 
 \begin{Schunk}
 \begin{Sinput}
@@ -191,11 +181,12 @@ For paired-end sequencing data, the bult-in plotting function \texttt{plotSummar
 
 \begin{Schunk}
 \begin{Sinput}
-> plotSummary(PS, gr, chr = "chrM", from = 1000, to = 4000, PE = TRUE)
+> plotSummary(PS, ping, gr, chr = "chrM", from = 1000, to = 4000)
 \end{Sinput}
 \end{Schunk}
 \includegraphics{PING-PE-plotSummary-PE}
 
-Note that the argument PE should be set to TRUE. All the arguments for this function will work for Paired-end data as well. Refer to PING vignette and  the man page ?plotSummary for more information.
+%Note that the argument PE should be set to TRUE. 
+All the arguments for this function will work for Paired-end data as well. Refer to PING vignette and  the man page ?plotSummary for more information.
 
 \end{document}
