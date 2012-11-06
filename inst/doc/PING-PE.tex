@@ -127,7 +127,7 @@ It returns a \texttt{segReadsListPE} object.
 
 \begin{Schunk}
 \begin{Sinput}
-> ping <- PING(segPE)
+> ping <- PING(segPE, nCores = 2)
 \end{Sinput}
 \end{Schunk}
 The returned object is a \texttt{pingList}, which will go through a post-processing step using \texttt{postPING} function.

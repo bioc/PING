@@ -1,5 +1,5 @@
 #PING<-function(segReadsList,detail=0, rescale=1, PE=F)
-PING<-function(segReadsList, paraEM=NULL, paraPrior=NULL, dataType="MNase", detail=0, rescale=1)#, PE=FALSE
+PING<-function(segReadsList, paraEM=NULL, paraPrior=NULL, dataType="MNase", detail=0, rescale=1, nCores=1)
 {
 # detail is an integer indicate how much detail to print
 # detail=0 print no details, The larger detail, the more detail I print 
@@ -37,11 +37,15 @@ PING<-function(segReadsList, paraEM=NULL, paraPrior=NULL, dataType="MNase", deta
   }
   calpha <- 1.5
   
-	
-  if("parallel" %in% names(getLoadedDLLs()) )
+  if(nCores>1 & "parallel" %in% names(getLoadedDLLs()) )
   {
 	#Number of cores
-	nCores<-parallel:::detectCores()
+	availCores<-parallel:::detectCores()
+	if(nCores > availCores)
+        {
+	  warning("The number of cores required is higher than the available cores on this machine (",availCores,").\n", immediate.=TRUE)
+	  nCores<-availCores
+        }
 	message("Using the parallel version of PING with ", nCores, " cpus or cores")
 	#Split into nCores segReadsList
 	cl <- parallel:::makeCluster(getOption("cl.cores", nCores))

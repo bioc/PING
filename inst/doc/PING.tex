@@ -111,9 +111,11 @@ The PING package also includes \texttt{bam2gr} function for converting a BAM-for
 \subsection{Genome segmentation}
 We segment the genome by pre-processing aligned read data from a single-end ChIP-Seq experiment to detect `candidate regions' that have a minimum number of forward and reverse reads. Each candidate region will then be processed separately by PING. The segmentation `minReads' parameter can heavily influence the number of candidate regions returned. In principle, it is better to use a small value for `minReads' in order not to miss any nucleosomes. However, a very small value will likely return many false positive regions, which can result in long computation time for the \texttt{PING} function. If users are not sure what values to use, they can assign `minReads=NULL', so that the value will be estimated from data. See below for an illustration.
 
-In order to improve the computational efficiency of the PING package, if you have access to multiple cores we recommend you to do parallel computations via the \texttt{parallel} package. In what follows, we assume that \texttt{parallel} is installed on your machine. If it is not, you could omit the first line, and calculations will occur on a single CPU.
-By default the command is not run. Note that the \texttt{PING} function will automatically detect whether you have initialized a
-cluster and will use it if you have.
+
+In order to improve the computational efficiency of the PING package, if you have access to multiple cores we recommend you to do parallel computations via the \texttt{parallel} package. In what follows, we assume that \texttt{parallel} is installed on your machine and that your machine has at least two cores. If it is not, you could omit the first line and the argument `nCores', and calculations will occur on a single CPU.
+By default the functions will use only one core.
+%By default the command is not run. Note that the \texttt{PING} function will automatically detect whether you have initialized a
+%cluster and will use it if you have.
 
 \begin{Schunk}
 \begin{Sinput}
@@ -130,9 +132,6 @@ cluster and will use it if you have.
 \begin{Soutput}
 Performing segmentation for single end reads
 [1] "We automatically calculated minReads, which is 5."
-nChr=1
-Finished chr 0 
-[1] "Saving the args of the constructor"
 \end{Soutput}
 \end{Schunk}
 
@@ -143,7 +142,7 @@ The function returns position estimates, confidence intervals, etc. In our case,
 
 \begin{Schunk}
 \begin{Sinput}
-> ping <- PING(seg)
+> ping <- PING(seg, nCores = 2)
 \end{Sinput}
 \end{Schunk}
 
@@ -170,11 +169,11 @@ We post-process results with the following command:
  The 1 Regions with following IDs are reprocessed for atypical delta: 
 [1] 262
 
- The 1 Peaks with following IDs are reprocessed for atypical sigma: 
-[1] 774
+ The 2 Peaks with following IDs are reprocessed for atypical sigma: 
+[1] 775 857
 
- The 10 regions with following IDs are reprocessed for Boundary problems: 
-[1]  80 182 328 346 581 650
+ The 9 regions with following IDs are reprocessed for Boundary problems: 
+[1]  43  81 185 580 650 692
 \end{Soutput}
 \end{Schunk}
 If the users analyze sonicated data, the argument \texttt{dataType} in both \texttt{PING} and \texttt{postPING} functions should be consistent as "sonicated".

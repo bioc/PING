@@ -107,9 +107,11 @@ The PING package also includes \texttt{bam2gr} function for converting a BAM-for
 \subsection{Genome segmentation}
 We segment the genome by pre-processing aligned read data from a single-end ChIP-Seq experiment to detect `candidate regions' that have a minimum number of forward and reverse reads. Each candidate region will then be processed separately by PING. The segmentation `minReads' parameter can heavily influence the number of candidate regions returned. In principle, it is better to use a small value for `minReads' in order not to miss any nucleosomes. However, a very small value will likely return many false positive regions, which can result in long computation time for the \texttt{PING} function. If users are not sure what values to use, they can assign `minReads=NULL', so that the value will be estimated from data. See below for an illustration.
 
-In order to improve the computational efficiency of the PING package, if you have access to multiple cores we recommend you to do parallel computations via the \texttt{parallel} package. In what follows, we assume that \texttt{parallel} is installed on your machine. If it is not, you could omit the first line, and calculations will occur on a single CPU.
-By default the command is not run. Note that the \texttt{PING} function will automatically detect whether you have initialized a
-cluster and will use it if you have.
+
+In order to improve the computational efficiency of the PING package, if you have access to multiple cores we recommend you to do parallel computations via the \texttt{parallel} package. In what follows, we assume that \texttt{parallel} is installed on your machine and that your machine has at least two cores. If it is not, you could omit the first line and the argument `nCores', and calculations will occur on a single CPU.
+By default the functions will use only one core.
+%By default the command is not run. Note that the \texttt{PING} function will automatically detect whether you have initialized a
+%cluster and will use it if you have.
 
 <<Cluster-initialization,eval=TRUE>>=
 library(parallel)
@@ -126,7 +128,7 @@ After having segmented the genome into candidate regions, we use the \texttt{PIN
 The function returns position estimates, confidence intervals, etc. In our case, assuming that we have already segmented the genome using \texttt{segmentPING}, we can proceed with the following command: 
 
 <<PING-analysis>>=
-ping<-PING(seg)
+ping<-PING(seg, nCores=2)
 @
 
 As the warning message states it, all the default parameters are set for MNase datatype. In order to use sonicated data, the user should add the argument dataType="sonicated".

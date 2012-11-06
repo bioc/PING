@@ -62,7 +62,7 @@ segReadsList.
 }
 
 \usage{
-PING(segReadsList, paraEM=NULL, paraPrior=NULL, dataType="MNase", detail=0, rescale=1)
+PING(segReadsList, paraEM=NULL, paraPrior=NULL, dataType="MNase", detail=0, rescale=1, nCores=1)
 }
 
 \arguments{
@@ -91,8 +91,7 @@ PING(segReadsList, paraEM=NULL, paraPrior=NULL, dataType="MNase", detail=0, resc
 \item{dataType}{A character string that can be set to use selected default parameters for the algorithm.}
 \item{detail}{An \code{integer}. Additional information are printed if set to a value > 0.}
 \item{rescale}{An \code{integer}.}
-
-
+\item{nCores}{An \code{integer}. The number of cores that should be used in parallel by the function.}
 }
 
 \section{Methods}{

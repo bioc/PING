@@ -6,6 +6,6 @@
 \contentsline {subsection}{\numberline {5.1}Genome segmentation}{4}{subsection.5.1}
 \contentsline {subsection}{\numberline {5.2}Parameter estimation}{5}{subsection.5.2}
 \contentsline {section}{\numberline {6}Post-processing PING results}{5}{section.6}
-\contentsline {section}{\numberline {7}Result output}{7}{section.7}
-\contentsline {subsection}{\numberline {7.1}Exporting the results}{7}{subsection.7.1}
+\contentsline {section}{\numberline {7}Result output}{6}{section.7}
+\contentsline {subsection}{\numberline {7.1}Exporting the results}{6}{subsection.7.1}
 \contentsline {subsection}{\numberline {7.2}Visualizing the results}{7}{subsection.7.2}
