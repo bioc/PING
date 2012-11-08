@@ -105,21 +105,22 @@ bam2gr<-function(bamFile, chr=NULL, PE=FALSE, verbose=FALSE)
 	paras <- ScanBamParam(what=c("qname", "rname", "strand", "pos", "mapq", "qwidth"), flag=scanBamFlag(isUnmappedQuery=FALSE,isDuplicate=FALSE))
 	bga<-readBamGappedAlignments(bamFile, use.names=TRUE, param=paras)
 	if(verbose)
-	  cat(length(bga),"reads in '",bamFile,"'","\n", sep="")
+	  cat(length(bga)," Reads in '",bamFile,"'","\n", sep="")
+	hiQScoreIdx<-which(elementMetadata(bga)$mapq>10)
+	if(verbose)
+	  cat(length(bga)-length(hiQScoreIdx)," Reads with low quality scores filtered out","\n")
+	bga<-bga[hiQScoreIdx]#filter out elt with low quality scores
 	gr<-GRanges()
 
 	if(!is.null(chr))
 	  chrs<-chr
 	else
 	  chrs<-unique(as.character(runValue(seqnames(bga))))#
+
 	for(i in 1:length(chrs))
 	{ 
 	  cat("Chromosome ", chrs[[i]], "\n")
 	  bga2<-bga[seqnames(bga)==chrs[i]]
-	  hiQScoreIdx<-which(elementMetadata(bga2)$mapq>10)
-	  if(verbose)
-	    cat(length(bga2)-length(hiQScoreIdx),"Reads with low quality scores filtered out","\n")
-	  bga2<-bga2[hiQScoreIdx]#filter out elt with low quality scores
 	  if(isTRUE(PE))
 	  {
 	    #change names
