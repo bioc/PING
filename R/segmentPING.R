@@ -100,10 +100,12 @@ segmentPING<-function(data, dataC=NULL, map=NULL,
 #          An optional chr if only selected chr are needed
 #   OUTPUT: A GRanges object that can be used in segmentPING
 ###
-bam2gr<-function(bamFile, chr=NULL, PE=FALSE)
+bam2gr<-function(bamFile, chr=NULL, PE=FALSE, verbose=FALSE)
 {
 	paras <- ScanBamParam(what=c("qname", "rname", "strand", "pos", "mapq", "qwidth"), flag=scanBamFlag(isUnmappedQuery=FALSE,isDuplicate=FALSE))
 	bga<-readBamGappedAlignments(bamFile, use.names=TRUE, param=paras)
+	if(verbose)
+	  cat(length(bga),"reads in '",bamFile,"'","\n", sep="")
 	gr<-GRanges()
 
 	if(!is.null(chr))
@@ -114,7 +116,10 @@ bam2gr<-function(bamFile, chr=NULL, PE=FALSE)
 	{ 
 	  cat("Chromosome ", chrs[[i]], "\n")
 	  bga2<-bga[seqnames(bga)==chrs[i]]
-	  bga2<-bga2[elementMetadata(bga2)$mapq>10]#filter out elt with low quality scores
+	  hiQScoreIdx<-which(elementMetadata(bga2)$mapq>10)
+	  if(verbose)
+	    cat(length(bga2)-length(hiQScoreIdx),"Reads with low quality scores filtered out","\n")
+	  bga2<-bga2[hiQScoreIdx]#filter out elt with low quality scores
 	  if(isTRUE(PE))
 	  {
 	    #change names
@@ -124,7 +129,10 @@ bam2gr<-function(bamFile, chr=NULL, PE=FALSE)
 	    elementMetadata(bga2)$qname<-qname
 	    #merge pairs
 	    asdf<-as(bga2, "data.frame")
-	    df<-reshape(asdf, timevar="strand", idvar="qname", direction="wide")
+	    if(verbose)
+	      df<-reshape(asdf, timevar="strand", idvar="qname", direction="wide")
+            else
+	      suppressWarnings(df<-reshape(asdf, timevar="strand", idvar="qname", direction="wide"))
 	    df2<-df[,c("start.+", "end.-")]
 	    rownames(df2)<-df[,"qname"]
 	    badReads<-which(df2$`start.+`>df2$`end.-`)
