@@ -127,6 +127,9 @@ bam2gr<-function(bamFile, chr=NULL, PE=FALSE)
 	    df<-reshape(asdf, timevar="strand", idvar="qname", direction="wide")
 	    df2<-df[,c("start.+", "end.-")]
 	    rownames(df2)<-df[,"qname"]
+	    badReads<-which(df2$`start.+`>df2$`end.-`)
+	    if(length(badReads)>0)
+	      df2<-df2[-badReads,]
 	    #Split PE and SE
 	    idx <- is.na(df2[,c("start.+","end.-")])
 	    reads <- list(P=df2[!(idx[,1]|idx[,2]),], yFm=df2[idx[,2],], yRm=df2[idx[,1],])
