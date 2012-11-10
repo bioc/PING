@@ -101,7 +101,7 @@ PING is used the same way for paired-end and single-end sequencing data. The
 function \texttt{segmentPING} will decide which segmentation method should be
 used based on the arguments provided. 
 When dealing with paired-end data, four new arguments have to be passed to the
-function: \texttt{chr} for a chromosome, \texttt{islandDepth}, \texttt{min_cut} 
+function: \texttt{islandDepth}, \texttt{min_cut} 
 and \texttt{max_cut} for candidate region selection. These arguments control the 
 size and required coverage for a region to be considered as a candidate.
 
@@ -113,10 +113,17 @@ Parallelisation will also work with paired-end data. In what follows, we assume 
 \end{Sinput}
 \end{Schunk}
 
+In order to run \texttt{segmentPING}, we have to subset our GRanges object to have a single chromosome
+\begin{Schunk}
+\begin{Sinput}
+> grM <- gr[seqnames(gr) == "chrM"]
+> seqlevels(grM) <- "chrM"
+\end{Sinput}
+\end{Schunk}
 
 \begin{Schunk}
 \begin{Sinput}
-> segPE <- segmentPING(gr, chr = "chrM", PE = TRUE)
+> segPE <- segmentPING(grM, PE = TRUE)
 \end{Sinput}
 \end{Schunk}
 
@@ -181,7 +188,7 @@ For paired-end sequencing data, the bult-in plotting function \texttt{plotSummar
 
 \begin{Schunk}
 \begin{Sinput}
-> plotSummary(PS, ping, gr, chr = "chrM", from = 1000, to = 4000)
+> plotSummary(PS, ping, grM, chr = "chrM", from = 1000, to = 4000)
 \end{Sinput}
 \end{Schunk}
 \includegraphics{PING-PE-plotSummary-PE}

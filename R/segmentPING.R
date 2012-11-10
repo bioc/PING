@@ -1,7 +1,6 @@
 segmentPING<-function(data, dataC=NULL, map=NULL,
 		minReads=2, minReadsInRegion=3, jitter=FALSE, maxLregion=1200, minLregion=80, step=NULL, width=NULL, dataType="H",
-		#islandDepth=NULL, min_cut=NULL, max_cut=NULL, chr=NULL, PE=FALSE )
-		islandDepth=3, min_cut=50, max_cut=1000, chr=NULL, PE=FALSE )
+		islandDepth=3, min_cut=50, max_cut=1000, PE=FALSE )
 {
   ##Determine PE/SE based on reads width
   #if(length(unique(width(data)))==1)
@@ -43,10 +42,10 @@ segmentPING<-function(data, dataC=NULL, map=NULL,
 	  cat("Performing segmentation for paired-end reads\n")
 	  if(var(width(data))<5)
     		warning("This data seems to be Single-End reads")
-	  #TODO: Add message stating that we are using default PE args
 	  
-	  if(!is.character(chr))
-		  stop("Argument chr should be a character\n")
+	  chr<-seqlevels(data)
+	  #if(!is.character(chr))
+		  #stop("Argument chr should be a character\n")
 	  if(length(chr)>1)
 		  stop("Paired-end sequencing data segmentation does not support multiple chromosomes\n") 
 	  if(!is.numeric(islandDepth))
@@ -55,7 +54,7 @@ segmentPING<-function(data, dataC=NULL, map=NULL,
 		  stop("Arguments min_cut and max_cut should be integers, provided: ", class(min_cut),", ", class(max_cut), "\n")
 	  
 	  #with GRanges as input
-	  data<-data[seqnames(data)==chr]
+	  #data<-data[seqnames(data)==chr]
 	  #Save xi for later
 	  xi<-mean(width(data))
 	  PE.RD<-IRanges(start=start(data), end=end(data))

@@ -8,7 +8,7 @@
 \usage{
 	segmentPING(data, dataC=NULL, map=NULL, minReads=2, minReadsInRegion=3,
     jitter=FALSE, maxLregion=1200, minLregion=80, step=NULL, width=NULL, dataType="H",
-    islandDepth=3, min_cut=50, max_cut=1000, chr=NULL, PE=FALSE)
+    islandDepth=3, min_cut=50, max_cut=1000, PE=FALSE)
 }
 
 
@@ -25,12 +25,12 @@
   \item{maxLregion}{The maximum length.}
   \item{minLregion}{The minimum length.}
   \item{PE}{A \code{logical}. Set to TRUE for Paired-End sequencing data.}
-  \item{islandDepth, min_cut, max_cut, chr}{Parameters used for paired-end sequencing data segmentation.}
+  \item{islandDepth, min_cut, max_cut}{Parameters used for paired-end sequencing data segmentation.}
 	\describe{
 		\item{islandDepth}{An \code{integer}. The minimum number of reads to cover a candidate region.}
 		\item{min_cut}{An \code{integer}. The minimum length of a candidate region.}
 		\item{max_cut}{An \code{integer}. The maximum length of a candidate region.}
-		\item{chr}{A character string for the name of the chromosome.}
+		%\item{chr}{A character string for the name of the chromosome.}
 	}
 
 }

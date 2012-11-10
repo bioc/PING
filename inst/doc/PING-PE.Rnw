@@ -94,7 +94,7 @@ PING is used the same way for paired-end and single-end sequencing data. The
 function \texttt{segmentPING} will decide which segmentation method should be
 used based on the arguments provided. 
 When dealing with paired-end data, four new arguments have to be passed to the
-function: \texttt{chr} for a chromosome, \texttt{islandDepth}, \texttt{min_cut} 
+function: \texttt{islandDepth}, \texttt{min_cut} 
 and \texttt{max_cut} for candidate region selection. These arguments control the 
 size and required coverage for a region to be considered as a candidate.
 
@@ -104,9 +104,14 @@ Parallelisation will also work with paired-end data. In what follows, we assume 
 library(parallel)
 @
 
+In order to run \texttt{segmentPING}, we have to subset our GRanges object to have a single chromosome
+<<subset-GR>>=
+grM<-gr[seqnames(gr)=="chrM"]
+seqlevels(grM)<-"chrM"
+@
 
 <<Genome-segmentation, results=hide>>=
-segPE<-segmentPING(gr,  chr="chrM", PE=TRUE)
+segPE<-segmentPING(grM, PE=TRUE)
 @
 
 It returns a \texttt{segReadsListPE} object.
@@ -146,7 +151,7 @@ For paired-end sequencing data, the bult-in plotting function \texttt{plotSummar
 
 
 <<plotSummary-PE, fig=TRUE>>=
-plotSummary(PS, ping,  gr, chr="chrM", from=1000, to=4000)
+plotSummary(PS, ping,  grM, chr="chrM", from=1000, to=4000)
 @
 
 %Note that the argument PE should be set to TRUE. 
