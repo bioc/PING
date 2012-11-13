@@ -1,0 +1,48 @@
+#
+# NAMESPACE PING
+#
+useDynLib(PING,.registration=TRUE)
+
+
+importFrom(graphics, abline, axis, grid, layout, lines, mtext, par, plot, points, segments, stripchart, symbols, title)
+importFrom(grDevices, grey)
+importFrom(stats, dt, integrate, kmeans, pt)
+importFrom(stats4, summary)
+
+importFrom(Rsamtools, ScanBamParam, scanBamFlag, readBamGappedAlignments)
+
+#importFrom(IRanges, IRanges, RangedData)
+#importClassesFrom(IRanges, IRanges, RangedData)
+#importMethodsFrom(IRanges, coerce, duplicated, end, levels, lapply, order, score, sort, space, start, width, as.matrix, runValue, elementMetadata, "elementMetadata<-")
+
+#importMethodsFrom(GenomicRanges, coerce, strand, seqnames, width)
+#importClassesFrom(GenomicRanges, GRanges)
+
+
+importClassesFrom(PICS, segReads, segReadsPE, segReadsList, segReadsListPE, pics, picsError, picsList)
+importMethodsFrom(PICS, coerce, show, summary, minRange,
+	maxRange,
+	scoreReverse,
+	scoreForward,
+	chromosome,
+	map,
+	score,
+	se, seF,seR,sigmaSqF, sigmaSqR, delta, mu, w, K, code, length, "[","[[")
+importFrom(PICS, segReads, segReadsPE, segReadsList, segReadsListPE,
+	segReadsGeneric, summarySeg, makeRangedDataOutput, setParaEM, setParaPrior,
+	candidate.region, segChrRead)
+importClassesFrom(Gviz, AnnotationTrack, DataTrack, GenomeAxisTrack, BiomartGeneRegionTrack)
+importFrom(Gviz, AnnotationTrack, DataTrack, GenomeAxisTrack, BiomartGeneRegionTrack)
+importFrom(Gviz, plotTracks)
+
+
+exportClasses(ping, pingError, pingList)
+exportMethods(show, summary, plot, se, seF, seR, sigmaSqF, sigmaSqR, mu, delta, w, code, length, K,"[","[[",
+	chromosome, score)
+export("PING","postPING","newPingError",
+	"segReads","segReadsPE","segReadsList","segReadsListPE",
+	"segmentPING",
+	"NucleosomeTrack","CoverageTrack","RawReadsTrack","plotSummary",
+	"bam2gr")
+#Export imported stuff
+export("makeRangedDataOutput","setParaPrior","setParaEM")
