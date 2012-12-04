@@ -33,7 +33,8 @@ library(parallel)
 ###################################################
 ### code chunk number 6: subset-GR
 ###################################################
-grM<-gr[seqnames(gr)=="chrM"]
+grM<-gr[seqnames(gr)=="chrI"]
+seqlevels(grM)<-"chrI"
 
 
 ###################################################
@@ -66,6 +67,6 @@ PS=postPING(ping, segPE, rho2=rho2, alpha2=alpha2, beta2=beta2, sigmaB2=sigmaB2)
 ###################################################
 ### code chunk number 11: plotSummary-PE
 ###################################################
-plotSummary(PS, ping,  grM, chr="chrM", from=1000, to=4000)
+plotSummary(PS, ping,  grM, chr="chrI", from=149000, to=153000)
 
 

@@ -67,7 +67,7 @@ postPING <- function(ping, seg, rho2=NULL, sigmaB2=NULL, alpha2=NULL, beta2=NULL
 	ps3=PostSigma(ps=ps2, ping=ping, seg=seg, rho2=rho2, makePlot=makePlot, datname=datname, DupBound=DupBound, IP=IP, FragmentLength=FragmentLength, mart=mart, sigmaB2=sigmaB2, paraEM=paraEM, paraPrior=paraPrior, alpha2=alpha2,beta2=beta2, score=score, PE=PE)
 	#PS=PostDup(ps=ps3, ping=ping, seg=seg, rho=rho,rho1=rho1,alpha1=alpha1,xi=xi, PE=PE,min.dist=min.dist,lambda=lambda)
 	PS=PostDup(ps=ps3, ping=ping, seg=seg, rho2=rho2,paraPrior=paraPrior, PE=PE, min.dist=min.dist)
-
+	#PS<-ps3
 	return(PS)
 }
 
