@@ -396,38 +396,6 @@ setMethod("plot", signature("data.frame", "data.frame"),
 ############################################################################################
 
 
-# CoverageTrack
-#CoverageTrack<-function(reads, chr, gen="gen", FragmentLength=200, name="XSET", PE=FALSE)
-#{
-	#if(class(reads)!="list")
-		#reads<-list(reads)
-#
-	#colList<-c("black", "red", "orange", "yellow", "green", "blue")
-	#for(idxReads in 1:length(reads))
-	#{
-	  #if not GRanges, assume it is PE
-	  #if(class(reads[[idxReads]])!="GRanges")
-	  #{
-	  	#stop("The reads should be of class 'GRanges'")
-	  #}
-	  #else if(!isTRUE(PE))
-	  #{#no need to resize for PE sequencing data (width known)
-	  	#EXT<-resize(reads[[idxReads]][seqnames(reads[[idxReads]])==chr], width=FragmentLength)
-	  #}
-	  #else
-	  #{
-	    #EXT<-reads[[idxReads]][seqnames(reads[[idxReads]])==chr]
-	  #}
-	  #start(EXT[start(EXT)<1,])<-1 #For reverse reads that have been extended into negative coordinates
-	  #XSET  <- c(XSET, coverage(EXT))
-	#}
-	  #covTrack<-DataTrack(data=XSET[[chr]]@values, start=start(XSET[[chr]]), width=width(XSET[[chr]]),
-	  		#col=colList,
-	  		#chromosome=chr, genome=gen, name=name, type="s", col.axis="black", cex.axis=1, col.title="black")
-	#return(covTrack)
-#}
-
-
 
 ## CoverageTrack
 CoverageTrack<-function(ping, reads, chr, gen="gen", FragmentLength=200, name="XSET")#, PE=FALSE
@@ -440,6 +408,7 @@ CoverageTrack<-function(ping, reads, chr, gen="gen", FragmentLength=200, name="X
 	else if(!isTRUE(PE))
 	{#no need to resize for PE sequencing data (width known)
 		EXT<-resize(reads[seqnames(reads)==chr], width=FragmentLength)
+		EXT<-EXT[start(EXT)>0]
 	}
 	else
 	{

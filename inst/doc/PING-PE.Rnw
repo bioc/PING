@@ -106,12 +106,12 @@ library(parallel)
 
 In order to run \texttt{segmentPING}, we have to subset our GRanges object to have a single chromosome
 <<subset-GR>>=
-grM<-gr[seqnames(gr)=="chrI"]
-seqlevels(grM)<-"chrI"
+grI<-gr[seqnames(gr)=="chrI"]
+seqlevels(grI)<-"chrI"
 @
 
 <<Genome-segmentation, results=hide>>=
-segPE<-segmentPING(grM, PE=TRUE)
+segPE<-segmentPING(grI, PE=TRUE)
 @
 
 It returns a \texttt{segReadsListPE} object.
@@ -151,7 +151,7 @@ For paired-end sequencing data, the bult-in plotting function \texttt{plotSummar
 
 
 <<plotSummary-PE, fig=TRUE>>=
-plotSummary(PS, ping,  grM, chr="chrI", from=149000, to=153000)
+plotSummary(PS, ping,  grI, chr="chrI", from=149000, to=153000)
 @
 
 %Note that the argument PE should be set to TRUE. 

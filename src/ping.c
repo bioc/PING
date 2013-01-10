@@ -74,7 +74,8 @@ double fun2(double x) {
 	return(y);
 }
 
-  //Main PING function
+//Main PING function
+//Calls fitModelAllk for each candidate region in @List
 SEXP fitPING(SEXP segReadsList, SEXP paraEM, SEXP paraPrior, SEXP minReads, SEXP detailS, SEXP rescaleS, SEXP calphaS, SEXP PES) {
   int l=0;
   SEXP pingList, segReads, List;
@@ -100,6 +101,7 @@ SEXP fitPING(SEXP segReadsList, SEXP paraEM, SEXP paraPrior, SEXP minReads, SEXP
   return(pingList);
 }
 
+//Calculates kmax and calls fitModelK to get the best K.
 SEXP fitModelAllk(SEXP segReads, SEXP paraEM, SEXP paraPrior, SEXP minReads, SEXP N, SEXP Nc, SEXP chr, int detail,int rescale, double calpha, int PE) {
   int Nnucle=0, minK=0, maxKK=0, i=0, k=0, kBest=0, K=0;
   SEXP yF, yR, cF, cR, map, kk, classDef;
@@ -466,6 +468,8 @@ SEXP fitModelAllk(SEXP segReads, SEXP paraEM, SEXP paraPrior, SEXP minReads, SEX
   return(myPing);
 }
 
+//Calls fitModel for 0 to kmax and keeps the best fit
+//Basically, tries different K (number of nucleosome within the region) and returns the best fit (and its params w/mu/delta/sigmaSqFR.
 SEXP fitModelK(SEXP kk, SEXP iMax, SEXP tol, SEXP mselect, SEXP yR, SEXP yF, SEXP a, SEXP b, SEXP xi, SEXP alpha, SEXP betap, SEXP rho, SEXP lambda, SEXP dMu, SEXP cst, SEXP nu, SEXP minReadPerPeak, int detail, int PE) {
 	int  nProtected=0, kmax=length(kk), k;
 	double bestBIC=GSL_NEGINF;
@@ -556,6 +560,8 @@ SEXP fitModelK(SEXP kk, SEXP iMax, SEXP tol, SEXP mselect, SEXP yR, SEXP yF, SEX
 	}
 }
 
+//Returns some estimated parameters and a score for the fit
+//This is where the estimates are first defined (in initPara)
 SEXP fitModel(SEXP kk, SEXP iMax, SEXP tol, SEXP mselect, SEXP yR, SEXP yF, SEXP a, SEXP b, SEXP xi, SEXP alpha, SEXP betap, SEXP rho, SEXP lambda, SEXP dMu, SEXP cst, SEXP nu, SEXP minReadPerPeak, int detail, int PE) {
 	//paraEM : SEXP iMax, SEXP tol, SEXP mselect
 	//segReads: SEXP yR, SEXP yF, SEXP a, SEXP b,

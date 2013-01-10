@@ -116,14 +116,14 @@ Parallelisation will also work with paired-end data. In what follows, we assume 
 In order to run \texttt{segmentPING}, we have to subset our GRanges object to have a single chromosome
 \begin{Schunk}
 \begin{Sinput}
-> grM <- gr[seqnames(gr) == "chrM"]
-> seqlevels(grM) <- "chrM"
+> grI <- gr[seqnames(gr) == "chrI"]
+> seqlevels(grI) <- "chrI"
 \end{Sinput}
 \end{Schunk}
 
 \begin{Schunk}
 \begin{Sinput}
-> segPE <- segmentPING(grM, PE = TRUE)
+> segPE <- segmentPING(grI, PE = TRUE)
 \end{Sinput}
 \end{Schunk}
 
@@ -155,14 +155,14 @@ The returned object is a \texttt{pingList}, which will go through a post-process
 \end{Sinput}
 \begin{Soutput}
  The 5 Regions with following IDs are reprocessed for singularity problem: 
-[1]  84 146 159 185 188
+[1] 385 388 400 409 415
 
- The 1 Regions with following IDs are reprocessed for atypical delta: 
-[1] 149
+ The 65 Regions with following IDs are reprocessed for atypical delta: 
+[1]  49 391 356 176  20  44
 [1] "No predictions with atypical sigma"
 
- The 146 regions with following IDs are reprocessed for Boundary problems: 
-[1]  4 17 25 37 39 46
+ The 1058 regions with following IDs are reprocessed for Boundary problems: 
+[1]  3  4  6  7 10 12
 \end{Soutput}
 \end{Schunk}
 The result output of \texttt{postPING} is a dataframe that contains estimated parameters of each nucleosome.
@@ -188,7 +188,7 @@ For paired-end sequencing data, the bult-in plotting function \texttt{plotSummar
 
 \begin{Schunk}
 \begin{Sinput}
-> plotSummary(PS, ping, grM, chr = "chrM", from = 1000, to = 4000)
+> plotSummary(PS, ping, grI, chr = "chrI", from = 149000, to = 153000)
 \end{Sinput}
 \end{Schunk}
 \includegraphics{PING-PE-plotSummary-PE}
