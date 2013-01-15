@@ -54,7 +54,7 @@ For an introduction to the biological background and \texttt{PING} method, pleas
 \section{PING analysis steps}
 A typical PING analysis consists of the following steps:
 \begin{enumerate}
-  \item Extract reads and chromosomes from bam files.
+  \item Extract reads and chromosomes from bam files into a GRanges object.
   \item Segment the genome into candidate regions that have sufficient aligned reads via `segmentPING'
   \item Estimate nucleosome positions and other parameters with PING
   \item Post-process PING predictions to correct certain predictions
@@ -76,7 +76,7 @@ A small BAM file including two chromosomes of the yeast is provided to be used a
 
 \begin{Schunk}
 \begin{Sinput}
-> yeastBam <- system.file("extdata/yeastChrI_M.bam", package = "PING")
+> yeastBam <- system.file("extdata/yeastChrI.bam", package = "PING")
 \end{Sinput}
 \end{Schunk}
 
@@ -86,7 +86,6 @@ A small BAM file including two chromosomes of the yeast is provided to be used a
 \end{Sinput}
 \begin{Soutput}
 Chromosome  chrI 
-Chromosome  chrM 
 \end{Soutput}
 \end{Schunk}
 $gr$ is a \texttt{GRanges} object containing all the reads from the .bam file. 
@@ -154,15 +153,14 @@ The returned object is a \texttt{pingList}, which will go through a post-process
      sigmaB2 = sigmaB2)
 \end{Sinput}
 \begin{Soutput}
- The 5 Regions with following IDs are reprocessed for singularity problem: 
-[1] 385 388 400 409 415
+[1] "No regions with pingerror"
+[1] "No predictions with atypical delta"
 
- The 65 Regions with following IDs are reprocessed for atypical delta: 
-[1]  49 391 356 176  20  44
-[1] "No predictions with atypical sigma"
+ The 1 Peaks with following IDs are reprocessed for atypical sigma: 
+[1] 518
 
- The 1058 regions with following IDs are reprocessed for Boundary problems: 
-[1]  3  4  6  7 10 12
+ The 449 regions with following IDs are reprocessed for Boundary problems: 
+[1] 11 21 27 34 37 38
 \end{Soutput}
 \end{Schunk}
 The result output of \texttt{postPING} is a dataframe that contains estimated parameters of each nucleosome.

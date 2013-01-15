@@ -205,7 +205,7 @@ nTrack<-NucleosomeTrack(PS, "chr1", "gen", scoreThreshold=0.1, name="NEW")
 Then we add some information using track types issued from the \texttt{Gviz} package and finally use its plotting function: \texttt{plotTracks}.
 <<Gviz-tracks, fig=TRUE>>=
 gTrack<-GenomeAxisTrack(add53=TRUE, add35=TRUE)
-aTrack<-AnnotationTrack(range=IRanges(start=149500, end=151000), showFeatureId=TRUE, id="random annotation", col.title="orange", chr="chr1", gen="gen", name="custom")
+aTrack<-AnnotationTrack(start=149500, end=151000, showFeatureId=TRUE, id="random annotation", col.title="orange", chr="chr1", gen="gen", name="custom")
 plotTracks(trackList=c(gTrack, cTrack, aTrack, rTrack, nTrack), main="Custom plot", from=149000, to=153000 )
 @
 

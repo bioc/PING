@@ -57,7 +57,7 @@ For an introduction to the biological background and \texttt{PING} method, pleas
 \section{PING analysis steps}
 A typical PING analysis consists of the following steps:
 \begin{enumerate}
-  \item Extract reads and chromosomes from bam files.
+  \item Extract reads and chromosomes from bam files into a GRanges object.
   \item Segment the genome into candidate regions that have sufficient aligned reads via `segmentPING'
   \item Estimate nucleosome positions and other parameters with PING
   \item Post-process PING predictions to correct certain predictions
@@ -76,7 +76,7 @@ Because Paired-End sequencing data often comes in the form of BAM files, we prov
 A small BAM file including two chromosomes of the yeast is provided to be used as an example in this vignette.
 
 <<Read-data>>=
-yeastBam<- system.file("extdata/yeastChrI_M.bam",package="PING")
+yeastBam<- system.file("extdata/yeastChrI.bam",package="PING")
 @
 
 <<bam2gr>>=
