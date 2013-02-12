@@ -6,7 +6,7 @@
 \description{ 
    Post process Estimation of binding site positions obtained from PING. Refit mixture models with stronger prior in candidate regions contain potential problems, and then convert final result into dataframe.}
 \usage{
-postPING(ping, seg, rho2=NULL, sigmaB2=NULL, alpha2=NULL, beta2=NULL, min.dist= 100, paraEM=NULL, paraPrior=NULL, score=0.05, dataType="MNase", makePlot=FALSE, FragmentLength=100, mart=NULL, seg.boundary=NULL, DupBound=NULL, IP=NULL, datname="")
+postPING(ping, seg, rho2=NULL, sigmaB2=NULL, alpha2=NULL, beta2=NULL, min.dist= 100, paraEM=NULL, paraPrior=NULL, score=0.05, dataType="MNase", nCores=1, makePlot=FALSE, FragmentLength=100, mart=NULL, seg.boundary=NULL, DupBound=NULL, IP=NULL, datname="")
 }
 
 
@@ -37,6 +37,7 @@ postPING(ping, seg, rho2=NULL, sigmaB2=NULL, alpha2=NULL, beta2=NULL, min.dist= 
   \item{score}{A \code{numeric}. The score threshold used when calling \code{FilterPING}.}
   %\item{PE}{A \code{logical}. This should be set to TRUE for paired-end sequencing data.}
   \item{dataType}{A character string that can be set to use selected default parameters for the algorithm.}
+  \item{nCores}{An \code{integer}. The number of cores that should be used in parallel by the function.}
   \item{makePlot}{A \code{logical}. Plot a summary of the output.}
   \item{FragmentLength, mart, seg.boundary, DupBound, IP, datname}{Plotting parameters and options.}
     \describe{

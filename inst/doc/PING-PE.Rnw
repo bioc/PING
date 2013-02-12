@@ -127,9 +127,9 @@ The returned object is a \texttt{pingList}, which will go through a post-process
 
 \section{Post-processing PING results}
 
+%{sigmaB2=3600; rho2=15; alpha2=98; beta2=200000}
 <<Post-process-PING-result>>=
-{sigmaB2=3600; rho2=15; alpha2=98; beta2=200000}
-PS=postPING(ping, segPE, rho2=rho2, alpha2=alpha2, beta2=beta2, sigmaB2=sigmaB2)
+PS=postPING(ping, segPE)
 @
 The result output of \texttt{postPING} is a dataframe that contains estimated parameters of each nucleosome.
 
