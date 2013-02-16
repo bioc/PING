@@ -1,6 +1,6 @@
 segmentPING<-function(data, dataC=NULL, map=NULL,
 		minReads=2, minReadsInRegion=3, jitter=FALSE, maxLregion=1200, minLregion=80, step=NULL, width=NULL, dataType="H",
-		islandDepth=3, min_cut=50, max_cut=1000, PE=FALSE )
+		islandDepth=3, min_cut=50, max_cut=1000, maxReadsWidth=500, PE=FALSE )
 {
   ##Determine PE/SE based on reads width
   #if(length(unique(width(data)))==1)
@@ -55,6 +55,7 @@ segmentPING<-function(data, dataC=NULL, map=NULL,
 	  
 	  #with GRanges as input
 	  #data<-data[seqnames(data)==chr]
+          data<-data[width(data)<maxReadsWidth,]
 	  #Save xi for later
 	  xi<-mean(width(data))
 	  PE.RD<-IRanges(start=start(data), end=end(data))
