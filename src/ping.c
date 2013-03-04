@@ -21,6 +21,8 @@
 #include <gsl/gsl_blas.h>
 #include <gsl/gsl_linalg.h>
 #include <gsl/gsl_errno.h>
+//R//
+#include <time.h>
 
 
 SEXP fitPING(SEXP segReadsList, SEXP paraEM, SEXP paraPrior, SEXP minReads, SEXP detailS, SEXP rescaleS, SEXP calphaS, SEXP PES);
@@ -92,6 +94,7 @@ SEXP fitPING(SEXP segReadsList, SEXP paraEM, SEXP paraPrior, SEXP minReads, SEXP
   for(l=0;l<length(List);l++)
   {
     // I have added the option to interrupt R
+	  /*Rprintf("Cand region %d\n", l);*/
     R_CheckUserInterrupt();
     segReads=VECTOR_ELT(List,l);
     chr=GET_SLOT(segReads,install("chr"));    
@@ -492,10 +495,11 @@ SEXP fitModelK(SEXP kk, SEXP iMax, SEXP tol, SEXP mselect, SEXP yR, SEXP yF, SEX
 	// I DONT THINK WE NEED TO ALLOCATE THE MEMORY HERE!
   //  PROTECT(ans = allocVector(VECSXP,  4)); nProtected++; 
 
-	if(detail>0) Rprintf("mink=%i,\t maxk= %i \n", INTEGER(kk)[0], INTEGER(kk)[kmax-1]);
+  	if(detail>0) Rprintf("mink=%i,\t maxk= %i \n", INTEGER(kk)[0], INTEGER(kk)[kmax-1]);
 	for (k=0; k < kmax; k++)
 	{
-		if(detail>0) Rprintf("k= %i \n", INTEGER(kk)[k]);
+		/*if(detail>0) Rprintf("k= %i \n", INTEGER(kk)[k]);*/
+		/*Rprintf("k= %i \t", INTEGER(kk)[k]);*/
     
 		INTEGER(nComp)[0]=INTEGER(kk)[k];
 		//Rprintf("start fit %i mixtures \n", INTEGER(VECTOR_ELT(kk, k))[0]);
