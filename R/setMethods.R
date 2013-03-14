@@ -31,8 +31,8 @@ setMethod("density", "ping",
           {
             
             # Check that all filters are passed
-            missingNames<-!c("delta","sigmaSqF","sigmaSqR","se","score")%in%names(filter)
-            filter[c("delta","sigmaSqF","sigmaSqR","se","score")[missingNames]]<-list(c(0,Inf))
+            missingNames<-!c("delta","sigmaSqF","sigmaSqR","se","seF","seR","score")%in%names(filter)
+            filter[c("delta","sigmaSqF","sigmaSqR","se","seF","seR","score")[missingNames]]<-list(c(0,Inf))
             if(strand=="+")
             {
               strand<-1
@@ -50,7 +50,7 @@ setMethod("density", "ping",
               stop("Strand must be either '+', '-' or '*'")
             }            
             strand<-as.double(paste(strand,"1",sep=""))
-            ans<-.Call("getDensity", x, strand, step, filter, sum, scale, PACKAGE="PING")
+            ans<-.Call("getDensity", x, strand, step, filter, sum, scale, PACKAGE="PICS")
             return(ans);
           }
 )
@@ -59,8 +59,8 @@ setMethod("density", "pingList",
           function(x,strand="+",step=10,sum=FALSE,filter=NULL,scale=TRUE)
           {
             # Check that all filters are passed
-            missingNames<-!c("delta","sigmaSqF","sigmaSqR","se","score")%in%names(filter)
-            filter[c("delta","sigmaSqF","sigmaSqR","se","score")[missingNames]]<-list(c(0,Inf))
+            missingNames<-!c("delta","sigmaSqF","sigmaSqR","se","seF","seR","score")%in%names(filter)
+            filter[c("delta","sigmaSqF","sigmaSqR","se","seF","seR","score")[missingNames]]<-list(c(0,Inf))
 
             if(strand=="+")
             {
@@ -78,7 +78,7 @@ setMethod("density", "pingList",
             {
               stop("Strand must be either '+', '-' or '*'")
             }
-            ans<-.Call("getDensityList", x, strand, step, filter, sum, scale, PACKAGE="PING")
+            ans<-.Call("getDensityList", x, strand, step, filter, sum, scale, PACKAGE="PICS")
             return(ans);
           }
 )

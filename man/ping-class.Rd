@@ -33,7 +33,7 @@ The PING package provide accessors to directly access to most of the parameters/
 \item{`delta(x)'}{Gets the average fragment lengths of all binding sites identified in the region.}
 \item{`sigmaSqF(x)'}{Gets the F peak variances of all binding sites identified in the region.}
 \item{`sigmaSqR(x)'}{Gets the R peak variances of all binding sites identified in the region.}
-\item{`seF(x)'}{Gets the standard errors of all binding site position estimates identified in the region.}
+\item{`se(x)'}{Gets the standard errors of all binding site position estimates identified in the region.}
 \item{`seF(x)'}{Gets the standard errors of all F peak modes identified in the region.}
 \item{`seR(x)'}{Gets the standard errors of all R peak modes identified in the region.}
 \item{score}{\code{signature(x = "ping")}: return the score for each binding event.} 
@@ -53,7 +53,6 @@ newPing(w,mu,delta,sigmaSqF,sigmaSqR,seMu,seMuF,seMuR,score,Nmerged,converge,inf
 \item{sigmaSqR}{The variance parameters for the forward distribution (vector)}
 \item{seMu}{The standard errors for mu (vector)}
 \item{seMuF}{The standard errors for muF (vector)}
-\item{seMuR}{The standard errors for muR (vector)}
 \item{seMuR}{The standard errors for muR (vector)}
 \item{score}{The scores for each binding event (vector)}
 \item{Nmerged}{The number of peaks that got merged (integer)}

@@ -38,7 +38,7 @@ importFrom(Gviz, plotTracks)
 
 exportClasses(ping, pingError, pingList)
 exportMethods(show, summary, plot, se, seF, seR, sigmaSqF, sigmaSqR, mu, delta, w, code, length, K,"[","[[",
-	chromosome, score)
+	chromosome, score, density)
 export("PING","postPING","newPingError",
 	"segReads","segReadsPE","segReadsList","segReadsListPE",
 	"segmentPING",

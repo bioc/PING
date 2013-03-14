@@ -2275,8 +2275,8 @@ SEXP initPara(SEXP F, SEXP R, SEXP kk, SEXP xi) {
 	int nProtected=0; //number of protected variables
 	
 	SEXP w, mu, delta, sigmaSqF, sigmaSqR; 
-	PROTECT(w			= allocVector(REALSXP, K));	nProtected++; 
-	PROTECT(mu			= allocVector(REALSXP, K));	nProtected++; 
+	PROTECT(w		= allocVector(REALSXP, K));	nProtected++; 
+	PROTECT(mu		= allocVector(REALSXP, K));	nProtected++; 
 	PROTECT(delta		= allocVector(REALSXP, K));	nProtected++; 
 	PROTECT(sigmaSqF	= allocVector(REALSXP, K));	nProtected++; 
 	PROTECT(sigmaSqR	= allocVector(REALSXP, K));	nProtected++; 
