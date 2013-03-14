@@ -16,6 +16,8 @@ setAs("pingList", "data.frame",
     return(ans)
   })
 
+setMethod("as.data.frame", "pingList", function(x, ...){as(x, "data.frame")})
+
 setMethod("show", "pingList",
           function(object)
           {
