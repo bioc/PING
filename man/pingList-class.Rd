@@ -14,6 +14,7 @@
 \alias{[,pingList,ANY,ANY-method}
 \alias{[[,pingList,ANY,ANY-method}
 \alias{newPingList,pingList-method}
+\alias{as.data.frame,pingList-method}
 \alias{length}
 \alias{length,pingList-method}
 \alias{newPingList}
@@ -63,6 +64,9 @@ newPingList(List, paraEM, paraPrior, minReads, N, Nc)
   \describe{
  \item{length}{\code{signature(x = "ping")}: subset PING object.}
 }
+  \describe{
+    \item{as.data.frame}{\code{signature(x = "pingList")}: Coerce a \code{pingList} to a \code{data.frame}}.
+  }
 }
 
 \arguments{
