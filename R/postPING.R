@@ -11,6 +11,9 @@
 #postPING <- function(ping, seg, rho=8, sigmaB2=2500,rho1=0.8,alpha1=20,alpha2=100,beta2=100000,xi=150,  min.dist=100, lambda=-0.000064)
 postPING <- function(ping, seg, rho2=NULL, sigmaB2=NULL, alpha2=NULL, beta2=NULL, min.dist= 100, paraEM=NULL, paraPrior=NULL, score=0.05, dataType="MNase", nCores=1, makePlot=FALSE, FragmentLength=100, mart=NULL, seg.boundary=NULL, DupBound=NULL, IP=NULL, datname="")
 {
+  if(length(ping)!=length(seg)){
+    stop("The length of `ping' and `seg' arguments are different. `seg' must be the same used when calling PING.")
+  }
 	PE<-ping@PE
 	if(length(paraPrior)!=6)
 	{

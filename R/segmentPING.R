@@ -102,56 +102,86 @@ segmentPING<-function(data, dataC=NULL, map=NULL,
 ###
 bam2gr<-function(bamFile, chr=NULL, PE=FALSE, verbose=FALSE)
 {
-	paras <- ScanBamParam(what=c("qname", "rname", "strand", "pos", "mapq", "qwidth"), flag=scanBamFlag(isUnmappedQuery=FALSE,isDuplicate=FALSE))
-	bga<-readBamGappedAlignments(bamFile, use.names=TRUE, param=paras)
-	if(verbose)
-	  cat(length(bga)," Reads in '",bamFile,"'","\n", sep="")
-	hiQScoreIdx<-which(elementMetadata(bga)$mapq>10)
-	if(verbose)
-	  cat(length(bga)-length(hiQScoreIdx)," Reads with low quality scores filtered out","\n")
-	bga<-bga[hiQScoreIdx]#filter out elt with low quality scores
-	gr<-GRanges()
+  paras <- ScanBamParam(what=c("qname", "rname", "strand", "pos", "mapq", "qwidth"), flag=scanBamFlag(isUnmappedQuery=FALSE,isDuplicate=FALSE))
+  bga<-readBamGappedAlignments(bamFile, use.names=TRUE, param=paras)
+  if(verbose){
+    cat(length(bga)," Reads in '",bamFile,"'","\n", sep="")
+  }
+  hiQScoreIdx<-which(elementMetadata(bga)$mapq>10)
+  if(verbose){
+    cat(length(bga)-length(hiQScoreIdx)," Reads with low quality scores filtered out","\n")
+  }
+  bga<-bga[hiQScoreIdx]#filter out elt with low quality scores
 
-	if(!is.null(chr))
-	  chrs<-chr
-	else
-	  chrs<-unique(as.character(runValue(seqnames(bga))))#
-
-	for(i in 1:length(chrs))
-	{ 
-	  cat("Chromosome ", chrs[[i]], "\n")
-	  bga2<-bga[seqnames(bga)==chrs[i]]
-	  if(isTRUE(PE))
-	  {
-	    #change names
-	    qname<-elementMetadata(bga2)$qname
-	    qname<-substring(qname,15)
-	    qname<-gsub(pattern="/3", replacement="", qname)
-	    elementMetadata(bga2)$qname<-qname
-	    #merge pairs
-	    asdf<-as(bga2, "data.frame")
-	    if(verbose)
-	      df<-reshape(asdf, timevar="strand", idvar="qname", direction="wide")
-            else
-	      suppressWarnings(df<-reshape(asdf, timevar="strand", idvar="qname", direction="wide"))
-	    df2<-df[,c("start.+", "end.-")]
-	    rownames(df2)<-df[,"qname"]
-	    badReads<-which(df2$`start.+`>df2$`end.-`)
-	    if(length(badReads)>0)
-	      df2<-df2[-badReads,]
-	    #Split PE and SE
-	    idx <- is.na(df2[,c("start.+","end.-")])
-	    reads <- list(P=df2[!(idx[,1]|idx[,2]),], yFm=df2[idx[,2],], yRm=df2[idx[,1],])
-	    #Build object
-	    ir<-IRanges(start=reads$P$`start.+`, end=reads$P$`end.-`)
-	    gr<-c(gr,GRanges(ranges=ir, seqnames=chrs[i])) #GR with PE (no SE)
-	  }
-	  else
-	  {
-	    ir<-IRanges(start=elementMetadata(bga2)$pos, width=elementMetadata(bga2)$qwidth)
-	    gr<-c(gr,GRanges(ranges=ir, strand=elementMetadata(bga2)$strand, seqnames=chrs[i]))
-	  }
-	}
-	return(gr)
+  if(isTRUE(PE)){
+    qname<-elementMetadata(bga)$qname
+    qname<-substring(qname,15)
+    qname<-gsub(pattern="/3", replacement="", qname)
+    elementMetadata(bga)$qname<-qname
+    #merge pairs
+    asdf<-as(bga, "data.frame")
+    if(verbose){
+      df<-reshape(asdf, timevar="strand", idvar="qname", direction="wide")
+    } else{
+      suppressWarnings(df<-reshape(asdf, timevar="strand", idvar="qname", direction="wide"))
+    }
+    df2<-df[,c("start.+", "end.-","rname.+")]
+    colnames(df2)<-c("start", "end", "chr")
+    rownames(df2)<-df[,"qname"]
+    badReads<-which(df2$start>df2$end)
+    if(length(badReads)>0){
+      df2<-df2[-badReads,]
+    }
+    #Split PE and SE
+    idx <- is.na(df2[,c("start","end")])
+    reads <- df2[!(idx[,1]|idx[,2]),]
+    yFm <- df2[idx[,2],] #Forward reads, missing matching reverse
+    yRm <- df2[idx[,1],] #Reverse reads
+    gr<-GRanges(ranges=IRanges(start=reads$start, end=reads$end), strand="*", seqnames=reads$chr)
+  } else{
+    gr<-GRanges(ranges=IRanges(start=start(bga), end=end(bga)), strand=strand(bga), seqnames=seqnames(bga))
+  }
+  return(gr)
 }
-	
+##	if(!is.null(chr))
+##	  chrs<-chr
+##	else
+##	  chrs<-unique(as.character(runValue(seqnames(bga))))#
+##	for(i in 1:length(chrs))
+##	{ 
+##	  cat("Chromosome ", chrs[[i]], "\n")
+##	  bga2<-bga[seqnames(bga)==chrs[i]]
+##	  if(isTRUE(PE))
+##	  {
+##	    #change names
+##	    qname<-elementMetadata(bga2)$qname
+##	    qname<-substring(qname,15)
+##	    qname<-gsub(pattern="/3", replacement="", qname)
+##	    elementMetadata(bga2)$qname<-qname
+##	    #merge pairs
+##	    asdf<-as(bga2, "data.frame")
+##	    if(verbose)
+##	      df<-reshape(asdf, timevar="strand", idvar="qname", direction="wide")
+##            else
+##	      suppressWarnings(df<-reshape(asdf, timevar="strand", idvar="qname", direction="wide"))
+##	    df2<-df[,c("start.+", "end.-")]
+##	    rownames(df2)<-df[,"qname"]
+##	    badReads<-which(df2$`start.+`>df2$`end.-`)
+##	    if(length(badReads)>0)
+##	      df2<-df2[-badReads,]
+##	    #Split PE and SE
+##	    idx <- is.na(df2[,c("start.+","end.-")])
+##	    reads <- list(P=df2[!(idx[,1]|idx[,2]),], yFm=df2[idx[,2],], yRm=df2[idx[,1],])
+##	    #Build object
+##	    ir<-IRanges(start=reads$P$`start.+`, end=reads$P$`end.-`)
+##	    gr<-c(gr,GRanges(ranges=ir, seqnames=chrs[i])) #GR with PE (no SE)
+##	  }
+##	  else
+##	  {
+##	    ir<-IRanges(start=elementMetadata(bga2)$pos, width=elementMetadata(bga2)$qwidth)
+##	    gr<-c(gr,GRanges(ranges=ir, strand=elementMetadata(bga2)$strand, seqnames=chrs[i]))
+##	  }
+##	}
+##	return(gr)
+##}
+##	
