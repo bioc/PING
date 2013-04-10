@@ -30,7 +30,7 @@ importMethodsFrom(PICS, coerce, show, summary, minRange,
 	se, seF,seR,sigmaSqF, sigmaSqR, delta, mu, w, K, code, length, "[","[[")
 importFrom(PICS, segReads, segReadsPE, segReadsList, segReadsListPE,
 	segReadsGeneric, summarySeg, makeRangedDataOutput, setParaEM, setParaPrior,
-	candidate.region, segChrRead)
+	candidate.region, segChrRead, bam2gr)
 importClassesFrom(Gviz, AnnotationTrack, DataTrack, GenomeAxisTrack, BiomartGeneRegionTrack)
 importFrom(Gviz, AnnotationTrack, DataTrack, GenomeAxisTrack, BiomartGeneRegionTrack)
 importFrom(Gviz, plotTracks)
@@ -42,7 +42,6 @@ exportMethods(show, summary, plot, se, seF, seR, sigmaSqF, sigmaSqR, mu, delta, 
 export("PING","postPING","newPingError",
 	"segReads","segReadsPE","segReadsList","segReadsListPE",
 	"segmentPING",
-	"NucleosomeTrack","CoverageTrack","RawReadsTrack","plotSummary",
-	"bam2gr")
+	"NucleosomeTrack","CoverageTrack","RawReadsTrack","plotSummary")
 #Export imported stuff
-export("makeRangedDataOutput","setParaPrior","setParaEM")
+export("makeRangedDataOutput","setParaPrior","setParaEM","bam2gr")

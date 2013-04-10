@@ -72,14 +72,19 @@ library(PING)
 \section{Data Input and Formatting}
 As with the Single-End \texttt{PING}, the input used for the segmentation step is a \texttt{GRanges} object.
 
-Because Paired-End sequencing data often comes in the form of BAM files, we provide a function called \texttt{bam2gr} to convert these files into \texttt{GRanges} objects with all the appropriate information.
+%Because Paired-End sequencing data often comes in the form of BAM files, we provide a function called \texttt{bam2gr} to convert these files into \texttt{GRanges} objects with all the appropriate information.
+%A small BAM file including a region of yeast's chromosome I is provided to be used as an example in this vignette.
+Because sequencing data often comes in the form of BAM files, in the \texttt{PICS} package, we provide a function called \texttt{bam2gr} to convert these files into \texttt{GRanges} objects with all the appropriate information.
 A small BAM file including a region of yeast's chromosome I is provided to be used as an example in this vignette.
+
+
 
 <<Read-data>>=
 yeastBam<- system.file("extdata/yeastChrI.bam",package="PING")
 @
 
 <<bam2gr>>=
+library(PICS)
 gr<-bam2gr(bamFile=yeastBam, PE=TRUE)
 @
 $gr$ is a \texttt{GRanges} object containing all the reads from the .bam file. 

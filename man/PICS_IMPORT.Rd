@@ -6,6 +6,7 @@
 \alias{segReadsListPE}
 \alias{setParaEM}
 \alias{setParaPrior}
+\alias{bam2gr}
 
 \title{
 	PICS functions.
@@ -14,6 +15,20 @@
 \description{
 	Functions imported from PICS and exposed when loading PING.
 	Refer to PICS documentation for further information.
+
+\code{?PICS::segReads}
+
+\code{?PICS::segReadsList}
+
+\code{?PICS::segReadsPE}
+
+\code{?PICS::segReadsListPE}
+
+\code{?PICS::setParaEM}
+
+\code{?PICS::setParaPrior}
+
+\code{?PICS::bam2gr}
 }
 
 
