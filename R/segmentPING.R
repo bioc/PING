@@ -103,7 +103,7 @@ segmentPING<-function(data, dataC=NULL, map=NULL,
 bam2gr<-function(bamFile, chr=NULL, PE=FALSE, verbose=FALSE)
 {
 	paras <- ScanBamParam(what=c("qname", "rname", "strand", "pos", "mapq", "qwidth"), flag=scanBamFlag(isUnmappedQuery=FALSE,isDuplicate=FALSE))
-	bga<-readBamGappedAlignments(bamFile, use.names=TRUE, param=paras)
+	bga<-readGAlignmentsFromBam(bamFile, use.names=TRUE, param=paras)
 	if(verbose)
 	  cat(length(bga)," Reads in '",bamFile,"'","\n", sep="")
 	hiQScoreIdx<-which(elementMetadata(bga)$mapq>10)

@@ -9,7 +9,7 @@ importFrom(grDevices, grey)
 importFrom(stats, dt, integrate, kmeans, pt)
 importFrom(stats4, summary)
 
-importFrom(Rsamtools, ScanBamParam, scanBamFlag, readBamGappedAlignments)
+importFrom(Rsamtools, ScanBamParam, scanBamFlag, readGAlignmentsFromBam)
 
 #importFrom(IRanges, IRanges, RangedData)
 #importClassesFrom(IRanges, IRanges, RangedData)
