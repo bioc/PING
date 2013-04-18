@@ -9,8 +9,6 @@ importFrom(grDevices, grey)
 importFrom(stats, dt, integrate, kmeans, pt)
 importFrom(stats4, summary)
 
-importFrom(Rsamtools, ScanBamParam, scanBamFlag, readBamGappedAlignments)
-
 #importFrom(IRanges, IRanges, RangedData)
 #importClassesFrom(IRanges, IRanges, RangedData)
 #importMethodsFrom(IRanges, coerce, duplicated, end, levels, lapply, order, score, sort, space, start, width, as.matrix, runValue, elementMetadata, "elementMetadata<-")
