@@ -1,5 +1,5 @@
 segmentPING<-function(data, dataC=NULL, map=NULL,
-		minReads=2, minReadsInRegion=3, jitter=FALSE, maxLregion=1200, minLregion=80, step=NULL, width=NULL, dataType="H",
+		minReads=2, minReadsInRegion=3, jitter=FALSE, maxLregion=1200, minLregion=80, step=NULL, width=NULL, #dataType="H",
 		islandDepth=3, min_cut=50, max_cut=1000, maxReadsWidth=500, PE=FALSE )
 {
   ##Determine PE/SE based on reads width
@@ -10,29 +10,25 @@ segmentPING<-function(data, dataC=NULL, map=NULL,
 
   if(!isTRUE(PE))
   {
-	  cat("Performing segmentation for single end reads\n")
-	  if(dataType=="TF")
-	  {
-		  if(is.null(step))
-		  {
-			  step<-20L
-		  }
-		  if(is.null(width))
-		  {
-			  width<-150L
-		  }
-	  }
-	  if(dataType=="H")
-	  {
-		  if(is.null(step))
-		  {
-			  step<-2L
-		  }
-		  if(is.null(width))
-		  {
-			  width<-150L
-		  }
-	  }
+    cat("Performing segmentation for single end reads\n")
+    step<-2L
+    width<-150L
+	  #if(dataType=="TF"){
+		  #if(is.null(step)){
+			  #step<-20L
+	          #}
+		  #if(is.null(width)){
+			  #width<-150L
+		  #}
+	  #}
+	  #if(dataType=="H"){
+		  #if(is.null(step)){
+			  #step<-2L
+		  #}
+		  #if(is.null(width)){
+			  #width<-150L
+		  #}
+	  #}
 	  newSet<-segReadsGeneric(data, dataC=dataC, map=map, minReads=minReads, minReadsInRegion=minReadsInRegion, jitter=jitter, maxLregion=maxLregion,minLregion=minLregion, step=step, width=width, package="PING")
 	  
 	  

@@ -103,12 +103,6 @@ function: \texttt{islandDepth}, \texttt{min_cut}
 and \texttt{max_cut} for candidate region selection. These arguments control the 
 size and required coverage for a region to be considered as a candidate.
 
-Parallelisation will also work with paired-end data. In what follows, we assume that \texttt{parallel} is installed on your machine. If it is not, the first line should be omitted and calculations will occur on a single CPU.
-
-<<Cluster-initialization>>=
-library(parallel)
-@
-
 In order to run \texttt{segmentPING}, we have to subset our GRanges object to have a single chromosome
 <<subset-GR>>=
 grI<-gr[seqnames(gr)=="chrI"]
@@ -123,6 +117,12 @@ It returns a \texttt{segReadsListPE} object.
 
 
 \subsection{Parameter estimation}
+
+Parallelisation will also work with paired-end data. In what follows, we assume that \texttt{parallel} is installed on your machine. If it is not, the first line should be omitted and calculations will occur on a single CPU.
+
+<<Cluster-initialization>>=
+library(parallel)
+@
 
 <<PING-analysis>>=
 ping<-PING(segPE, nCores=2)
