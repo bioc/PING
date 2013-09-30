@@ -4,18 +4,11 @@
 %\VignettePackage{PING}
 \documentclass[11pt]{article}
 \usepackage{Sweave}
-\usepackage{underscore}
+%\usepackage{underscore}
 \usepackage{hyperref}
-%\usepackage{url}
-%\usepackage{color, pdfcolmk}
 %\usepackage[authoryear,round]{natbib}
 \SweaveOpts{keep.source=FALSE}
 %\setkeys{Gin}{width=1\textwidth} %This control the width of the plots compared to the text
-%\bibliographystyle{plainnat}
-
-
-%\newcommand{\scscst}{\scriptscriptstyle}
-%\newcommand{\scst}{\scriptstyle}
 
 \title{PING: Probabilistic Inference for Nucleosome Positioning with MNase-based or Sonicated Short-read Data}
 \author{Xuekui Zhang\footnote{ubcxzhang@gmail.com}, Sangsoon Woo\footnote{swoo@fhcrc.org}, Raphael Gottardo\footnote{rgottard@fhcrc.org} and Renan Sauteraud\footnote{rsautera@fhcrc.org}}
@@ -40,6 +33,7 @@ Under the Artistic License 2.0, you are free to use and redistribute this softwa
 If you use this package for a publication, we would ask you to cite the following: 
 
 \begin{itemize}
+\item[] Sangsoon Woo, Xuekui Zhang, Renan Sauteraud, Francois Robert, Raphael Gottardo: \htmladdnormallink{PING 2.0: an R/Bioconductor package for nucleosome positioning using next-generation sequencing data}{http://bioinformatics.oxfordjournals.org/content/29/16/2049}. Bioinformatics 29(16): 2049-2050 (2013)
 \item[] Xuekui Zhang, Gordon Robertson, Sangsoon Woo, Brad G. Hoffman, and Raphael Gottardo. (2012). Probabilistic Inference for Nucleosome Positioning with MNase-based or Sonicated Short-read Data. PLoS ONE 7(2): e32095.
 \end{itemize}
 
