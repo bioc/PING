@@ -2,7 +2,7 @@ Package: PING
 Type: Package
 Title: Probabilistic inference for Nucleosome Positioning with
         MNase-based or Sonicated Short-read Data
-Version: 2.5.0
+Version: 2.6.0
 Author: Xuekui Zhang <xuezhang@jhsph.edu>, Raphael Gottardo <raph@stat.ubc.ca>, Sangsoon Woo, <swoo@fhcrc.org>
 Maintainer: Renan Sauteraud <rsautera@fhcrc.org>
 Depends: R(>= 2.15.0), chipseq, IRanges, GenomicRanges
