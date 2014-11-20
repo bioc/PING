@@ -9,9 +9,8 @@ importFrom(grDevices, grey)
 importFrom(stats, dt, integrate, kmeans, pt)
 importFrom(stats4, summary)
 
-#importFrom(IRanges, IRanges, RangedData)
-#importClassesFrom(IRanges, IRanges, RangedData)
-#importMethodsFrom(IRanges, coerce, duplicated, end, levels, lapply, order, score, sort, space, start, width, as.matrix, runValue, elementMetadata, "elementMetadata<-")
+import(IRanges)
+import(S4Vectors)
 
 #importMethodsFrom(GenomicRanges, coerce, strand, seqnames, width)
 #importClassesFrom(GenomicRanges, GRanges)

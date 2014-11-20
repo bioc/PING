@@ -2,13 +2,13 @@ Package: PING
 Type: Package
 Title: Probabilistic inference for Nucleosome Positioning with
         MNase-based or Sonicated Short-read Data
-Version: 2.11.0
+Version: 2.11.1
 Author: Xuekui Zhang <xuezhang@jhsph.edu>, Raphael Gottardo
         <raph@stat.ubc.ca>, Sangsoon Woo, <swoo@fhcrc.org>
 Maintainer: Renan Sauteraud <rsautera@fhcrc.org>
 Depends: R(>= 2.15.0), chipseq, IRanges, GenomicRanges
 Imports: methods, PICS, graphics, grDevices, stats, Gviz, fda,
-        BSgenome, stats4, BiocGenerics
+        BSgenome, stats4, BiocGenerics, IRanges, S4Vectors
 Suggests: parallel, ShortRead, rtracklayer
 Description: Probabilistic inference of ChIP-Seq using an empirical
         Bayes mixture model approach.
