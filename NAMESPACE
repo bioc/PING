@@ -1,6 +1,3 @@
-#
-# NAMESPACE PING
-#
 useDynLib(PING,.registration=TRUE)
 
 
@@ -9,9 +6,8 @@ importFrom(grDevices, grey)
 importFrom(stats, dt, integrate, kmeans, pt)
 importFrom(stats4, summary)
 
-#importFrom(IRanges, IRanges, RangedData)
-#importClassesFrom(IRanges, IRanges, RangedData)
-#importMethodsFrom(IRanges, coerce, duplicated, end, levels, lapply, order, score, sort, space, start, width, as.matrix, runValue, elementMetadata, "elementMetadata<-")
+import(IRanges)
+import(S4Vectors)
 
 #importMethodsFrom(GenomicRanges, coerce, strand, seqnames, width)
 #importClassesFrom(GenomicRanges, GRanges)
@@ -27,7 +23,7 @@ importMethodsFrom(PICS, coerce, show, summary, minRange,
 	score,
 	se, seF,seR,sigmaSqF, sigmaSqR, delta, mu, w, K, code, length, "[","[[")
 importFrom(PICS, segReads, segReadsPE, segReadsList, segReadsListPE,
-	segReadsGeneric, summarySeg, makeGRangesOutput, setParaEM, setParaPrior,
+	segReadsGeneric, summarySeg, makeRangedDataOutput, setParaEM, setParaPrior,
 	candidate.region, segChrRead, bam2gr)
 importClassesFrom(Gviz, AnnotationTrack, DataTrack, GenomeAxisTrack, BiomartGeneRegionTrack)
 importFrom(Gviz, AnnotationTrack, DataTrack, GenomeAxisTrack, BiomartGeneRegionTrack)
