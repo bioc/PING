@@ -27,7 +27,7 @@ importMethodsFrom(PICS, coerce, show, summary, minRange,
 	score,
 	se, seF,seR,sigmaSqF, sigmaSqR, delta, mu, w, K, code, length, "[","[[")
 importFrom(PICS, segReads, segReadsPE, segReadsList, segReadsListPE,
-	segReadsGeneric, summarySeg, makeRangedDataOutput, setParaEM, setParaPrior,
+	segReadsGeneric, summarySeg, makeGRangesOutput, setParaEM, setParaPrior,
 	candidate.region, segChrRead, bam2gr)
 importClassesFrom(Gviz, AnnotationTrack, DataTrack, GenomeAxisTrack, BiomartGeneRegionTrack)
 importFrom(Gviz, AnnotationTrack, DataTrack, GenomeAxisTrack, BiomartGeneRegionTrack)
