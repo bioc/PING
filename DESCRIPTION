@@ -4,11 +4,11 @@ Title: Probabilistic inference for Nucleosome Positioning with
         MNase-based or Sonicated Short-read Data
 Description: Probabilistic inference of ChIP-Seq using an empirical
         Bayes mixture model approach.
-Version: 2.31.1
+Version: 2.31.2
 Author: Xuekui Zhang <xuezhang@jhsph.edu>, Raphael Gottardo
         <rgottard@fredhutch.org>, Sangsoon Woo <swoo@fhcrc.org>
 Maintainer: Renan Sauteraud <renan.sauteraud@gmail.com>
-Depends: R(>= 3.5.0), chipseq, IRanges, GenomicRanges
+Depends: R(>= 3.5.0)
 Imports: 
   methods, 
   PICS, 
@@ -21,6 +21,7 @@ Imports:
   stats4, 
   BiocGenerics, 
   IRanges, 
+  GenomicRanges,
   S4Vectors
 Suggests: parallel, ShortRead, rtracklayer
 Collate: setClasses.R setMethods.R PING.R postPING.R segmentPING.R
